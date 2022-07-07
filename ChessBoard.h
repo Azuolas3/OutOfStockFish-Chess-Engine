@@ -16,7 +16,7 @@ namespace ChessEngine
     {
     public:
         void printBoard();
-        int pieces[8][8] = { 0 };
+        Piece pieces[8][8] = { EMPTY };
     };
 }
 

@@ -8,23 +8,21 @@ using namespace ChessEngine;
 
 void ChessBoard::printBoard()
 {
-    wchar_t test = L'\u2659';
-
-    std::map<int, wchar_t> symbolDictionary =
+    std::map<Piece, wchar_t> symbolDictionary =
     {
-            {0, L'\u26DA'},
-            {2, L'\u2659'},
-            {3, L'\u265F'},
-            {4, L'\u2657'},
-            {5, L'\u265D'},
-            {6, L'\u2658'},
-            {7, L'\u265E'},
-            {8, L'\u2656'},
-            {9, L'\u265C'},
-            {10, L'\u2655'},
-            {11, L'\u265B'},
-            {12, L'\u2654'},
-            {13, L'\u265A'}
+            {EMPTY, L'\u26DA'},
+            {B_PAWN, L'\u2659'},
+            {W_PAWN, L'\u265F'},
+            {B_BISHOP, L'\u2657'},
+            {W_BISHOP, L'\u265D'},
+            {B_KNIGHT, L'\u2658'},
+            {W_KNIGHT, L'\u265E'},
+            {B_ROOK, L'\u2656'},
+            {W_ROOK, L'\u265C'},
+            {B_QUEEN, L'\u2655'},
+            {W_QUEEN, L'\u265B'},
+            {B_KING, L'\u2654'},
+            {W_KING, L'\u265A'}
     };
 
     for(int i = 7; i >= 0; i--)
