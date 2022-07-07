@@ -5,6 +5,7 @@
 #ifndef CHESS_ENGINE_MOVEGENERATOR_H
 #define CHESS_ENGINE_MOVEGENERATOR_H
 
+#include <iostream>
 #include <vector>
 #include "ChessBoard.h"
 
@@ -26,9 +27,17 @@ class MoveGenerator
 {
     ChessEngine::ChessBoard board;
 
+    bool isSameColor(int startingX, int startingY, int destinationX, int destinationY);
+    bool IsInBounds(int x, int y);
+
 public:
+    MoveGenerator(ChessEngine::ChessBoard board)
+    {
+        this->board = board;
+    }
     std::vector<Move> GenerateStraightMoves(int startingX, int startingY);
     std::vector<Move> GenerateDiagonalMoves(int startingX, int startingY);
+    std::vector<Move> GenerateKnightMoves(int startingX, int startingY);
 };
 
 

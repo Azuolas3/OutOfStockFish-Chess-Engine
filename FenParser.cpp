@@ -16,7 +16,7 @@ ChessBoard FenParser::loadFen(std::string fenString)
         for(int col = 0; col <= 8;)
         {
             char currChar = fenString[charIterator];
-            std::cout << col << " " << row << " " << charIterator << " " << currChar << " ";
+            //std::cout << col << " " << row << " " << charIterator << " " << currChar << " ";
 
             if(std::isdigit(currChar))
             {
@@ -40,7 +40,7 @@ ChessBoard FenParser::loadFen(std::string fenString)
             else
                 pieceColor = ChessEngine::WHITE;
 
-            std::cout << (pieceColor | pieceType) << std::endl;
+            //std::cout << (pieceColor | pieceType) << std::endl;
             ChessEngine::Piece piece = static_cast<ChessEngine::Piece>(pieceColor | pieceType);
             board.pieces[col][row] = piece;
 

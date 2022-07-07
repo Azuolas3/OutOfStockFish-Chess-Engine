@@ -26,7 +26,7 @@ namespace ChessEngine
         };
 
     public:
-        std::string const startingFenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
+        std::string const startingFenString = "rnbqkbnr/pppppppp/8/8/4N3/8/PPPPPPPP/RNBQKBNR";
         ChessBoard loadFen(std::string fenString);
     };
 }

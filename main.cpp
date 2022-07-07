@@ -14,9 +14,11 @@ int main() {
     //std::fill(&test[0][0], &test[7][7], EMPTY);
     vector<Move> generatedMoves;
     FenParser fenParser;
-    MoveGenerator moveGenerator;
+
     ChessBoard board = fenParser.loadFen(fenParser.startingFenString);
-    generatedMoves = moveGenerator.GenerateDiagonalMoves(4, 3);
+    MoveGenerator moveGenerator(board);
+    //cout << board.pieces[4][3] << endl;
+    generatedMoves = moveGenerator.GenerateKnightMoves(4, 3);
     //std::cout << "HELLO WORLD BLET " << test[2][0] << std::endl;
 
     board.printBoard();

@@ -5,6 +5,8 @@
 #ifndef CHESS_ENGINE_PIECES_H
 #define CHESS_ENGINE_PIECES_H
 
+#include <iostream>
+
 namespace ChessEngine
 {
     enum PieceColor
@@ -43,10 +45,10 @@ namespace ChessEngine
         return color;
     }
 
-    inline PieceColor getType(Piece piece)
+    inline PieceType getType(Piece piece)
     {
-        PieceColor color = static_cast<PieceColor>(piece & pieceTypeBitMask);
-        return color;
+        PieceType type = static_cast<PieceType>(piece & pieceTypeBitMask);
+        return type;
     }
 }
 
