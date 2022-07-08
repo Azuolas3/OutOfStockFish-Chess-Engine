@@ -10,6 +10,7 @@
 //#include "ctype.h"
 #include "ChessBoard.h"
 #include "pieces.h"
+#include "Position.h"
 
 namespace ChessEngine
 {
@@ -26,8 +27,8 @@ namespace ChessEngine
         };
 
     public:
-        std::string const startingFenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
-        ChessBoard loadFen(std::string fenString);
+        std::string const startingFenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+        Position loadFen(std::string fenString);
     };
 }
 

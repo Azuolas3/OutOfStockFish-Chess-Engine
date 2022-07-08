@@ -14,18 +14,23 @@ int main() {
     vector<Move> generatedMoves;
     FenParser fenParser;
 
-    ChessBoard board = fenParser.loadFen(fenParser.startingFenString);
+    Position position = fenParser.loadFen(fenParser.startingFenString);
+    ChessBoard board = position.board;
     MoveGenerator moveGenerator(board);
-    //cout << board.pieces[4][3] << endl;
+    //cout << board.pieces[0][0] << endl;
     generatedMoves = moveGenerator.GeneratePawnMoves(4, 5);
     //std::cout << "HELLO WORLD BLET " << test[2][0] << std::endl;
 
     board.printBoard();
 
-    for(int i = 0; i < generatedMoves.size(); i++)
+/*    for(int i = 0; i < generatedMoves.size(); i++)
     {
         cout << generatedMoves[i].destinationX << " " << generatedMoves[i].destinationY << endl;
-    }
+    }*/
+
+    //if(position.whiteKingCastlingRights)
+/*    cout << position.whiteKingCastlingRights << " " << position.whiteQueenCastlingRights << " " << position.blackKingCastlingRights << " " << position.blackQueenCastlingRights << endl;
+    cout << position.fiftyMoveRuleCounter;*/
 
     return 0;
 }

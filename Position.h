@@ -11,20 +11,20 @@ namespace ChessEngine
 {
     class Position
     {
+    public:
         ChessBoard board;
         PieceColor activePlayerColor;
 
-        bool whiteKingCastlingRights; // kingside
-        bool whiteQueenCastlingRights; // queenside
+        bool whiteKingCastlingRights = false; // kingside
+        bool whiteQueenCastlingRights = false; // queenside
 
-        bool blackKingCastlingRights; // kingside
-        bool blackQueenCastlingRights;
+        bool blackKingCastlingRights = false; // kingside
+        bool blackQueenCastlingRights = false;
 
         int fiftyMoveRuleCounter;
 
         int enPassantSquareX;
         int enPassantSquareY;
-
     };
 }
 
