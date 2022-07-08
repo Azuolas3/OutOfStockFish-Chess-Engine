@@ -27,7 +27,7 @@ class MoveGenerator
 {
     ChessEngine::ChessBoard board;
 
-    bool isSameColor(int startingX, int startingY, int destinationX, int destinationY);
+    bool IsSameColor(int startingX, int startingY, int destinationX, int destinationY);
     bool IsInBounds(int x, int y);
 
 public:
@@ -38,6 +38,8 @@ public:
     std::vector<Move> GenerateStraightMoves(int startingX, int startingY);
     std::vector<Move> GenerateDiagonalMoves(int startingX, int startingY);
     std::vector<Move> GenerateKnightMoves(int startingX, int startingY);
+    std::vector<Move> GenerateKingMoves(int startingX, int startingY);
+    std::vector<Move> GeneratePawnMoves(int startingX, int startingY);
 };
 
 

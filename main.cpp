@@ -8,17 +8,16 @@ using namespace ChessEngine;
 using std::cout; using std::endl;
 using std::vector;
 
+
 int main() {
     Piece test[8][8] = { EMPTY };
-    //for(auto &test : test)
-    //std::fill(&test[0][0], &test[7][7], EMPTY);
     vector<Move> generatedMoves;
     FenParser fenParser;
 
     ChessBoard board = fenParser.loadFen(fenParser.startingFenString);
     MoveGenerator moveGenerator(board);
     //cout << board.pieces[4][3] << endl;
-    generatedMoves = moveGenerator.GenerateKnightMoves(4, 3);
+    generatedMoves = moveGenerator.GeneratePawnMoves(4, 5);
     //std::cout << "HELLO WORLD BLET " << test[2][0] << std::endl;
 
     board.printBoard();
