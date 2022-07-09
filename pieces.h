@@ -18,12 +18,12 @@ namespace ChessEngine
 
     enum PieceType
     {
-        PAWN = 4,
-        BISHOP = 8,
-        KNIGHT = 12,
-        ROOK = 16,
-        QUEEN = 20,
-        KING = 24
+        PAWN = 4, //0b00100
+        BISHOP = 8, //0b01000
+        KNIGHT = 12, //0b01100
+        ROOK = 16, //0b10000
+        QUEEN = 20, //0b10100
+        KING = 24 //0b11000
     };
 
     const int pieceTypeBitMask = 0b11100;
@@ -49,6 +49,14 @@ namespace ChessEngine
     {
         PieceType type = static_cast<PieceType>(piece & pieceTypeBitMask);
         return type;
+    }
+
+    inline bool isRookOrKing(Piece piece)
+    {
+        if(getType(piece) == ROOK || getType(piece) == KING)
+            return true;
+        else
+            return false;
     }
 }
 

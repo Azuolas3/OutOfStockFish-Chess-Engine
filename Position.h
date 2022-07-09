@@ -9,22 +9,27 @@
 
 namespace ChessEngine
 {
+    enum CastlingRights
+    {
+        NONE, KINGSIDE, QUEENSIDE, BOTH
+    };
+
+
     class Position
     {
     public:
         ChessBoard board;
         PieceColor activePlayerColor;
 
-        bool whiteKingCastlingRights = false; // kingside
-        bool whiteQueenCastlingRights = false; // queenside
-
-        bool blackKingCastlingRights = false; // kingside
-        bool blackQueenCastlingRights = false;
+        CastlingRights whiteCastlingRights = NONE;
+        CastlingRights blackCastlingRights = NONE;
 
         int fiftyMoveRuleCounter;
 
         int enPassantSquareX;
         int enPassantSquareY;
+
+        void RemoveCastlingRights(PieceColor color, CastlingRights side);
     };
 }
 

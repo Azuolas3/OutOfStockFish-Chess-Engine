@@ -64,25 +64,25 @@ Position FenParser::loadFen(std::string fenString)
     if(fenSubString.find('K') != std::string::npos)
     {
         charIterator++;
-        position.whiteKingCastlingRights = true;
+        position.whiteCastlingRights = static_cast<CastlingRights>(position.whiteCastlingRights | KINGSIDE);
     }
 
     if(fenSubString.find('Q') != std::string::npos)
     {
         charIterator++;
-        position.whiteQueenCastlingRights = true;
+        position.whiteCastlingRights = static_cast<CastlingRights>(position.whiteCastlingRights | QUEENSIDE);
     }
 
-    if(fenSubString.find('k') != std::string::npos)
+    if(fenSubString.find('K') != std::string::npos)
     {
         charIterator++;
-        position.blackKingCastlingRights = true;
+        position.blackCastlingRights = static_cast<CastlingRights>(position.blackCastlingRights | KINGSIDE);
     }
 
-    if(fenSubString.find('q') != std::string::npos)
+    if(fenSubString.find('Q') != std::string::npos)
     {
         charIterator++;
-        position.blackQueenCastlingRights = true;
+        position.blackCastlingRights = static_cast<CastlingRights>(position.blackCastlingRights | QUEENSIDE);
     }
 
     if(charIterator != '-')

@@ -7,7 +7,9 @@
 
 #include <iostream>
 #include <vector>
+#include <functional>
 #include "ChessBoard.h"
+#include "Position.h"
 
 struct Move
 {
@@ -21,19 +23,22 @@ struct Move
 
     int startingX, startingY;
     int destinationX, destinationY;
+    std::function<void()> additionalAction = nullptr;
 };
 
 class MoveGenerator
 {
+    ChessEngine::Position position;
     ChessEngine::ChessBoard board;
 
     bool IsSameColor(int startingX, int startingY, int destinationX, int destinationY);
     bool IsInBounds(int x, int y);
 
 public:
-    MoveGenerator(ChessEngine::ChessBoard board)
+    MoveGenerator(ChessEngine::Position position)
     {
-        this->board = board;
+        this-> position = position;
+        board = position.board;
     }
     std::vector<Move> GenerateStraightMoves(int startingX, int startingY);
     std::vector<Move> GenerateDiagonalMoves(int startingX, int startingY);

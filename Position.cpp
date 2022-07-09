@@ -3,3 +3,11 @@
 //
 
 #include "Position.h"
+using namespace ChessEngine;
+
+void Position::RemoveCastlingRights(PieceColor color, CastlingRights side)
+{
+    CastlingRights* sideRights = (color == WHITE) ? &whiteCastlingRights : &blackCastlingRights;
+
+    *sideRights = static_cast<CastlingRights>(*sideRights & ~side);
+}
