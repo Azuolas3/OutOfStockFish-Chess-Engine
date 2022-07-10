@@ -5,11 +5,9 @@
 #ifndef CHESS_ENGINE_PIECES_H
 #define CHESS_ENGINE_PIECES_H
 
-#include <iostream>
-
 namespace ChessEngine
 {
-    enum PieceColor
+    enum Color
     {
         BLACK = 1, WHITE
     };
@@ -39,9 +37,9 @@ namespace ChessEngine
         B_KING = KING + BLACK, W_KING
     };
 
-    inline PieceColor getColor(Piece piece)
+    inline Color getColor(Piece piece)
     {
-        PieceColor color = static_cast<PieceColor>(piece & pieceColorBitMask);
+        Color color = static_cast<Color>(piece & pieceColorBitMask);
         return color;
     }
 

@@ -15,8 +15,11 @@ namespace ChessEngine
     class ChessBoard
     {
     public:
-        void printBoard();
         Piece pieces[8][8] = { EMPTY };
+
+        void RemovePiece(int x, int y);
+        void MovePiece(int fromX, int fromY, int toX, int toY);
+        void PrintBoard();
     };
 }
 

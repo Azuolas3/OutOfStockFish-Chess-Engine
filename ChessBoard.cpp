@@ -6,11 +6,11 @@
 
 using namespace ChessEngine;
 
-void ChessBoard::printBoard()
+void ChessBoard::PrintBoard()
 {
     std::map<Piece, wchar_t> symbolDictionary =
     {
-            {EMPTY, L'\u26DA'},
+            {EMPTY, L'\u26DA'}, //Unicode symbol codes for each piece and its color
             {B_PAWN, L'\u2659'},
             {W_PAWN, L'\u265F'},
             {B_BISHOP, L'\u2657'},
@@ -36,4 +36,17 @@ void ChessBoard::printBoard()
         }
         std::cout << std::endl;
     }
+}
+
+void ChessBoard::MovePiece(int fromX, int fromY, int toX, int toY)
+{
+    std::cout << this << std::endl << fromX << " " << fromY << "   " << toX << " " << toY << std::endl;
+    pieces[toX][toY] = pieces[fromX][fromY];
+    pieces[fromX][fromY] = EMPTY;
+    //PrintBoard();
+}
+
+void ChessBoard::RemovePiece(int x, int y)
+{
+    pieces[x][y] = EMPTY;
 }

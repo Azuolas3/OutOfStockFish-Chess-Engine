@@ -6,10 +6,10 @@
 
 using namespace ChessEngine;
 
-Position FenParser::loadFen(std::string fenString)
+Position* FenParser::loadFen(std::string fenString)
 {
-    Position position;
-    ChessBoard board;
+    Position* position = new Position();
+    position->board = new ChessBoard();
 
     int x = 0, y = 7;
     int charIterator = 0;
@@ -30,7 +30,7 @@ Position FenParser::loadFen(std::string fenString)
         }
 
         ChessEngine::PieceType pieceType = pieceTypeMap[tolower(currChar)];
-        ChessEngine::PieceColor pieceColor;
+        ChessEngine::Color pieceColor;
 
         if(std::islower(currChar))
             pieceColor = ChessEngine::BLACK;
@@ -39,23 +39,22 @@ Position FenParser::loadFen(std::string fenString)
 
         //std::cout << (pieceColor | pieceType) << std::endl;
         ChessEngine::Piece piece = static_cast<ChessEngine::Piece>(pieceColor | pieceType);
-        board.pieces[x][y] = piece;
+        position->board->pieces[x][y] = piece;
         x++;
 
         if(currChar == ' ')
             break;
     }
-    position.board = board;
 
     charIterator++; //Skip empty character and move to color specifier
 
     if(fenString[charIterator] == 'w')
     {
-        position.activePlayerColor = WHITE;
+        position->activePlayerColor = WHITE;
     }
     else
     {
-        position.activePlayerColor = BLACK;
+        position->activePlayerColor = BLACK;
     }
 
     charIterator += 2; // Skip empty char and move to castling rights specifier
@@ -64,25 +63,25 @@ Position FenParser::loadFen(std::string fenString)
     if(fenSubString.find('K') != std::string::npos)
     {
         charIterator++;
-        position.whiteCastlingRights = static_cast<CastlingRights>(position.whiteCastlingRights | KINGSIDE);
+        position->whiteCastlingRights = static_cast<CastlingRights>(position->whiteCastlingRights | KINGSIDE);
     }
 
     if(fenSubString.find('Q') != std::string::npos)
     {
         charIterator++;
-        position.whiteCastlingRights = static_cast<CastlingRights>(position.whiteCastlingRights | QUEENSIDE);
+        position->whiteCastlingRights = static_cast<CastlingRights>(position->whiteCastlingRights | QUEENSIDE);
     }
 
     if(fenSubString.find('K') != std::string::npos)
     {
         charIterator++;
-        position.blackCastlingRights = static_cast<CastlingRights>(position.blackCastlingRights | KINGSIDE);
+        position->blackCastlingRights = static_cast<CastlingRights>(position->blackCastlingRights | KINGSIDE);
     }
 
     if(fenSubString.find('Q') != std::string::npos)
     {
         charIterator++;
-        position.blackCastlingRights = static_cast<CastlingRights>(position.blackCastlingRights | QUEENSIDE);
+        position->blackCastlingRights = static_cast<CastlingRights>(position->blackCastlingRights | QUEENSIDE);
     }
 
     if(charIterator != '-')
@@ -92,7 +91,7 @@ Position FenParser::loadFen(std::string fenString)
 
     charIterator += 2;
 
-    position.fiftyMoveRuleCounter = std::stoi(&fenString[charIterator]);
+    position->fiftyMoveRuleCounter = std::stoi(&fenString[charIterator]);
 
     return position;
 }

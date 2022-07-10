@@ -6,6 +6,7 @@
 #define CHESS_ENGINE_POSITION_H
 
 #include "ChessBoard.h"
+#include "BoardUtility.h"
 
 namespace ChessEngine
 {
@@ -18,8 +19,8 @@ namespace ChessEngine
     class Position
     {
     public:
-        ChessBoard board;
-        PieceColor activePlayerColor;
+        ChessBoard* board;
+        Color activePlayerColor;
 
         CastlingRights whiteCastlingRights = NONE;
         CastlingRights blackCastlingRights = NONE;
@@ -29,7 +30,8 @@ namespace ChessEngine
         int enPassantSquareX;
         int enPassantSquareY;
 
-        void RemoveCastlingRights(PieceColor color, CastlingRights side);
+        void RemoveCastlingRights(Color color, CastlingRights side);
+        bool HasCastlingRights(Color color, CastlingRights side);
     };
 }
 

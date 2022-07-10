@@ -10,6 +10,7 @@ using std::vector;
 vector<Move> MoveGenerator::GenerateStraightMoves(int startingX, int startingY)
 {
     vector<Move> pseudoLegalMoves;
+    ChessBoard board = (*position->board);
 
     // Horizontal moves
     for(int x = startingX + 1; x < 8; x++) // add moves to the right
@@ -76,6 +77,7 @@ vector<Move> MoveGenerator::GenerateStraightMoves(int startingX, int startingY)
 vector<Move> MoveGenerator::GenerateDiagonalMoves(int startingX, int startingY)
 {
     vector<Move> pseudoLegalMoves;
+    ChessBoard board = (*position->board);
 
     // Upper right moves
     for(int x = startingX + 1, y = startingY + 1; x < 8 && y < 8; x++, y++) // add moves to the right
@@ -209,9 +211,37 @@ vector<Move> MoveGenerator::GenerateKingMoves(int startingX, int startingY)
     return pseudoLegalMoves;
 }
 
+std::vector<Move> MoveGenerator::GenerateCastlingMoves(int startingX, int startingY)
+{
+    vector<Move> pseudoLegalMoves;
+    ChessBoard board = (*position->board);
+
+    int kingRank = startingY;
+    Color color = getColor(board.pieces[startingX][startingY]);
+
+    //Kingside generation
+    if(IsKingsideEmpty(color, board.pieces) && position->HasCastlingRights(color, KINGSIDE))
+    {
+        Move move(startingX, startingY, startingX + 2, startingY);
+        move.additionalAction = std::bind(&ChessBoard::MovePiece, std::ref(position->board), 7, kingRank, 5, kingRank);
+        pseudoLegalMoves.push_back(move);
+    }
+
+    //Queenside generation
+    if(IsQueensideEmpty(color, board.pieces) && position->HasCastlingRights(color, QUEENSIDE))
+    {
+        Move move(startingX, startingY, startingX + 2, startingY);
+        move.additionalAction = std::bind(&ChessBoard::MovePiece, std::ref(position->board), 7, kingRank, 5, kingRank);
+        pseudoLegalMoves.push_back(move);
+    }
+
+    return pseudoLegalMoves;
+}
+
 vector<Move> MoveGenerator::GeneratePawnMoves(int startingX, int startingY)
 {
     vector<Move> pseudoLegalMoves;
+    ChessBoard board = (*position->board);
 
     int offset = (getColor(board.pieces[startingX][startingY]) == ChessEngine::WHITE) ? 1 : -1;
     int startingRank = (getColor(board.pieces[startingX][startingY]) == ChessEngine::WHITE) ? 1 : 6;
@@ -243,6 +273,8 @@ vector<Move> MoveGenerator::GeneratePawnMoves(int startingX, int startingY)
         pseudoLegalMoves.push_back(move);
     }
 
+    // En Passant
+
 
 
     return pseudoLegalMoves;
@@ -251,6 +283,8 @@ vector<Move> MoveGenerator::GeneratePawnMoves(int startingX, int startingY)
 
 bool MoveGenerator::IsSameColor(int startingX, int startingY, int destinationX, int destinationY)
 {
+    ChessBoard board = (*position->board);
+
     if(getColor(board.pieces[startingX][startingY]) == getColor(board.pieces[destinationX][destinationY]))
         return true;
     else
