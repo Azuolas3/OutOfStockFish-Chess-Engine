@@ -27,11 +27,13 @@ namespace ChessEngine
 
         int fiftyMoveRuleCounter;
 
-        int enPassantSquareX;
-        int enPassantSquareY;
+        int enPassantSquareX = -1; // -1 to represent no square
+        int enPassantSquareY = -1;
 
         void RemoveCastlingRights(Color color, CastlingRights side);
         bool HasCastlingRights(Color color, CastlingRights side);
+
+        void SetEnPassantSquare(int x, int y);
     };
 }
 

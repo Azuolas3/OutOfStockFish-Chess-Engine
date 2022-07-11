@@ -3,4 +3,4 @@ project(chess_engine)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(chess_engine main.cpp ChessBoard.cpp ChessBoard.h FenParser.cpp FenParser.h pieces.h MoveGenerator.cpp MoveGenerator.h bitboards.h Position.cpp Position.h BoardUtility.cpp BoardUtility.h)
+add_executable(chess_engine main.cpp ChessBoard.cpp ChessBoard.h FenParser.cpp FenParser.h pieces.h MoveGenerator.cpp MoveGenerator.h bitboards.h Position.cpp Position.h BoardUtility.cpp BoardUtility.h AlgebraicNotationUtility.h AlgebraicNotationUtility.cpp)

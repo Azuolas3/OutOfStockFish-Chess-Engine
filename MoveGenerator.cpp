@@ -274,7 +274,22 @@ vector<Move> MoveGenerator::GeneratePawnMoves(int startingX, int startingY)
     }
 
     // En Passant
+    if(position->enPassantSquareX != -1)
+    {
+        if(IsInBounds(startingX + 1, startingY + offset) && (startingX + 1) == position->enPassantSquareX && (startingY + offset) == (position->enPassantSquareY + offset)) //adding offset to squareY to make sure its equal with the target square
+        {
+            Move move(startingX, startingY, startingX + 1, startingY + offset);
+            move.additionalAction = std::bind(&ChessBoard::RemovePiece, std::ref(position->board), position->enPassantSquareX, startingY);
+            pseudoLegalMoves.push_back(move);
+        }
 
+        if(IsInBounds(startingX - 1, startingY + offset) && (startingX - 1) == position->enPassantSquareX && (startingY + offset) == (position->enPassantSquareY + offset))
+        {
+            Move move(startingX, startingY, startingX - 1, startingY + offset);
+            move.additionalAction = std::bind(&ChessBoard::RemovePiece, std::ref(position->board), startingX - 1, startingY);
+            pseudoLegalMoves.push_back(move);
+        }
+    }
 
 
     return pseudoLegalMoves;

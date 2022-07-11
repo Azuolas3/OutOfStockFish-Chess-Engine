@@ -18,8 +18,8 @@ int main() {
     Position* position = fenParser.loadFen(fenParser.startingFenString);
     ChessBoard* board = position->board;
     MoveGenerator moveGenerator(position);
-    //cout << board.pieces[0][0] << endl;
-    generatedMoves = moveGenerator.GenerateCastlingMoves(4, 0);
+    cout << position->enPassantSquareX << " " << position->enPassantSquareY << endl;
+    generatedMoves = moveGenerator.GeneratePawnMoves(4, 4);
     //std::cout << "HELLO WORLD BLET " << test[2][0] << std::endl;
 
     board->PrintBoard();
@@ -30,7 +30,8 @@ int main() {
     }
 
     //board->MovePiece(0, 0, 5, 3);
-    generatedMoves[0].additionalAction();
+    generatedMoves[1].additionalAction();
+    //board->RemovePiece(3, 4);
     //position->board->MovePiece(7, 7, 0, 5);
 
     board->PrintBoard();

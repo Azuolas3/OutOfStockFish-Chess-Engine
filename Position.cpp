@@ -25,3 +25,9 @@ bool Position::HasCastlingRights(Color color, CastlingRights side)
         return false;
     }
 }
+
+void Position::SetEnPassantSquare(int x, int y)
+{
+    enPassantSquareX = x;
+    enPassantSquareY = y;
+}

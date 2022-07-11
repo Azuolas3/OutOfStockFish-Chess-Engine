@@ -72,21 +72,22 @@ Position* FenParser::loadFen(std::string fenString)
         position->whiteCastlingRights = static_cast<CastlingRights>(position->whiteCastlingRights | QUEENSIDE);
     }
 
-    if(fenSubString.find('K') != std::string::npos)
+    if(fenSubString.find('k') != std::string::npos)
     {
         charIterator++;
         position->blackCastlingRights = static_cast<CastlingRights>(position->blackCastlingRights | KINGSIDE);
     }
 
-    if(fenSubString.find('Q') != std::string::npos)
+    if(fenSubString.find('q') != std::string::npos)
     {
         charIterator++;
         position->blackCastlingRights = static_cast<CastlingRights>(position->blackCastlingRights | QUEENSIDE);
     }
 
-    if(charIterator != '-')
+    if(fenString[charIterator] != '-')
     {
-        // code for en passant square but fk that shit
+        position->enPassantSquareX = letterToFile(fenString[charIterator]);
+        position->enPassantSquareY = intToRank(fenString[charIterator+1]);
     }
 
     charIterator += 2;
