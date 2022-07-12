@@ -4,43 +4,101 @@
 #include "FenParser.h"
 #include "MoveGenerator.h"
 #include "BoardUtility.h"
+#include "AlgebraicNotationUtility.h"
 
 using namespace ChessEngine;
-using std::cout; using std::endl;
-using std::vector;
+using std::cout; using std::cin; using std::endl;
+using std::string; using std::vector;
 
 
 int main() {
     Piece test[8][8] = { EMPTY };
-    vector<Move> generatedMoves;
+    //vector<Move> generatedMoves;
     FenParser fenParser;
 
     Position* position = fenParser.loadFen(fenParser.startingFenString);
     ChessBoard* board = position->board;
     MoveGenerator moveGenerator(position);
-    cout << position->enPassantSquareX << " " << position->enPassantSquareY << endl;
-    generatedMoves = moveGenerator.GeneratePawnMoves(4, 4);
+
+    board->PrintBoard();
+    while(true)
+    {
+        string moveInput;
+        cin >> moveInput;
+        if(moveInput == "STOP")
+            break;
+
+
+        cout<<"MOVE START :" << IsKingsideEmpty(WHITE, board->pieces) << " " << position->HasCastlingRights(WHITE, KINGSIDE) << endl;
+
+        int startX = letterToFile(moveInput[0]);
+        int startY = intToRank(moveInput[1]);
+
+        int endX = letterToFile(moveInput[2]);
+        int endY = intToRank(moveInput[3]);
+
+        PieceType pieceType = getType(board->pieces[startX][startY]);
+        vector<Move> generatedMoves;
+        vector<Move> additionalMoves;
+
+        switch(pieceType)
+        {
+            case PAWN:
+                generatedMoves = moveGenerator.GeneratePawnMoves(startX, startY);
+                break;
+
+            case BISHOP:
+                generatedMoves = moveGenerator.GenerateDiagonalMoves(startX, startY);
+                break;
+
+            case KNIGHT:
+                generatedMoves = moveGenerator.GenerateKnightMoves(startX, startY);
+                break;
+
+            case ROOK:
+                generatedMoves = moveGenerator.GenerateStraightMoves(startX, startY);
+                break;
+
+            case QUEEN:
+                generatedMoves = moveGenerator.GenerateStraightMoves(startX, startY);
+                additionalMoves = moveGenerator.GenerateDiagonalMoves(startX, startY);
+                generatedMoves = moveGenerator.CombineVectors(generatedMoves, additionalMoves);
+                break;
+
+            case KING:
+                generatedMoves = moveGenerator.GenerateKingMoves(startX, startY);
+                additionalMoves = moveGenerator.GenerateCastlingMoves(startX, startY);
+                generatedMoves = moveGenerator.CombineVectors(generatedMoves, additionalMoves);
+                for(int i = 0; i < generatedMoves.size(); i++)
+                {
+                    cout << generatedMoves[i].destinationX << " " << generatedMoves[i].destinationY << endl;
+                }
+                break;
+        }
+
+        Move pseudoLegalMove;
+        if(moveGenerator.doesContainMove(generatedMoves, endX, endY, &pseudoLegalMove))
+        {
+            board->MovePiece(startX, startY, endX, endY);
+            if(pseudoLegalMove.additionalAction != nullptr)
+                pseudoLegalMove.additionalAction();
+
+            position->activePlayerColor = (position->activePlayerColor == WHITE) ? BLACK : WHITE;
+
+            board->PrintBoard();
+        }
+
+    }
+    //cout << position->enPassantSquareX << " " << position->enPassantSquareY << endl;
+    //generatedMoves = moveGenerator.GenerateStraightMoves(0, 0);
     //std::cout << "HELLO WORLD BLET " << test[2][0] << std::endl;
 
-    board->PrintBoard();
+    //board->PrintBoard();
 
-    for(int i = 0; i < generatedMoves.size(); i++)
+    /*for(int i = 0; i < generatedMoves.size(); i++)
     {
         cout << generatedMoves[i].destinationX << " " << generatedMoves[i].destinationY << endl;
-    }
-
-    //board->MovePiece(0, 0, 5, 3);
-    generatedMoves[1].additionalAction();
-    //board->RemovePiece(3, 4);
-    //position->board->MovePiece(7, 7, 0, 5);
-
-    board->PrintBoard();
-
-    //if(position.whiteKingCastlingRights)
-    cout << position->whiteCastlingRights << endl;
-    //position.RemoveCastlingRights(WHITE, BOTH);
-    cout << position->whiteCastlingRights << endl;
-    //cout << IsKingsideEmpty(BLACK, board.pieces) << endl;
+    }*/
 
     return 0;
 }

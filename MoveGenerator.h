@@ -14,6 +14,11 @@
 
 struct Move
 {
+    Move()
+    {
+
+    }
+
     Move(int fromX, int fromY, int toX, int toY)
     {
         startingX = fromX;
@@ -41,12 +46,16 @@ public:
         this-> position = position;
         //board = position.board;
     }
+
     std::vector<Move> GenerateStraightMoves(int startingX, int startingY);
     std::vector<Move> GenerateDiagonalMoves(int startingX, int startingY);
     std::vector<Move> GenerateKnightMoves(int startingX, int startingY);
     std::vector<Move> GenerateKingMoves(int startingX, int startingY);
     std::vector<Move> GenerateCastlingMoves(int startingX, int startingY);
     std::vector<Move> GeneratePawnMoves(int startingX, int startingY);
+
+    std::vector<Move> CombineVectors(std::vector<Move> a, std::vector<Move> b);
+    bool doesContainMove(std::vector<Move> generatedMoves, int x, int y, Move* correctMove);
 };
 
 

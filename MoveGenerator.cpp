@@ -71,6 +71,29 @@ vector<Move> MoveGenerator::GenerateStraightMoves(int startingX, int startingY)
         pseudoLegalMoves.push_back(move);
     }
 
+    if(position->whiteCastlingRights != NONE && position->blackCastlingRights != NONE && getType(board.pieces[startingX][startingY]) == ROOK) // Adding RemoveCastleRights to each rook move
+    {
+        if(startingX == 0) // QUEENSIDE
+        {
+            Color color = getColor(board.pieces[startingX][startingY]);
+            std::function<void()> func = std::bind(&Position::RemoveCastlingRights, std::ref(position), color, QUEENSIDE);
+            for(int i = 0; i < pseudoLegalMoves.size(); i++)
+            {
+                pseudoLegalMoves[i].additionalAction = func;
+            }
+        }
+
+        if(startingX == 7) // KINGSIDE
+        {
+            Color color = getColor(board.pieces[startingX][startingY]);
+            std::function<void()> func = std::bind(&Position::RemoveCastlingRights, std::ref(position), color, KINGSIDE);
+            for(int i = 0; i < pseudoLegalMoves.size(); i++)
+            {
+                pseudoLegalMoves[i].additionalAction = func;
+            }
+        }
+    }
+
     return pseudoLegalMoves;
 }
 
@@ -196,6 +219,7 @@ vector<Move> MoveGenerator::GenerateKingMoves(int startingX, int startingY)
     int xOffset[8] = { 0, 1, 1, 1, 0, -1, -1, -1 };
     int yOffset[8] = { 1, 1, 0, -1, -1, -1, 0, 1 };
 
+
     for(int i = 0; i < 8; i++)
     {
         int x = startingX + xOffset[i];
@@ -204,6 +228,8 @@ vector<Move> MoveGenerator::GenerateKingMoves(int startingX, int startingY)
         if(IsInBounds(x, y) && (!IsSameColor(startingX, startingY, x, y)))
         {
             Move move(startingX, startingY, x, y);
+            Color color = getColor(position->board->pieces[startingX][startingY]);
+            move.additionalAction = std::bind(&Position::RemoveCastlingRights, std::ref(position), color, BOTH);
             pseudoLegalMoves.push_back(move);
         }
     }
@@ -230,8 +256,8 @@ std::vector<Move> MoveGenerator::GenerateCastlingMoves(int startingX, int starti
     //Queenside generation
     if(IsQueensideEmpty(color, board.pieces) && position->HasCastlingRights(color, QUEENSIDE))
     {
-        Move move(startingX, startingY, startingX + 2, startingY);
-        move.additionalAction = std::bind(&ChessBoard::MovePiece, std::ref(position->board), 7, kingRank, 5, kingRank);
+        Move move(startingX, startingY, startingX - 2, startingY);
+        move.additionalAction = std::bind(&ChessBoard::MovePiece, std::ref(position->board), 0, kingRank, 3, kingRank);
         pseudoLegalMoves.push_back(move);
     }
 
@@ -256,6 +282,7 @@ vector<Move> MoveGenerator::GeneratePawnMoves(int startingX, int startingY)
         {
             offset *= 2;
             Move move(startingX, startingY, startingX, startingY + offset);
+            move.additionalAction = std::bind(&Position::SetEnPassantSquare, std::ref(position), startingX, startingY + offset);
             pseudoLegalMoves.push_back(move);
             offset /= 2;
         }
@@ -312,4 +339,26 @@ bool MoveGenerator::IsInBounds(int x, int y)
         return true;
     else
         return false;
+}
+
+std::vector<Move> MoveGenerator::CombineVectors(std::vector<Move> a, std::vector<Move> b)
+{
+    std::vector<Move> combinedVector;
+    combinedVector.reserve( a.size() + b.size());
+    combinedVector.insert(combinedVector.end(), a.begin(), a.end());
+    combinedVector.insert( combinedVector.end(), b.begin(), b.end() );
+    return combinedVector;
+}
+
+bool MoveGenerator::doesContainMove(std::vector<Move> generatedMoves, int x, int y, Move* correctMove)
+{
+    for(int i = 0; i < generatedMoves.size(); i++)
+    {
+        if(generatedMoves[i].destinationX == x && generatedMoves[i].destinationY == y)
+        {
+            *correctMove = generatedMoves[i];
+            return true;
+        }
+    }
+    return false;
 }
