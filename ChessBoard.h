@@ -9,6 +9,7 @@
 #include <iostream>
 #include "windows.h"
 #include <map>
+#include <vector>
 
 namespace ChessEngine
 {
@@ -16,6 +17,8 @@ namespace ChessEngine
     {
     public:
         Piece pieces[8][8] = { EMPTY };
+        std::vector<PieceInfo> whitePieces;
+        std::vector<PieceInfo> blackPieces;
 
         void RemovePiece(int x, int y);
         void MovePiece(int fromX, int fromY, int toX, int toY);

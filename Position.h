@@ -6,6 +6,7 @@
 #define CHESS_ENGINE_POSITION_H
 
 #include "ChessBoard.h"
+#include <iostream>
 #include "BoardUtility.h"
 
 namespace ChessEngine

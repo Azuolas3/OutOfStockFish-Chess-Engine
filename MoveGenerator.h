@@ -1,62 +1,38 @@
 //
-// Created by Azuolas on 7/6/2022.
+// Created by Azuolas on 7/14/2022.
 //
 
 #ifndef CHESS_ENGINE_MOVEGENERATOR_H
 #define CHESS_ENGINE_MOVEGENERATOR_H
 
-#include <iostream>
-#include <vector>
-#include <functional>
-#include "ChessBoard.h"
-#include "Position.h"
-#include "BoardUtility.h"
+#include "PseudoLegalMoveGenerator.h"
+#include "LegalityTester.h"
 
-struct Move
+namespace ChessEngine
 {
-    Move()
+    class MoveGenerator
     {
+        Position* position;
+        LegalityTester legalityTester;
 
-    }
+        bool whiteThreatMap[8][8]; // squares attacked by white pieces
+        bool blackThreatMap[8][8]; // squares attacked by black pieces
 
-    Move(int fromX, int fromY, int toX, int toY)
-    {
-        startingX = fromX;
-        startingY = fromY;
-        destinationX = toX;
-        destinationY = toY;
-    }
+        void InitThreatMaps(ChessBoard board);
 
-    int startingX, startingY;
-    int destinationX, destinationY;
-    std::function<void()> additionalAction = nullptr;
-};
+    public:
+        std::vector<Move> GenerateAllMoves(Color color);
+        MoveGenerator(Position* position)
+        {
+            this->position = position;
+            plMoveGenerator = new PseudoLegalMoveGenerator(position);
+            InitThreatMaps(*(position->board));
+        }
 
-class MoveGenerator
-{
-    ChessEngine::Position* position;
-    //ChessEngine::ChessBoard* board;
 
-    bool IsSameColor(int startingX, int startingY, int destinationX, int destinationY);
-    bool IsInBounds(int x, int y);
+        PseudoLegalMoveGenerator* plMoveGenerator;
+    };
 
-public:
-    MoveGenerator(ChessEngine::Position* position)
-    {
-        this-> position = position;
-        //board = position.board;
-    }
-
-    std::vector<Move> GenerateStraightMoves(int startingX, int startingY);
-    std::vector<Move> GenerateDiagonalMoves(int startingX, int startingY);
-    std::vector<Move> GenerateKnightMoves(int startingX, int startingY);
-    std::vector<Move> GenerateKingMoves(int startingX, int startingY);
-    std::vector<Move> GenerateCastlingMoves(int startingX, int startingY);
-    std::vector<Move> GeneratePawnMoves(int startingX, int startingY);
-
-    std::vector<Move> CombineVectors(std::vector<Move> a, std::vector<Move> b);
-    bool doesContainMove(std::vector<Move> generatedMoves, int x, int y, Move* correctMove);
-};
-
+} // ChessEngine
 
 #endif //CHESS_ENGINE_MOVEGENERATOR_H

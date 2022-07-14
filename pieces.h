@@ -37,6 +37,19 @@ namespace ChessEngine
         B_KING = KING + BLACK, W_KING
     };
 
+    struct PieceInfo
+    {
+        Piece piece;
+        int x, y;
+
+        PieceInfo(Piece piece, int x, int y)
+        {
+            this->piece = piece;
+            this->x = x;
+            this->y = y;
+        }
+    };
+
     inline Color getColor(Piece piece)
     {
         Color color = static_cast<Color>(piece & pieceColorBitMask);

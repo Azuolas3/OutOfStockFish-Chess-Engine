@@ -27,7 +27,7 @@ namespace ChessEngine
         };
 
     public:
-        std::string const startingFenString = "r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w KQkq - 0 1";
+        std::string const startingFenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
         Position* loadFen(std::string fenString);
     };
 }

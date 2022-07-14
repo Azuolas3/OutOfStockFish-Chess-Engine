@@ -29,6 +29,9 @@ Position* FenParser::loadFen(std::string fenString)
             continue;
         }
 
+        if(currChar == ' ')
+            break;
+
         ChessEngine::PieceType pieceType = pieceTypeMap[tolower(currChar)];
         ChessEngine::Color pieceColor;
 
@@ -38,12 +41,16 @@ Position* FenParser::loadFen(std::string fenString)
             pieceColor = ChessEngine::WHITE;
 
         //std::cout << (pieceColor | pieceType) << std::endl;
-        ChessEngine::Piece piece = static_cast<ChessEngine::Piece>(pieceColor | pieceType);
+        Piece piece = static_cast<Piece>(pieceColor | pieceType);
         position->board->pieces[x][y] = piece;
-        x++;
+        PieceInfo pieceInfo(piece, x, y);
 
-        if(currChar == ' ')
-            break;
+        if(pieceColor == WHITE)
+            position->board->whitePieces.push_back(pieceInfo);
+        if(pieceColor == BLACK)
+            position->board->blackPieces.push_back(pieceInfo);
+
+        x++;
     }
 
     charIterator++; //Skip empty character and move to color specifier

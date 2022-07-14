@@ -13,7 +13,6 @@ using std::string; using std::vector;
 
 int main() {
     Piece test[8][8] = { EMPTY };
-    //vector<Move> generatedMoves;
     FenParser fenParser;
 
     Position* position = fenParser.loadFen(fenParser.startingFenString);
@@ -23,6 +22,8 @@ int main() {
     board->PrintBoard();
     while(true)
     {
+        cout << moveGenerator.GenerateAllMoves(WHITE).size();
+
         string moveInput;
         cin >> moveInput;
         if(moveInput == "STOP")
@@ -37,47 +38,13 @@ int main() {
         int endX = letterToFile(moveInput[2]);
         int endY = intToRank(moveInput[3]);
 
-        PieceType pieceType = getType(board->pieces[startX][startY]);
         vector<Move> generatedMoves;
         vector<Move> additionalMoves;
 
-        switch(pieceType)
-        {
-            case PAWN:
-                generatedMoves = moveGenerator.GeneratePawnMoves(startX, startY);
-                break;
-
-            case BISHOP:
-                generatedMoves = moveGenerator.GenerateDiagonalMoves(startX, startY);
-                break;
-
-            case KNIGHT:
-                generatedMoves = moveGenerator.GenerateKnightMoves(startX, startY);
-                break;
-
-            case ROOK:
-                generatedMoves = moveGenerator.GenerateStraightMoves(startX, startY);
-                break;
-
-            case QUEEN:
-                generatedMoves = moveGenerator.GenerateStraightMoves(startX, startY);
-                additionalMoves = moveGenerator.GenerateDiagonalMoves(startX, startY);
-                generatedMoves = moveGenerator.CombineVectors(generatedMoves, additionalMoves);
-                break;
-
-            case KING:
-                generatedMoves = moveGenerator.GenerateKingMoves(startX, startY);
-                additionalMoves = moveGenerator.GenerateCastlingMoves(startX, startY);
-                generatedMoves = moveGenerator.CombineVectors(generatedMoves, additionalMoves);
-                for(int i = 0; i < generatedMoves.size(); i++)
-                {
-                    cout << generatedMoves[i].destinationX << " " << generatedMoves[i].destinationY << endl;
-                }
-                break;
-        }
+        generatedMoves = moveGenerator.plMoveGenerator->GeneratePieceMoves(board->pieces[startX][startY], startX, startY);
 
         Move pseudoLegalMove;
-        if(moveGenerator.doesContainMove(generatedMoves, endX, endY, &pseudoLegalMove))
+        if(moveGenerator.plMoveGenerator->doesContainMove(generatedMoves, endX, endY, &pseudoLegalMove))
         {
             board->MovePiece(startX, startY, endX, endY);
             if(pseudoLegalMove.additionalAction != nullptr)
