@@ -40,13 +40,18 @@ void ChessBoard::PrintBoard()
 
 void ChessBoard::MovePiece(int fromX, int fromY, int toX, int toY)
 {
-    std::cout << this << std::endl << fromX << " " << fromY << "   " << toX << " " << toY << std::endl;
+    //std::cout << this << std::endl << fromX << " " << fromY << "   " << toX << " " << toY << std::endl;
     pieces[toX][toY] = pieces[fromX][fromY];
     pieces[fromX][fromY] = EMPTY;
-    //PrintBoard();
+
 }
 
 void ChessBoard::RemovePiece(int x, int y)
 {
     pieces[x][y] = EMPTY;
+}
+
+void ChessBoard::RemovePieceFromList(int x, int y)
+{
+
 }

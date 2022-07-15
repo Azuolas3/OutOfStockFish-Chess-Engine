@@ -43,12 +43,12 @@ Position* FenParser::loadFen(std::string fenString)
         //std::cout << (pieceColor | pieceType) << std::endl;
         Piece piece = static_cast<Piece>(pieceColor | pieceType);
         position->board->pieces[x][y] = piece;
-        PieceInfo pieceInfo(piece, x, y);
+        //PieceInfo pieceInfo(piece, x, y);
 
         if(pieceColor == WHITE)
-            position->board->whitePieces.push_back(pieceInfo);
+            position->board->whitePieces->AddPiece(x, y);
         if(pieceColor == BLACK)
-            position->board->blackPieces.push_back(pieceInfo);
+            position->board->blackPieces->AddPiece(x, y);
 
         x++;
     }

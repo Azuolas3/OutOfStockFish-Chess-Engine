@@ -17,12 +17,12 @@ int main() {
 
     Position* position = fenParser.loadFen(fenParser.startingFenString);
     ChessBoard* board = position->board;
-    MoveGenerator moveGenerator(position);
+    MoveGenerator* moveGenerator = new MoveGenerator(position);
 
     board->PrintBoard();
     while(true)
     {
-        cout << moveGenerator.GenerateAllMoves(WHITE).size();
+        cout << moveGenerator->GenerateAllMoves(WHITE).size();
 
         string moveInput;
         cin >> moveInput;
@@ -41,12 +41,16 @@ int main() {
         vector<Move> generatedMoves;
         vector<Move> additionalMoves;
 
-        generatedMoves = moveGenerator.plMoveGenerator->GeneratePieceMoves(board->pieces[startX][startY], startX, startY);
+        generatedMoves = moveGenerator->GeneratePieceMoves(board->pieces[startX][startY], startX, startY);
 
         Move pseudoLegalMove;
-        if(moveGenerator.plMoveGenerator->doesContainMove(generatedMoves, endX, endY, &pseudoLegalMove))
+        if(moveGenerator->plMoveGenerator->doesContainMove(generatedMoves, endX, endY, &pseudoLegalMove))
         {
+            PieceList* pieceList = (getColor(board->pieces[startX][startY]) == WHITE) ? board->whitePieces : board->blackPieces;
+            pieceList->MovePiece(startX, startY, endX, endY);
             board->MovePiece(startX, startY, endX, endY);
+            moveGenerator->InitThreatMaps(*board);
+
             if(pseudoLegalMove.additionalAction != nullptr)
                 pseudoLegalMove.additionalAction();
 

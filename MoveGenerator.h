@@ -18,10 +18,12 @@ namespace ChessEngine
         bool whiteThreatMap[8][8]; // squares attacked by white pieces
         bool blackThreatMap[8][8]; // squares attacked by black pieces
 
-        void InitThreatMaps(ChessBoard board);
-
     public:
         std::vector<Move> GenerateAllMoves(Color color);
+        std::vector<Move> GenerateKingMoves(int x, int y);
+
+        std::vector<Move> GeneratePieceMoves(ChessEngine::Piece piece, int startingX, int startingY);
+
         MoveGenerator(Position* position)
         {
             this->position = position;
@@ -31,6 +33,8 @@ namespace ChessEngine
 
 
         PseudoLegalMoveGenerator* plMoveGenerator;
+
+        void InitThreatMaps(ChessBoard board);
     };
 
 } // ChessEngine
