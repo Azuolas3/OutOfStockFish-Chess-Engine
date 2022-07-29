@@ -41,6 +41,13 @@ void ChessBoard::PrintBoard()
 void ChessBoard::MovePiece(int fromX, int fromY, int toX, int toY)
 {
     //std::cout << this << std::endl << fromX << " " << fromY << "   " << toX << " " << toY << std::endl;
+    PieceList* pieceList = (GetColor(pieces[fromX][fromY]) == WHITE) ? whitePieces : blackPieces;
+    PieceList* oppositePieceList = (GetColor(pieces[fromX][fromY]) == WHITE) ? blackPieces : whitePieces;
+
+    pieceList->MovePiece(fromX, fromY, toX, toY);
+    if(pieces[toX][toY] != EMPTY)
+        oppositePieceList->RemovePiece(toX, toY);
+
     pieces[toX][toY] = pieces[fromX][fromY];
     pieces[fromX][fromY] = EMPTY;
 
@@ -49,9 +56,4 @@ void ChessBoard::MovePiece(int fromX, int fromY, int toX, int toY)
 void ChessBoard::RemovePiece(int x, int y)
 {
     pieces[x][y] = EMPTY;
-}
-
-void ChessBoard::RemovePieceFromList(int x, int y)
-{
-
 }

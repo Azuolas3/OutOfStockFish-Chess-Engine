@@ -10,19 +10,22 @@ using namespace ChessEngine;
 using std::cout; using std::cin; using std::endl;
 using std::string; using std::vector;
 
+void Print2darray(bool array[8][8]);
 
 int main() {
     Piece test[8][8] = { EMPTY };
     FenParser fenParser;
 
-    Position* position = fenParser.loadFen(fenParser.startingFenString);
+    Position* position = fenParser.loadFen("rnb1kbnr/ppp1pppp/8/3q4/4p3/1N2K3/PPPP1PPP/RNBQ1BNR b - - 1 3");
     ChessBoard* board = position->board;
     MoveGenerator* moveGenerator = new MoveGenerator(position);
 
     board->PrintBoard();
     while(true)
     {
-        cout << moveGenerator->GenerateAllMoves(WHITE).size();
+        //moveGenerator->GenerateAllMoves(WHITE);
+        //moveGenerator->GetCheckRayMap();
+        //Print2darray(moveGenerator->captureCheckMap);
 
         string moveInput;
         cin >> moveInput;
@@ -30,7 +33,7 @@ int main() {
             break;
 
 
-        cout<<"MOVE START :" << IsKingsideEmpty(WHITE, board->pieces) << " " << position->HasCastlingRights(WHITE, KINGSIDE) << endl;
+        cout<<"MOVE START :" << position->activePlayerColor << endl;
 
         int startX = letterToFile(moveInput[0]);
         int startY = intToRank(moveInput[1]);
@@ -41,21 +44,21 @@ int main() {
         vector<Move> generatedMoves;
         vector<Move> additionalMoves;
 
-        generatedMoves = moveGenerator->GeneratePieceMoves(board->pieces[startX][startY], startX, startY);
+        //generatedMoves = moveGenerator->GeneratePieceMoves(board->pieces[startX][startY], startX, startY);
+        generatedMoves = moveGenerator->GenerateAllMoves();
+        cout << generatedMoves.size() << endl;
 
         Move pseudoLegalMove;
-        if(moveGenerator->plMoveGenerator->doesContainMove(generatedMoves, endX, endY, &pseudoLegalMove))
+        if(moveGenerator->plMoveGenerator->doesContainMove(generatedMoves, Square(startX, startY), Square(endX, endY), &pseudoLegalMove))
         {
-            PieceList* pieceList = (getColor(board->pieces[startX][startY]) == WHITE) ? board->whitePieces : board->blackPieces;
-            pieceList->MovePiece(startX, startY, endX, endY);
             board->MovePiece(startX, startY, endX, endY);
-            moveGenerator->InitThreatMaps(*board);
 
             if(pseudoLegalMove.additionalAction != nullptr)
                 pseudoLegalMove.additionalAction();
 
             position->activePlayerColor = (position->activePlayerColor == WHITE) ? BLACK : WHITE;
 
+            moveGenerator->InitThreatMaps();
             board->PrintBoard();
         }
 
@@ -72,5 +75,20 @@ int main() {
     }*/
 
     return 0;
+}
+
+void Print2darray(bool array[8][8])
+{
+    for(int i = 7; i >= 0; i--)
+    {
+        for(int j = 0; j < 8; j++)
+        {
+            if(array[j][i])
+                cout<<"1 ";
+            else
+                cout<<"0 ";
+        }
+        std::cout << std::endl;
+    }
 }
 

@@ -17,7 +17,7 @@ namespace ChessEngine
     class ChessBoard
     {
 
-        void RemovePieceFromList(int x, int y);
+
     public:
         Piece pieces[8][8] = { EMPTY };
         PieceList* whitePieces = new PieceList();

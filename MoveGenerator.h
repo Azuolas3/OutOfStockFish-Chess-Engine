@@ -13,28 +13,61 @@ namespace ChessEngine
     class MoveGenerator
     {
         Position* position;
+        ChessBoard* board;
         LegalityTester legalityTester;
 
         bool whiteThreatMap[8][8]; // squares attacked by white pieces
-        bool blackThreatMap[8][8]; // squares attacked by black pieces
+        // squares attacked by black pieces
+
+        bool isInCheck;
+
+        int activeKingX;
+        int activeKingY;
+
+        void FindKingPosition(Color color);
+        std::pair<Square, Square> GetSquareAttackers(int x, int y, int &attackerCount);
+
+        void EraseIllegalMoves(std::vector<Move>& moveList); // Erases illegal moves for every piece except king
 
     public:
-        std::vector<Move> GenerateAllMoves(Color color);
+        std::vector<Move> GenerateAllMoves(Color color, bool generatesThreatMap = false); // Generates all legal moves for chosen color
+        std::vector<Move> GenerateAllMoves(); // Efficiently generates all legal moves for current active Color
+
+
         std::vector<Move> GenerateKingMoves(int x, int y);
 
-        std::vector<Move> GeneratePieceMoves(ChessEngine::Piece piece, int startingX, int startingY);
+        std::vector<Move> GeneratePieceMoves(ChessEngine::Piece piece, int startingX, int startingY, bool generatesThreatMap = false);
 
         MoveGenerator(Position* position)
         {
             this->position = position;
+            board = position->board;
             plMoveGenerator = new PseudoLegalMoveGenerator(position);
-            InitThreatMaps(*(position->board));
+            FindKingPosition(WHITE);
+            FindKingPosition(BLACK);
+            InitThreatMaps();
         }
 
 
         PseudoLegalMoveGenerator* plMoveGenerator;
 
-        void InitThreatMaps(ChessBoard board);
+        void InitThreatMaps();
+
+        int whiteKingX;
+        int whiteKingY;
+
+        int blackKingX;
+        int blackKingY;
+
+        void GetCheckRayMap();
+        void UpdateCaptureCheckMap(std::pair<Square, Square> attackerPair);
+
+        bool checkRayMap[8][8];
+        bool captureCheckMap[8][8];
+
+        bool IsInCheck();
+
+        bool blackThreatMap[8][8];
     };
 
 } // ChessEngine

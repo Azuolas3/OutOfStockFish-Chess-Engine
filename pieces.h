@@ -50,21 +50,53 @@ namespace ChessEngine
         }
     };
 
-    inline Color getColor(Piece piece)
+    inline Color GetColor(Piece piece)
     {
         Color color = static_cast<Color>(piece & pieceColorBitMask);
         return color;
     }
 
-    inline PieceType getType(Piece piece)
+    inline PieceType GetType(Piece piece)
     {
         PieceType type = static_cast<PieceType>(piece & pieceTypeBitMask);
         return type;
     }
 
-    inline bool isRookOrKing(Piece piece)
+    inline bool IsSlidingPiece(Piece piece)
     {
-        if(getType(piece) == ROOK || getType(piece) == KING)
+        if(GetType(piece) == ROOK || GetType(piece) == BISHOP ||  GetType(piece) == QUEEN)
+            return true;
+        else
+            return false;
+    }
+
+    inline bool IsRookOrQueen(Piece piece)
+    {
+        if(GetType(piece) == ROOK || GetType(piece) == QUEEN)
+            return true;
+        else
+            return false;
+    }
+
+    inline bool IsRookOrQueen(Piece piece, Color color)
+    {
+        if((GetType(piece) == ROOK || GetType(piece) == QUEEN) && GetColor(piece) == color)
+            return true;
+        else
+            return false;
+    }
+
+    inline bool IsBishopOrQueen(Piece piece)
+    {
+        if(GetType(piece) == BISHOP || GetType(piece) == QUEEN)
+            return true;
+        else
+            return false;
+    }
+
+    inline bool IsBishopOrQueen(Piece piece, Color color)
+    {
+        if((GetType(piece) == BISHOP || GetType(piece) == QUEEN) && GetColor(piece) == color)
             return true;
         else
             return false;

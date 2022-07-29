@@ -4,6 +4,8 @@
 
 #include "BoardUtility.h"
 
+using namespace ChessEngine;
+
 namespace ChessEngine
 {
     bool IsInBounds(int x, int y)
@@ -36,7 +38,7 @@ namespace ChessEngine
 
     bool isAbsolutelyPinned(int x, int y, Piece board[8][8])
     {
-
+        return false;
     }
 
     Piece FindFirstPieceInDirection(int startingX, int startingY, Direction dir, Piece board[8][8])
@@ -98,5 +100,43 @@ namespace ChessEngine
                 return EMPTY;
             }
         }
+    }
+}
+
+void ChessEngine::CastRayToSquare(bool table[8][8], Square startingPos, Square endingPos)
+{
+    int xDistance = startingPos.x - endingPos.x;
+    int yDistance = startingPos.y - endingPos.y;
+
+    int xOffset;
+    int yOffset;
+
+    if(xDistance > 0)
+        xOffset = 1;
+    else if(xDistance == 0)
+        xOffset = 0;
+    else
+        xOffset = -1;
+
+    if(yDistance > 0)
+        yOffset = 1;
+    else if(yDistance == 0)
+        yOffset = 0;
+    else
+        yOffset = -1;
+
+
+    int x = endingPos.x + xOffset;
+    int y = endingPos.y + yOffset;
+
+    xDistance += x - xOffset;
+    yDistance += y - yOffset;
+
+    while(x < xDistance || y < yDistance)
+    {
+        table[x][y] = true;
+
+        x += xOffset;
+        y += yOffset;
     }
 }

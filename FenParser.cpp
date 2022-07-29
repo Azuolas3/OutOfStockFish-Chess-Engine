@@ -53,7 +53,7 @@ Position* FenParser::loadFen(std::string fenString)
         x++;
     }
 
-    charIterator++; //Skip empty character and move to color specifier
+    charIterator; //Skip empty character and move to color specifier
 
     if(fenString[charIterator] == 'w')
     {
@@ -66,6 +66,11 @@ Position* FenParser::loadFen(std::string fenString)
 
     charIterator += 2; // Skip empty char and move to castling rights specifier
     std::string fenSubString = fenString.substr(charIterator-1);
+
+    if(fenSubString.find('-') != std::string::npos)
+    {
+        charIterator++;
+    }
 
     if(fenSubString.find('K') != std::string::npos)
     {
@@ -90,6 +95,8 @@ Position* FenParser::loadFen(std::string fenString)
         charIterator++;
         position->blackCastlingRights = static_cast<CastlingRights>(position->blackCastlingRights | QUEENSIDE);
     }
+
+    charIterator++;
 
     if(fenString[charIterator] != '-')
     {

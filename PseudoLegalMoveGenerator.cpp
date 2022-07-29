@@ -7,7 +7,7 @@
 using namespace ChessEngine;
 using std::vector;
 
-vector<Move> PseudoLegalMoveGenerator::GenerateStraightMoves(int startingX, int startingY)
+vector<Move> PseudoLegalMoveGenerator::GenerateStraightMoves(int startingX, int startingY, bool generatesThreatMap)
 {
     vector<Move> pseudoLegalMoves;
     ChessBoard board = (*position->board);
@@ -19,9 +19,10 @@ vector<Move> PseudoLegalMoveGenerator::GenerateStraightMoves(int startingX, int 
 
         if(board.pieces[x][startingY] != EMPTY)
         {
-            if(getColor(board.pieces[startingX][startingY]) != getColor(board.pieces[x][startingY]))
+            if(!IsSameColor(startingX, startingY, x, startingY) || (generatesThreatMap && IsSameColor(startingX, startingY, x, startingY)))
                 pseudoLegalMoves.push_back(move);
-            break;
+            if(!generatesThreatMap || (generatesThreatMap && GetType(board.pieces[x][startingY]) != KING))
+                break;
         }
 
         pseudoLegalMoves.push_back(move);
@@ -31,12 +32,14 @@ vector<Move> PseudoLegalMoveGenerator::GenerateStraightMoves(int startingX, int 
     {
         Move move(startingX, startingY, x, startingY);
 
-        if(board.pieces[x][startingY] != EMPTY)
+        if(!IsSameColor(startingX, startingY, x, startingY) || (generatesThreatMap && IsSameColor(startingX, startingY, x, startingY)))
         {
-            if(getColor(board.pieces[startingX][startingY]) != getColor(board.pieces[x][startingY]))
+            if(GetColor(board.pieces[startingX][startingY]) != GetColor(board.pieces[x][startingY]))
                 pseudoLegalMoves.push_back(move);
-            break;
+            if(!generatesThreatMap || (generatesThreatMap && GetType(board.pieces[x][startingY]) != KING))
+                break;
         }
+
 
         pseudoLegalMoves.push_back(move);
     }
@@ -49,9 +52,10 @@ vector<Move> PseudoLegalMoveGenerator::GenerateStraightMoves(int startingX, int 
 
         if(board.pieces[startingX][y] != EMPTY)
         {
-            if(getColor(board.pieces[startingX][startingY]) != getColor(board.pieces[startingX][y]))
+            if(!IsSameColor(startingX, startingY, startingX, y) || (generatesThreatMap && IsSameColor(startingX, startingY, startingX, y)))
                 pseudoLegalMoves.push_back(move);
-            break;
+            if(!generatesThreatMap || (generatesThreatMap && GetType(board.pieces[startingX][y]) != KING))
+                break;
         }
 
         pseudoLegalMoves.push_back(move);
@@ -63,19 +67,21 @@ vector<Move> PseudoLegalMoveGenerator::GenerateStraightMoves(int startingX, int 
 
         if(board.pieces[startingX][y] != EMPTY)
         {
-            if(getColor(board.pieces[startingX][startingY]) != getColor(board.pieces[startingX][y]))
+            if(!IsSameColor(startingX, startingY, startingX, y) || (generatesThreatMap && IsSameColor(startingX, startingY, startingX, y)))
                 pseudoLegalMoves.push_back(move);
-            break;
+            if(!generatesThreatMap || (generatesThreatMap && GetType(board.pieces[startingX][y]) != KING))
+                break;
         }
 
         pseudoLegalMoves.push_back(move);
     }
 
-    if(position->whiteCastlingRights != NONE && position->blackCastlingRights != NONE && getType(board.pieces[startingX][startingY]) == ROOK) // Adding RemoveCastleRights to each rook move
+    if(position->whiteCastlingRights != NONE && position->blackCastlingRights != NONE &&
+            GetType(board.pieces[startingX][startingY]) == ROOK) // Adding RemoveCastleRights to each rook move
     {
         if(startingX == 0) // QUEENSIDE
         {
-            Color color = getColor(board.pieces[startingX][startingY]);
+            Color color = GetColor(board.pieces[startingX][startingY]);
             std::function<void()> func = std::bind(&Position::RemoveCastlingRights, std::ref(position), color, QUEENSIDE);
             for(int i = 0; i < pseudoLegalMoves.size(); i++)
             {
@@ -85,7 +91,7 @@ vector<Move> PseudoLegalMoveGenerator::GenerateStraightMoves(int startingX, int 
 
         if(startingX == 7) // KINGSIDE
         {
-            Color color = getColor(board.pieces[startingX][startingY]);
+            Color color = GetColor(board.pieces[startingX][startingY]);
             std::function<void()> func = std::bind(&Position::RemoveCastlingRights, std::ref(position), color, KINGSIDE);
             for(int i = 0; i < pseudoLegalMoves.size(); i++)
             {
@@ -97,7 +103,7 @@ vector<Move> PseudoLegalMoveGenerator::GenerateStraightMoves(int startingX, int 
     return pseudoLegalMoves;
 }
 
-vector<Move> PseudoLegalMoveGenerator::GenerateDiagonalMoves(int startingX, int startingY)
+vector<Move> PseudoLegalMoveGenerator::GenerateDiagonalMoves(int startingX, int startingY, bool generatesThreatMap)
 {
     vector<Move> pseudoLegalMoves;
     ChessBoard board = (*position->board);
@@ -109,9 +115,10 @@ vector<Move> PseudoLegalMoveGenerator::GenerateDiagonalMoves(int startingX, int 
 
         if(board.pieces[x][y] != EMPTY)
         {
-            if(getColor(board.pieces[startingX][startingY]) != getColor(board.pieces[x][y]))
+            if(!IsSameColor(startingX, startingY, x, y) || (generatesThreatMap && IsSameColor(startingX, startingY, x, y)))
                 pseudoLegalMoves.push_back(move);
-            break;
+            if(!generatesThreatMap || (generatesThreatMap && GetType(board.pieces[x][y]) != KING))
+                break;
         }
 
         pseudoLegalMoves.push_back(move);
@@ -124,9 +131,10 @@ vector<Move> PseudoLegalMoveGenerator::GenerateDiagonalMoves(int startingX, int 
 
         if(board.pieces[x][y] != EMPTY)
         {
-            if(getColor(board.pieces[startingX][startingY]) != getColor(board.pieces[x][y]))
+            if(!IsSameColor(startingX, startingY, x, y) || (generatesThreatMap && IsSameColor(startingX, startingY, x, y)))
                 pseudoLegalMoves.push_back(move);
-            break;
+            if(!generatesThreatMap || (generatesThreatMap && GetType(board.pieces[x][y]) != KING))
+                break;
         }
 
         pseudoLegalMoves.push_back(move);
@@ -139,9 +147,10 @@ vector<Move> PseudoLegalMoveGenerator::GenerateDiagonalMoves(int startingX, int 
 
         if(board.pieces[x][y] != EMPTY)
         {
-            if(getColor(board.pieces[startingX][startingY]) != getColor(board.pieces[x][y]))
+            if(!IsSameColor(startingX, startingY, x, y) || (generatesThreatMap && IsSameColor(startingX, startingY, x, y)))
                 pseudoLegalMoves.push_back(move);
-            break;
+            if(!generatesThreatMap || (generatesThreatMap && GetType(board.pieces[x][y]) != KING))
+                break;
         }
 
         pseudoLegalMoves.push_back(move);
@@ -154,9 +163,10 @@ vector<Move> PseudoLegalMoveGenerator::GenerateDiagonalMoves(int startingX, int 
 
         if(board.pieces[x][y] != EMPTY)
         {
-            if(getColor(board.pieces[startingX][startingY]) != getColor(board.pieces[x][y]))
+            if(!IsSameColor(startingX, startingY, x, y) || (generatesThreatMap && IsSameColor(startingX, startingY, x, y)))
                 pseudoLegalMoves.push_back(move);
-            break;
+            if(!generatesThreatMap || (generatesThreatMap && GetType(board.pieces[x][y]) != KING))
+                break;
         }
 
         pseudoLegalMoves.push_back(move);
@@ -165,7 +175,7 @@ vector<Move> PseudoLegalMoveGenerator::GenerateDiagonalMoves(int startingX, int 
     return pseudoLegalMoves;
 }
 
-vector<Move> PseudoLegalMoveGenerator::GenerateKnightMoves(int startingX, int startingY)
+vector<Move> PseudoLegalMoveGenerator::GenerateKnightMoves(int startingX, int startingY, bool generatesThreatMap)
 {
     vector<Move> pseudoLegalMoves;
 
@@ -177,7 +187,7 @@ vector<Move> PseudoLegalMoveGenerator::GenerateKnightMoves(int startingX, int st
         int x = startingX + xOffset[i];
         int y = startingY + yOffset[i];
 
-        if(IsInBounds(x, y) && (!IsSameColor(startingX, startingY, x, y)))
+        if(IsInBounds(x, y) && (!IsSameColor(startingX, startingY, x, y) || (generatesThreatMap && IsSameColor(startingX, startingY, x, y))))
         {
             Move move(startingX, startingY, x, y);
             pseudoLegalMoves.push_back(move);
@@ -203,7 +213,7 @@ vector<Move> PseudoLegalMoveGenerator::GenerateKingMoves(int startingX, int star
         if(IsInBounds(x, y) && (!IsSameColor(startingX, startingY, x, y)))
         {
             Move move(startingX, startingY, x, y);
-            Color color = getColor(position->board->pieces[startingX][startingY]);
+            Color color = GetColor(position->board->pieces[startingX][startingY]);
             move.additionalAction = std::bind(&Position::RemoveCastlingRights, std::ref(position), color, BOTH);
             pseudoLegalMoves.push_back(move);
         }
@@ -218,7 +228,7 @@ std::vector<Move> PseudoLegalMoveGenerator::GenerateCastlingMoves(int startingX,
     ChessBoard board = (*position->board);
 
     int kingRank = startingY;
-    Color color = getColor(board.pieces[startingX][startingY]);
+    Color color = GetColor(board.pieces[startingX][startingY]);
 
     //Kingside generation
     if(IsKingsideEmpty(color, board.pieces) && position->HasCastlingRights(color, KINGSIDE))
@@ -239,40 +249,50 @@ std::vector<Move> PseudoLegalMoveGenerator::GenerateCastlingMoves(int startingX,
     return pseudoLegalMoves;
 }
 
-vector<Move> PseudoLegalMoveGenerator::GeneratePawnMoves(int startingX, int startingY)
+vector<Move> PseudoLegalMoveGenerator::GeneratePawnMoves(int startingX, int startingY, bool generatesOnlyCaptures)
 {
     vector<Move> pseudoLegalMoves;
     ChessBoard board = (*position->board);
 
-    int offset = (getColor(board.pieces[startingX][startingY]) == ChessEngine::WHITE) ? 1 : -1;
-    int startingRank = (getColor(board.pieces[startingX][startingY]) == ChessEngine::WHITE) ? 1 : 6;
+    int offset = (GetColor(board.pieces[startingX][startingY]) == ChessEngine::WHITE) ? 1 : -1;
+    int startingRank = (GetColor(board.pieces[startingX][startingY]) == ChessEngine::WHITE) ? 1 : 6;
     Piece possibleSquare = board.pieces[startingX][startingY + offset];
 
-    if(possibleSquare == EMPTY)
+    if(!generatesOnlyCaptures)
     {
-        Move move(startingX, startingY, startingX, startingY + offset);
-        pseudoLegalMoves.push_back(move);
-
-        if(startingY == startingRank)
+        if(possibleSquare == EMPTY)
         {
-            offset *= 2;
             Move move(startingX, startingY, startingX, startingY + offset);
-            move.additionalAction = std::bind(&Position::SetEnPassantSquare, std::ref(position), startingX, startingY + offset);
             pseudoLegalMoves.push_back(move);
-            offset /= 2;
+
+            if(startingY == startingRank)
+            {
+                offset *= 2;
+                Move move(startingX, startingY, startingX, startingY + offset);
+                move.additionalAction = std::bind(&Position::SetEnPassantSquare, std::ref(position), startingX, startingY + offset);
+                pseudoLegalMoves.push_back(move);
+                offset /= 2;
+            }
         }
     }
 
-    if(IsInBounds(startingX - 1, startingY + offset) && board.pieces[startingX - 1][startingY + offset] && !IsSameColor(startingX, startingY, startingX - 1, startingY + offset))
+
+    if(IsInBounds(startingX - 1, startingY + offset))
     {
-        Move move(startingX, startingY, startingX - 1, startingY + offset);
-        pseudoLegalMoves.push_back(move);
+        if((board.pieces[startingX - 1][startingY + offset] && !IsSameColor(startingX, startingY, startingX - 1, startingY + offset)) || generatesOnlyCaptures)
+        {
+            Move move(startingX, startingY, startingX - 1, startingY + offset);
+            pseudoLegalMoves.push_back(move);
+        }
     }
 
-    if(IsInBounds(startingX + 1, startingY + offset) && board.pieces[startingX + 1][startingY + offset] && !IsSameColor(startingX, startingY, startingX + 1, startingY + offset))
+    if(IsInBounds(startingX + 1, startingY + offset))
     {
-        Move move(startingX, startingY, startingX + 1, startingY + offset);
-        pseudoLegalMoves.push_back(move);
+        if((board.pieces[startingX + 1][startingY + offset] && !IsSameColor(startingX, startingY, startingX + 1, startingY + offset)) || generatesOnlyCaptures)
+        {
+            Move move(startingX, startingY, startingX + 1, startingY + offset);
+            pseudoLegalMoves.push_back(move);
+        }
     }
 
     // En Passant
@@ -297,20 +317,20 @@ vector<Move> PseudoLegalMoveGenerator::GeneratePawnMoves(int startingX, int star
     return pseudoLegalMoves;
 }
 
-std::vector<Move> PseudoLegalMoveGenerator::GeneratePieceMoves(ChessEngine::Piece piece, int startingX, int startingY)
+std::vector<Move> PseudoLegalMoveGenerator::GeneratePieceMoves(ChessEngine::Piece piece, int startingX, int startingY, bool ignoresEnemyKing)
 {
-    PieceType pieceType = getType(piece);
+    PieceType pieceType = GetType(piece);
     std::vector<Move> generatedMoves;
     std::vector<Move> additionalMoves;
 
     switch(pieceType)
     {
         case PAWN:
-            generatedMoves = GeneratePawnMoves(startingX, startingY);
+            generatedMoves = GeneratePawnMoves(startingX, startingY, ignoresEnemyKing);
             break;
 
         case BISHOP:
-            generatedMoves = GenerateDiagonalMoves(startingX, startingY);
+            generatedMoves = GenerateDiagonalMoves(startingX, startingY, ignoresEnemyKing);
             break;
 
         case KNIGHT:
@@ -318,12 +338,12 @@ std::vector<Move> PseudoLegalMoveGenerator::GeneratePieceMoves(ChessEngine::Piec
             break;
 
         case ROOK:
-            generatedMoves = GenerateStraightMoves(startingX, startingY);
+            generatedMoves = GenerateStraightMoves(startingX, startingY, ignoresEnemyKing);
             break;
 
         case QUEEN:
-            generatedMoves = GenerateStraightMoves(startingX, startingY);
-            additionalMoves = GenerateDiagonalMoves(startingX, startingY);
+            generatedMoves = GenerateStraightMoves(startingX, startingY, ignoresEnemyKing);
+            additionalMoves = GenerateDiagonalMoves(startingX, startingY, ignoresEnemyKing);
             generatedMoves = CombineVectors(generatedMoves, additionalMoves);
             break;
 
@@ -341,7 +361,7 @@ bool PseudoLegalMoveGenerator::IsSameColor(int startingX, int startingY, int des
 {
     ChessBoard board = (*position->board);
 
-    if(getColor(board.pieces[startingX][startingY]) == getColor(board.pieces[destinationX][destinationY]))
+    if(GetColor(board.pieces[startingX][startingY]) == GetColor(board.pieces[destinationX][destinationY]))
         return true;
     else
         return false;
@@ -356,15 +376,39 @@ std::vector<Move> PseudoLegalMoveGenerator::CombineVectors(std::vector<Move> a, 
     return combinedVector;
 }
 
-bool PseudoLegalMoveGenerator::doesContainMove(std::vector<Move> generatedMoves, int x, int y, Move* correctMove)
+bool PseudoLegalMoveGenerator::doesContainMove(std::vector<Move> generatedMoves, Square start, Square end, Move* correctMove)
 {
     for(int i = 0; i < generatedMoves.size(); i++)
     {
-        if(generatedMoves[i].destinationX == x && generatedMoves[i].destinationY == y)
+        if(generatedMoves[i].destinationX == end.x && generatedMoves[i].destinationY == end.y && generatedMoves[i].startingX == start.x && generatedMoves[i].startingY == start.y)
         {
             *correctMove = generatedMoves[i];
             return true;
         }
     }
     return false;
+}
+
+std::vector<Move> PseudoLegalMoveGenerator::GenerateAllMoves(ChessEngine::Color color, bool generatesThreatMap)
+{
+    std::vector<Move> allGeneratedMoves;
+
+    ChessBoard* board = position->board;
+
+    PieceList* pieceList = (color == WHITE) ? board->whitePieces : board->blackPieces;
+    std::vector<int> xList = pieceList->squaresX;
+    std::vector<int> yList = pieceList->squaresY;
+
+    for(int i = 0; i < pieceList->squaresX.size(); i++)
+    {
+        int x = xList[i];
+        int y = yList[i];
+        //std::cout << i << " " << pieceList[i].x << " " << pieceList[i].y << " " << pieceList[i].piece << std::endl;
+
+        std::vector<Move> generatedMoves;
+        generatedMoves = GeneratePieceMoves(board->pieces[x][y], x, y, generatesThreatMap);
+        allGeneratedMoves = CombineVectors(allGeneratedMoves, generatedMoves);
+    }
+
+    return allGeneratedMoves;
 }

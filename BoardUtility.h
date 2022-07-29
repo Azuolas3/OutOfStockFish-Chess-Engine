@@ -6,15 +6,36 @@
 #define CHESS_ENGINE_BOARDUTILITY_H
 
 #include "pieces.h"
+#include <cstdlib>
 
 namespace ChessEngine
 {
+
     enum Direction
     {
-        NORTHWEST = 1, NORTH, NORTHEAST, // the opposite of each direction is its negative value
-        WEST, EAST = -4,
+        NORTHWEST, NORTH, NORTHEAST,
+        WEST,                   EAST,
         SOUTHWEST, SOUTH, SOUTHEAST
     };
+
+    struct Square
+    {
+        int x;
+        int y;
+
+        Square() = default;
+
+        Square(int posX, int posY)
+        {
+            x = posX;
+            y = posY;
+        }
+    };
+
+    inline int xDirOffset[] = {-1, 0, 1, -1, 1, -1, 0, 1};
+    inline int yDirOffset[] = {1, 1, 1, 0, 0, -1, -1, -1};
+
+    void CastRayToSquare(bool table[8][8], Square startingPos, Square endingPos);
 
     bool IsInBounds(int x, int y);
 
