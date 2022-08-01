@@ -16,7 +16,7 @@ int main() {
     Piece test[8][8] = { EMPTY };
     FenParser fenParser;
 
-    Position* position = fenParser.loadFen("rnb1kbnr/ppp1pppp/8/3q4/4p3/1N2K3/PPPP1PPP/RNBQ1BNR b - - 1 3");
+    Position* position = fenParser.loadFen(fenParser.startingFenString);
     ChessBoard* board = position->board;
     MoveGenerator* moveGenerator = new MoveGenerator(position);
 
@@ -46,12 +46,15 @@ int main() {
 
         //generatedMoves = moveGenerator->GeneratePieceMoves(board->pieces[startX][startY], startX, startY);
         generatedMoves = moveGenerator->GenerateAllMoves();
-        cout << generatedMoves.size() << endl;
+        cout << position->enPassantSquareX <<  " " << position->enPassantSquareY << endl;
 
         Move pseudoLegalMove;
         if(moveGenerator->plMoveGenerator->doesContainMove(generatedMoves, Square(startX, startY), Square(endX, endY), &pseudoLegalMove))
         {
             board->MovePiece(startX, startY, endX, endY);
+
+            position->enPassantSquareX = -1;
+            position->enPassantSquareY = -1;
 
             if(pseudoLegalMove.additionalAction != nullptr)
                 pseudoLegalMove.additionalAction();
@@ -59,6 +62,7 @@ int main() {
             position->activePlayerColor = (position->activePlayerColor == WHITE) ? BLACK : WHITE;
 
             moveGenerator->InitThreatMaps();
+
             board->PrintBoard();
         }
 

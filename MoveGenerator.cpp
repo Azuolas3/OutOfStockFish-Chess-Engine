@@ -31,6 +31,16 @@ namespace ChessEngine
     {
         Color activePlayerColor = position->activePlayerColor;
 
+        if(activePlayerColor == WHITE)
+        {
+            //std::copy(&whiteThreatMap[0][0], &whiteThreatMap + 8*8, &activeThreatMap[0][0]);
+        }
+        else
+        {
+
+        }
+
+
         FindKingPosition(activePlayerColor);
 
         if(IsInCheck())
@@ -148,7 +158,7 @@ namespace ChessEngine
 
             case KING:
                 generatedMoves = GenerateKingMoves(startingX, startingY);
-                additionalMoves = plMoveGenerator->GenerateCastlingMoves(startingX, startingY);
+                additionalMoves = GenerateCastlingMoves(startingX, startingY);
                 generatedMoves = plMoveGenerator->CombineVectors(generatedMoves, additionalMoves);
                 break;
         }
@@ -161,6 +171,7 @@ namespace ChessEngine
     {
         memset(whiteThreatMap, false, sizeof(bool) * 8 * 8);
         memset(blackThreatMap, false, sizeof(bool) * 8 * 8);
+        memset(activeThreatMap, false, sizeof(bool) * 8 * 8);
 
         std::vector<Move> whiteMoves = plMoveGenerator->GenerateAllMoves(WHITE, true);
         std::vector<Move> blackMoves = plMoveGenerator->GenerateAllMoves(BLACK, true);
@@ -169,12 +180,20 @@ namespace ChessEngine
         {
             //whiteThreatMap[whiteMove.startingX][whiteMove.startingY] = true;
             whiteThreatMap[whiteMove.destinationX][whiteMove.destinationY] = true;
+            if(position->activePlayerColor == BLACK)
+            {
+                activeThreatMap[whiteMove.destinationX][whiteMove.destinationY] = true;
+            }
         }
 
         for(auto & blackMove : blackMoves)
         {
             //blackThreatMap[blackMove.startingX][blackMove.startingY] = true;
             blackThreatMap[blackMove.destinationX][blackMove.destinationY] = true;
+            if(position->activePlayerColor == WHITE)
+            {
+                activeThreatMap[blackMove.destinationX][blackMove.destinationY] = true;
+            }
         }
     }
 
@@ -279,7 +298,21 @@ namespace ChessEngine
             }
         }
 
+        if(attackerCount == 2)
+            return std::pair<Square, Square>(attackers[0], attackers[1]);
 
+        generatedMoves = plMoveGenerator->GeneratePawnMoves(x, y, true);
+
+        for(Move& move : generatedMoves)
+        {
+            Piece piece = board->pieces[move.destinationX][move.destinationY];
+            if(GetType(piece) == PAWN && GetColor(piece) != position->activePlayerColor)
+            {
+                attackers[attackerCount] = Square(move.destinationX, move.destinationY);
+                attackerCount++;
+                break;
+            }
+        }
 
         return std::pair<Square, Square>(attackers[0], attackers[1]);
     }
@@ -311,6 +344,16 @@ namespace ChessEngine
             Move move = moveList[i];
             if(!captureCheckMap[move.destinationX][move.destinationY] && !checkRayMap[move.destinationX][move.destinationY])
             {
+                if(isMoveEnPassant(move)) // cover for edge case where move square doesnt coincide with capture square - en passant
+                {
+                    int offset = (position->activePlayerColor == WHITE) ? -1 : 1;
+                    if(captureCheckMap[move.destinationX][move.destinationY + offset])
+                    {
+                        i++;
+                        continue;
+                    }
+                }
+
                 moveList.erase(moveList.begin() + i);
                 moveCount--;
             }
@@ -329,6 +372,85 @@ namespace ChessEngine
             if(attackerPair.second.x != -1)
                 captureCheckMap[attackerPair.second.x][attackerPair.second.y] = true;
         }
+    }
+
+    bool MoveGenerator::isMoveEnPassant(Move move)
+    {
+        if(GetType(board->pieces[move.startingX][move.startingY]) == PAWN && move.destinationX == position->enPassantSquareX && move.destinationY == position->enPassantSquareY)
+            return true;
+        else
+            return false;
+    }
+
+    std::vector<Move> MoveGenerator::GenerateCastlingMoves(int startingX, int startingY)
+    {
+
+        std::vector<Move> pseudoLegalMoves;
+
+        int kingRank = startingY;
+        Color color = GetColor(board->pieces[startingX][startingY]);
+
+        if(IsInCheck())
+            return pseudoLegalMoves;
+
+
+        //Kingside generation
+        if(IsKingsideEmpty(color, board->pieces) && position->HasCastlingRights(color, KINGSIDE) && GetType(board->pieces[7][kingRank]) == ROOK
+        && !activeThreatMap[5][kingRank] && !activeThreatMap[6][kingRank]) // checking only for type because color doesnt matter - all castling conditions cant be met if the rook is of opposite color.
+        {
+            Move move(startingX, startingY, startingX + 2, startingY);
+            move.additionalAction = std::bind(&ChessBoard::MovePiece, std::ref(position->board), 7, kingRank, 5, kingRank);
+            pseudoLegalMoves.push_back(move);
+        }
+
+        //Queenside generation
+        if(IsQueensideEmpty(color, board->pieces) && position->HasCastlingRights(color, QUEENSIDE) && GetType(board->pieces[0][kingRank]) == ROOK
+        && !activeThreatMap[3][kingRank] && !activeThreatMap[2][kingRank])
+        {
+            Move move(startingX, startingY, startingX - 2, startingY);
+            move.additionalAction = std::bind(&ChessBoard::MovePiece, std::ref(position->board), 0, kingRank, 3, kingRank);
+            pseudoLegalMoves.push_back(move);
+        }
+    }
+
+    std::vector<Square> MoveGenerator::GetAbsolutelyPinnedPieces()
+    {
+        std::vector<Square> pinnedPieces;
+
+        for(int currentDir = 0; currentDir < 9; currentDir++)
+        {
+            Square firstPiece;
+            Square pinnerPiece;
+
+            for(int x = activeKingX + xDirOffset[currentDir], y = activeKingY + yDirOffset[currentDir]; ;x += xDirOffset[currentDir], y += yDirOffset[currentDir])
+            {
+                if(!IsInBounds(activeKingX, activeKingY))
+                    break;
+
+                if(board->pieces[x][y] != EMPTY)
+                {
+                    if(GetColor(board->pieces[x][y]) == position->activePlayerColor)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        firstPiece = Square(x, y);
+
+                        x += xDirOffset[currentDir];
+                        y += yDirOffset[currentDir];
+
+                        bool haveFoundPinner;
+                        while(!haveFoundPinner || !IsInBounds(x, y))
+                        {
+                            //if(board->pieces[x][y] != EMPTY && )
+                        }
+                    }
+                }
+            }
+        }
+
+        return pinnedPieces;
     }
 
 } // ChessEngine

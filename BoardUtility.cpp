@@ -43,52 +43,7 @@ namespace ChessEngine
 
     Piece FindFirstPieceInDirection(int startingX, int startingY, Direction dir, Piece board[8][8])
     {
-        int offsetX, offsetY;
-        switch(dir)
-        {
-            case NORTHWEST:
-                offsetX = -1;
-                offsetY = 1;
-                break;
-
-            case NORTH:
-                offsetX = 0;
-                offsetY = 1;
-                break;
-
-            case NORTHEAST:
-                offsetX = 1;
-                offsetY = 1;
-                break;
-
-            case WEST:
-                offsetX = -1;
-                offsetY = 0;
-                break;
-
-            case EAST:
-                offsetX = 1;
-                offsetY = 0;
-                break;
-
-            case SOUTHWEST:
-                offsetX = -1;
-                offsetY = -1;
-                break;
-
-            case SOUTH:
-                offsetX = 0;
-                offsetY = -1;
-                break;
-
-            case SOUTHEAST:
-                offsetX = 1;
-                offsetY = -1;
-                break;
-
-        }
-
-        for(int x = startingX + offsetX, y = startingY + offsetY;; x += offsetX, y += offsetY)
+        for(int x = startingX + xDirOffset[dir], y = startingY + yDirOffset[dir];; x += xDirOffset[dir], y += yDirOffset[dir])
         {
             if(IsInBounds(x, y))
             {

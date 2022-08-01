@@ -7,6 +7,7 @@
 
 #include "PseudoLegalMoveGenerator.h"
 #include "LegalityTester.h"
+#include <algorithm>
 
 namespace ChessEngine
 {
@@ -24,10 +25,16 @@ namespace ChessEngine
         int activeKingX;
         int activeKingY;
 
+        bool activeThreatMap[8][8];
+
         void FindKingPosition(Color color);
+
         std::pair<Square, Square> GetSquareAttackers(int x, int y, int &attackerCount);
+        std::vector<Square> GetAbsolutelyPinnedPieces();
 
         void EraseIllegalMoves(std::vector<Move>& moveList); // Erases illegal moves for every piece except king
+
+        bool isMoveEnPassant(Move move);
 
     public:
         std::vector<Move> GenerateAllMoves(Color color, bool generatesThreatMap = false); // Generates all legal moves for chosen color
@@ -35,6 +42,7 @@ namespace ChessEngine
 
 
         std::vector<Move> GenerateKingMoves(int x, int y);
+        std::vector<Move> GenerateCastlingMoves(int x, int y);
 
         std::vector<Move> GeneratePieceMoves(ChessEngine::Piece piece, int startingX, int startingY, bool generatesThreatMap = false);
 
