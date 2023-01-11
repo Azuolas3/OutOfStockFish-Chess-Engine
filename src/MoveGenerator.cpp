@@ -13,20 +13,19 @@ namespace ChessEngine
         //absolutelyPinnedPieces[1];
 
         PieceList* pieceList = (color == WHITE) ? board->whitePieces : board->blackPieces;
-        std::vector<int> xList = pieceList->squaresX;
-        std::vector<int> yList = pieceList->squaresY;
+        std::vector<Square> squareList = pieceList->squares;
 
         if(!generatesThreatMap)
             absolutelyPinnedPieces = GetAbsolutelyPinnedPieces(color);
 
         std::cout << absolutelyPinnedPieces.size() << " " << position->activePlayerColor <<  '\n';
-        if(absolutelyPinnedPieces.size() != 0)
+        if(!absolutelyPinnedPieces.empty())
             std::cout << absolutelyPinnedPieces[0].x << " " <<  absolutelyPinnedPieces[0].y << '\n';
 
-        for(int i = 0; i < pieceList->squaresX.size(); i++)
+        for(int i = 0; i < pieceList->squares.size(); i++)
         {
-            int x = xList[i];
-            int y = yList[i];
+            int x = squareList[i].x;
+            int y = squareList[i].y;
 
             std::vector<Move> generatedMoves;
             generatedMoves = GeneratePieceMoves(board->pieces[x][y], x, y, generatesThreatMap);
@@ -213,17 +212,17 @@ namespace ChessEngine
 
         for(int i = 0; i < pieceList->count; i++)
         {
-            if(GetType(board->pieces[pieceList->squaresX[i]][pieceList->squaresY[i]]) == KING)
+            if(GetType(board->pieces[pieceList->squares[i].x][pieceList->squares[i].y]) == KING)
             {
                 if(color == WHITE)
                 {
-                    whiteKingX = pieceList->squaresX[i];
-                    whiteKingY = pieceList->squaresY[i];
+                    whiteKingX = pieceList->squares[i].x;
+                    whiteKingY = pieceList->squares[i].y;
                 }
                 else
                 {
-                    blackKingX = pieceList->squaresX[i];
-                    blackKingY = pieceList->squaresY[i];
+                    blackKingX = pieceList->squares[i].x;
+                    blackKingY = pieceList->squares[i].y;
                 }
             }
         }
@@ -371,6 +370,11 @@ namespace ChessEngine
                 i++;
         }
     }
+
+//    void MoveGenerator::EraseIllegalPinnedPieceMoves(std::vector<Move> &moveList)
+//    {
+//
+//    }
 
     void MoveGenerator::UpdateCaptureCheckMap(std::pair<Square, Square> attackerPair)
     {

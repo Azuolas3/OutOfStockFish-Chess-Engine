@@ -8,8 +8,9 @@ namespace ChessEngine
 {
     void PieceList::AddPiece(int x, int y)
     {
-        squaresX.push_back(x);
-        squaresY.push_back(y);
+        Square newPiece = Square(x, y);
+
+        squares.push_back(newPiece);
 
         map[x][y] = count; // index, doesn't matter whether X or Y list
         count++;
@@ -18,8 +19,7 @@ namespace ChessEngine
     void PieceList::RemovePiece(int x, int y)
     {
         int index = map[x][y];
-        squaresX.erase(squaresX.begin() + index);
-        squaresY.erase(squaresY.begin() + index);
+        squares.erase(squares.begin() + index);
         map[x][y] = 0;
         count--;
     }
@@ -29,8 +29,8 @@ namespace ChessEngine
         int index; //= map[toX][toY];
 
         index = map[fromX][fromY];
-        squaresX[index] = toX;
-        squaresY[index] = toY;
+        squares[index].x = toX;
+        squares[index].y = toY;
         map[toX][toY] = index;
     }
 } // ChessEngine

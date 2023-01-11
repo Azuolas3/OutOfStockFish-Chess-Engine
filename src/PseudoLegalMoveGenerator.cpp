@@ -396,13 +396,13 @@ std::vector<Move> PseudoLegalMoveGenerator::GenerateAllMoves(ChessEngine::Color 
     ChessBoard* board = position->board;
 
     PieceList* pieceList = (color == WHITE) ? board->whitePieces : board->blackPieces;
-    std::vector<int> xList = pieceList->squaresX;
-    std::vector<int> yList = pieceList->squaresY;
+    std::vector<Square> squareList = pieceList->squares;
 
-    for(int i = 0; i < pieceList->squaresX.size(); i++)
+
+    for(int i = 0; i < pieceList->squares.size(); i++)
     {
-        int x = xList[i];
-        int y = yList[i];
+        int x = squareList[i].x;
+        int y = squareList[i].y;
         //std::cout << i << " " << pieceList[i].x << " " << pieceList[i].y << " " << pieceList[i].piece << std::endl;
 
         std::vector<Move> generatedMoves;

@@ -6,6 +6,7 @@
 #define CHESS_ENGINE_PIECELIST_H
 
 #include <vector>
+#include "BoardUtility.h"
 //#include "Position.h"
 
 namespace ChessEngine
@@ -20,8 +21,8 @@ namespace ChessEngine
         void RemovePiece(int x, int y);
         void MovePiece(int fromX, int fromY, int toX, int toY);
 
-        std::vector<int> squaresX;
-        std::vector<int> squaresY;
+        std::vector<Square> squares;
+
 
         int count = 0;
     };
