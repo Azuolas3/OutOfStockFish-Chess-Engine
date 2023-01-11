@@ -32,9 +32,9 @@ vector<Move> PseudoLegalMoveGenerator::GenerateStraightMoves(int startingX, int 
     {
         Move move(startingX, startingY, x, startingY);
 
-        if(!IsSameColor(startingX, startingY, x, startingY) || (generatesThreatMap && IsSameColor(startingX, startingY, x, startingY)))
+        if(board.pieces[x][startingY] != EMPTY)
         {
-            if(GetColor(board.pieces[startingX][startingY]) != GetColor(board.pieces[x][startingY]))
+            if(!IsSameColor(startingX, startingY, x, startingY) || (generatesThreatMap && IsSameColor(startingX, startingY, x, startingY)))
                 pseudoLegalMoves.push_back(move);
             if(!generatesThreatMap || (generatesThreatMap && GetType(board.pieces[x][startingY]) != KING))
                 break;
