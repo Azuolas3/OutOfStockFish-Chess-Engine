@@ -56,42 +56,78 @@ namespace ChessEngine
             }
         }
     }
-}
 
-void ChessEngine::CastRayToSquare(bool table[8][8], Square startingPos, Square endingPos)
-{
-    int xDistance = startingPos.x - endingPos.x;
-    int yDistance = startingPos.y - endingPos.y;
-
-    int xOffset;
-    int yOffset;
-
-    if(xDistance > 0)
-        xOffset = 1;
-    else if(xDistance == 0)
-        xOffset = 0;
-    else
-        xOffset = -1;
-
-    if(yDistance > 0)
-        yOffset = 1;
-    else if(yDistance == 0)
-        yOffset = 0;
-    else
-        yOffset = -1;
-
-
-    int x = endingPos.x + xOffset;
-    int y = endingPos.y + yOffset;
-
-    xDistance += x - xOffset;
-    yDistance += y - yOffset;
-
-    while(x < xDistance || y < yDistance)
+    void CastRayToSquare(bool table[8][8], Square startingPos, Square endingPos)
     {
-        table[x][y] = true;
+        int xDistance = startingPos.x - endingPos.x;
+        int yDistance = startingPos.y - endingPos.y;
 
-        x += xOffset;
-        y += yOffset;
+        int xOffset;
+        int yOffset;
+
+        if(xDistance > 0)
+            xOffset = 1;
+        else if(xDistance == 0)
+            xOffset = 0;
+        else
+            xOffset = -1;
+
+        if(yDistance > 0)
+            yOffset = 1;
+        else if(yDistance == 0)
+            yOffset = 0;
+        else
+            yOffset = -1;
+
+
+        int x = endingPos.x + xOffset;
+        int y = endingPos.y + yOffset;
+
+        xDistance += x - xOffset;
+        yDistance += y - yOffset;
+
+        while(x < xDistance || y < yDistance)
+        {
+            table[x][y] = true;
+
+            x += xOffset;
+            y += yOffset;
+        }
     }
+
+    void CastRayInDirection(bool (*table)[8], Square startingPos, Square direction)
+    {
+        for(int x = startingPos.x, y = startingPos.y;; x += direction.x, y += direction.y) // x y doesnt change, infinite loop
+        {
+            if(IsInBounds(x, y))
+            {
+                table[x][y] = true;
+            }
+            else
+                break;
+        }
+    }
+
+    Square NormalizeVector(Square vector)
+    {
+        Square normalizedSquare{};
+
+        if(vector.x == 0)
+            normalizedSquare.x = 0;
+        else if (vector.x > 0)
+            normalizedSquare.x = 1;
+        else
+            normalizedSquare.x = -1;
+
+        if(vector.y == 0)
+            normalizedSquare.y = 0;
+        else if (normalizedSquare.y > 0)
+            normalizedSquare.y = 1;
+        else
+            normalizedSquare.y = -1;
+
+        return normalizedSquare;
+    }
+
 }
+

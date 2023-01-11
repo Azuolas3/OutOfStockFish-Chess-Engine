@@ -30,12 +30,31 @@ namespace ChessEngine
             x = posX;
             y = posY;
         }
+
+        bool operator==(const Square& square) const
+        {
+            if(this->x == square.x && this->y == square.y)
+                return true;
+            else
+                return false;
+        }
+
+        bool operator!=(const Square& square) const
+        {
+            if(this->x != square.x || this->y != square.y)
+                return true;
+            else
+                return false;
+        }
     };
 
     inline int xDirOffset[] = {-1, 0, 1, -1, 1, -1, 0, 1};
     inline int yDirOffset[] = {1, 1, 1, 0, 0, -1, -1, -1};
 
     void CastRayToSquare(bool table[8][8], Square startingPos, Square endingPos);
+    void CastRayInDirection(bool table[8][8], Square startingPos, Square direction);
+
+    Square NormalizeVector(Square vector); // it doesn't quite normalize the vector, however changes it into a direction the code understands
 
     bool IsInBounds(int x, int y);
 

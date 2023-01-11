@@ -16,7 +16,7 @@ int main() {
     Piece test[8][8] = { EMPTY };
     FenParser fenParser;
 
-    Position* position = fenParser.loadFen("rnbqkbnr/1ppppppp/p7/7Q/4P3/8/PPPP1PPP/RNB1KBNR b KQkq - 1 2");
+    Position* position = fenParser.loadFen("r1bqkbnr/ppp1pppp/2q5/8/B7/4P3/PPPP1PPP/RNBQK1NR w KQkq - 1 2");
     ChessBoard* board = position->board;
     MoveGenerator* moveGenerator = new MoveGenerator(position);
 

@@ -7,6 +7,7 @@
 
 #include "PseudoLegalMoveGenerator.h"
 #include "LegalityTester.h"
+#include "BoardUtility.h"
 #include <algorithm>
 #include <iostream>
 
@@ -34,6 +35,7 @@ namespace ChessEngine
         std::vector<Square> GetAbsolutelyPinnedPieces(Color color);
 
         void EraseIllegalMoves(std::vector<Move>& moveList); // Erases illegal moves for every piece except king
+        void EraseIllegalPinnedMoves(std::vector<Move>& moveList, Square pinnedPiece); // Erases illegal moves for absolutely pinned pieces
 
         bool isMoveEnPassant(Move move);
 
@@ -45,7 +47,7 @@ namespace ChessEngine
         std::vector<Move> GenerateKingMoves(int x, int y);
         std::vector<Move> GenerateCastlingMoves(int x, int y);
 
-        std::vector<Move> GeneratePieceMoves(ChessEngine::Piece piece, int startingX, int startingY, bool generatesThreatMap = false);
+        std::vector<Move> GeneratePieceMoves(ChessEngine::Piece piece, int startingX, int startingY, bool generatesThreatMap = false, bool isPinned = false);
 
         MoveGenerator(Position* position)
         {
@@ -78,7 +80,7 @@ namespace ChessEngine
 
         bool blackThreatMap[8][8];
 
-        bool IsCorrectSlidingPiece(Piece piece, int xOffset, int yOffset);
+        bool IsCorrectSlidingPiece(Piece piece, int xOffset, int yOffset); // function checks if the piece can move in a certain direction (given in offsets)
     };
 
 } // ChessEngine

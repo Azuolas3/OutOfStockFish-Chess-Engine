@@ -15,6 +15,9 @@ namespace ChessEngine
         PieceList* pieceList = (color == WHITE) ? board->whitePieces : board->blackPieces;
         std::vector<Square> squareList = pieceList->squares;
 
+        activeKingX = (color == WHITE) ? whiteKingX : blackKingX;
+        activeKingY = (color == WHITE) ? whiteKingY : blackKingY;
+
         if(!generatesThreatMap)
             absolutelyPinnedPieces = GetAbsolutelyPinnedPieces(color);
 
@@ -27,8 +30,10 @@ namespace ChessEngine
             int x = squareList[i].x;
             int y = squareList[i].y;
 
+            bool isPinned = std::find(absolutelyPinnedPieces.begin(), absolutelyPinnedPieces.end(), Square(x, y)) != absolutelyPinnedPieces.end();
+
             std::vector<Move> generatedMoves;
-            generatedMoves = GeneratePieceMoves(board->pieces[x][y], x, y, generatesThreatMap);
+            generatedMoves = GeneratePieceMoves(board->pieces[x][y], x, y, generatesThreatMap, isPinned);
             allGeneratedMoves = plMoveGenerator->CombineVectors(allGeneratedMoves, generatedMoves);
         }
 
@@ -130,7 +135,7 @@ namespace ChessEngine
     }
 
 
-    std::vector<Move> MoveGenerator::GeneratePieceMoves(ChessEngine::Piece piece, int startingX, int startingY, bool generatesThreatMap)
+    std::vector<Move> MoveGenerator::GeneratePieceMoves(ChessEngine::Piece piece, int startingX, int startingY, bool generatesThreatMap, bool isPinned)
     {
         PieceType pieceType = GetType(piece);
         std::vector<Move> generatedMoves;
@@ -170,6 +175,11 @@ namespace ChessEngine
                 additionalMoves = GenerateCastlingMoves(startingX, startingY);
                 generatedMoves = plMoveGenerator->CombineVectors(generatedMoves, additionalMoves);
                 break;
+        }
+
+        if(isPinned)
+        {
+            EraseIllegalPinnedMoves(generatedMoves, Square(startingX, startingY));
         }
 
         return generatedMoves;
@@ -371,10 +381,28 @@ namespace ChessEngine
         }
     }
 
-//    void MoveGenerator::EraseIllegalPinnedPieceMoves(std::vector<Move> &moveList)
-//    {
-//
-//    }
+    void MoveGenerator::EraseIllegalPinnedMoves(std::vector<Move> &moveList, Square pinnedPiece)
+    {
+        Square direction = Square(pinnedPiece.x - activeKingX, pinnedPiece.y - activeKingY);
+        direction = NormalizeVector(direction);
+
+        bool pinnedRay[8][8];
+        memset(pinnedRay, false, sizeof(bool) * 8 * 8);
+        CastRayInDirection(pinnedRay, Square(activeKingX, activeKingY), direction);
+
+        int moveCount = moveList.size();
+        for(int i = 0; i < moveCount;)
+        {
+            Move move = moveList[i];
+            if(!pinnedRay[move.destinationX][move.destinationY])
+            {
+                moveList.erase(moveList.begin() + i);
+                moveCount--;
+            }
+            else
+                i++;
+        }
+    }
 
     void MoveGenerator::UpdateCaptureCheckMap(std::pair<Square, Square> attackerPair)
     {
@@ -492,6 +520,5 @@ namespace ChessEngine
 
         return false;
     }
-
 
 } // ChessEngine
