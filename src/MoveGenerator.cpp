@@ -9,10 +9,19 @@ namespace ChessEngine
     std::vector<Move> MoveGenerator::GenerateAllMoves(Color color, bool generatesThreatMap)
     {
         std::vector<Move> allGeneratedMoves;
+        std::vector<Square> absolutelyPinnedPieces;
+        //absolutelyPinnedPieces[1];
 
         PieceList* pieceList = (color == WHITE) ? board->whitePieces : board->blackPieces;
         std::vector<int> xList = pieceList->squaresX;
         std::vector<int> yList = pieceList->squaresY;
+
+        if(!generatesThreatMap)
+            absolutelyPinnedPieces = GetAbsolutelyPinnedPieces(color);
+
+        std::cout << absolutelyPinnedPieces.size() << " " << position->activePlayerColor <<  '\n';
+        if(absolutelyPinnedPieces.size() != 0)
+            std::cout << absolutelyPinnedPieces[0].x << " " <<  absolutelyPinnedPieces[0].y << '\n';
 
         for(int i = 0; i < pieceList->squaresX.size(); i++)
         {
@@ -43,6 +52,7 @@ namespace ChessEngine
 
         FindKingPosition(activePlayerColor);
 
+        //if active player is in check,
         if(IsInCheck())
         {
             std::pair<Square, Square> attackerPair;
@@ -66,7 +76,7 @@ namespace ChessEngine
             GetCheckRayMap();
             UpdateCaptureCheckMap(attackerPair);
 
-
+            // Only calculate king moves if its a double check since its impossible for any other piece to have a legal move
             if(attackerCount == 1)
             {
                 return GenerateAllMoves(activePlayerColor);
@@ -244,7 +254,7 @@ namespace ChessEngine
         std::pair<Square, Square> attackerPair = GetSquareAttackers(kingX, kingY, attackerCount);
         std::cout << attackerPair.first.x << " " << attackerPair.first.y << " " << attackerPair.second.x << " " << attackerPair.second.y << " " << attackerCount << std::endl;
 
-        if(attackerCount > 0 && IsSlidingPiece(board->pieces[attackerPair.first.x][attackerPair.first.y]))
+        if(attackerCount > 0 && IsSlidingPiece(board->pieces[attackerPair.first.x][attackerPair.first.y])) // probably a bug here - should cast for both pieces(attackers)
             CastRayToSquare(std::ref(checkRayMap), Square(kingX, kingY), attackerPair.first);
     }
 
@@ -344,7 +354,7 @@ namespace ChessEngine
             Move move = moveList[i];
             if(!captureCheckMap[move.destinationX][move.destinationY] && !checkRayMap[move.destinationX][move.destinationY])
             {
-                if(isMoveEnPassant(move)) // cover for edge case where move square doesnt coincide with capture square - en passant
+                if(isMoveEnPassant(move)) // cover for edge case where move square doesn't coincide with capture square - en passant
                 {
                     int offset = (position->activePlayerColor == WHITE) ? -1 : 1;
                     if(captureCheckMap[move.destinationX][move.destinationY + offset])
@@ -413,38 +423,54 @@ namespace ChessEngine
         }
     }
 
-    std::vector<Square> MoveGenerator::GetAbsolutelyPinnedPieces()
+    std::vector<Square> MoveGenerator::GetAbsolutelyPinnedPieces(Color color)
     {
+        int kingX = (color == WHITE) ? whiteKingX : blackKingX;
+        int kingY = (color == WHITE) ? whiteKingY : blackKingY;
+
         std::vector<Square> pinnedPieces;
 
-        for(int currentDir = 0; currentDir < 9; currentDir++)
+        for(int currentDir = 0; currentDir < 8; currentDir++)
         {
-            Square firstPiece;
-            Square pinnerPiece;
+            Square pinnedPiece{};
 
-            for(int x = activeKingX + xDirOffset[currentDir], y = activeKingY + yDirOffset[currentDir]; ;x += xDirOffset[currentDir], y += yDirOffset[currentDir])
+            for(int x = kingX + xDirOffset[currentDir], y = kingY + yDirOffset[currentDir]; ;x += xDirOffset[currentDir], y += yDirOffset[currentDir])
             {
-                if(!IsInBounds(activeKingX, activeKingY))
+                if(!IsInBounds(x, y))
                     break;
 
                 if(board->pieces[x][y] != EMPTY)
                 {
                     if(GetColor(board->pieces[x][y]) == position->activePlayerColor)
                     {
-                        break;
-                    }
-                    else
-                    {
-                        firstPiece = Square(x, y);
+                        pinnedPiece = Square(x, y);
 
                         x += xDirOffset[currentDir];
                         y += yDirOffset[currentDir];
 
-                        bool haveFoundPinner;
-                        while(!haveFoundPinner || !IsInBounds(x, y))
+                        bool haveFoundPinner = false;
+                        while(!haveFoundPinner && IsInBounds(x, y))
                         {
-                            //if(board->pieces[x][y] != EMPTY && )
+                            if(board->pieces[x][y] != EMPTY)
+                            {
+                                if(GetColor(board->pieces[x][y]) != position->activePlayerColor && IsCorrectSlidingPiece(board->pieces[x][y], xDirOffset[currentDir], yDirOffset[currentDir]))
+                                {
+                                    //pinnerPiece = Square(x, y);
+                                    haveFoundPinner = true;
+                                    pinnedPieces.push_back(pinnedPiece);
+                                }
+                                else
+                                    break;
+                            }
+
+                            x += xDirOffset[currentDir];
+                            y += yDirOffset[currentDir];
                         }
+                        break;
+                    }
+                    else
+                    {
+                        break;
                     }
                 }
             }
@@ -452,5 +478,16 @@ namespace ChessEngine
 
         return pinnedPieces;
     }
+
+    bool MoveGenerator::IsCorrectSlidingPiece(Piece piece, int xOffset, int yOffset) // function for checking if the sliding piece can move in given direction (given in offset)
+    {
+        if((xOffset == 0 || yOffset == 0) && IsRookOrQueen(piece))
+            return true;
+        if((xOffset != 0 && yOffset != 0) && IsBishopOrQueen(piece))
+            return true;
+
+        return false;
+    }
+
 
 } // ChessEngine

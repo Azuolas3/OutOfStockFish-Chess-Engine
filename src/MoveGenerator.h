@@ -8,6 +8,7 @@
 #include "PseudoLegalMoveGenerator.h"
 #include "LegalityTester.h"
 #include <algorithm>
+#include <iostream>
 
 namespace ChessEngine
 {
@@ -30,7 +31,7 @@ namespace ChessEngine
         void FindKingPosition(Color color);
 
         std::pair<Square, Square> GetSquareAttackers(int x, int y, int &attackerCount);
-        std::vector<Square> GetAbsolutelyPinnedPieces();
+        std::vector<Square> GetAbsolutelyPinnedPieces(Color color);
 
         void EraseIllegalMoves(std::vector<Move>& moveList); // Erases illegal moves for every piece except king
 
@@ -70,12 +71,14 @@ namespace ChessEngine
         void GetCheckRayMap();
         void UpdateCaptureCheckMap(std::pair<Square, Square> attackerPair);
 
-        bool checkRayMap[8][8];
-        bool captureCheckMap[8][8];
+        bool checkRayMap[8][8]; // map for squares which are in between the checked king and the sliding piece checking it (or the multiple ones)
+        bool captureCheckMap[8][8]; // map for pieces checking the king
 
         bool IsInCheck();
 
         bool blackThreatMap[8][8];
+
+        bool IsCorrectSlidingPiece(Piece piece, int xOffset, int yOffset);
     };
 
 } // ChessEngine

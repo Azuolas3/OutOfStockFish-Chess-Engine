@@ -16,7 +16,7 @@ int main() {
     Piece test[8][8] = { EMPTY };
     FenParser fenParser;
 
-    Position* position = fenParser.loadFen(fenParser.startingFenString);
+    Position* position = fenParser.loadFen("rnbqkbnr/1ppppppp/p7/7Q/4P3/8/PPPP1PPP/RNB1KBNR b KQkq - 1 2");
     ChessBoard* board = position->board;
     MoveGenerator* moveGenerator = new MoveGenerator(position);
 
@@ -46,7 +46,7 @@ int main() {
 
         //generatedMoves = moveGenerator->GeneratePieceMoves(board->pieces[startX][startY], startX, startY);
         generatedMoves = moveGenerator->GenerateAllMoves();
-        cout << position->enPassantSquareX <<  " " << position->enPassantSquareY << endl;
+        //cout << position->enPassantSquareX <<  " " << position->enPassantSquareY << endl;
 
         Move pseudoLegalMove;
         if(moveGenerator->plMoveGenerator->doesContainMove(generatedMoves, Square(startX, startY), Square(endX, endY), &pseudoLegalMove))
@@ -64,6 +64,7 @@ int main() {
             moveGenerator->InitThreatMaps();
 
             board->PrintBoard();
+            cout << "\n MOVED SUCCESSFULLY \n";
         }
 
     }
