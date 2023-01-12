@@ -38,18 +38,18 @@ void ChessBoard::PrintBoard()
     }
 }
 
-void ChessBoard::MovePiece(int fromX, int fromY, int toX, int toY)
+void ChessBoard::MovePiece(Move move)
 {
     //std::cout << this << std::endl << fromX << " " << fromY << "   " << toX << " " << toY << std::endl;
-    PieceList* pieceList = (GetColor(pieces[fromX][fromY]) == WHITE) ? whitePieces : blackPieces;
-    PieceList* oppositePieceList = (GetColor(pieces[fromX][fromY]) == WHITE) ? blackPieces : whitePieces;
+    PieceList* pieceList = (GetColor(pieces[move.startingX][move.startingY]) == WHITE) ? whitePieces : blackPieces;
+    PieceList* oppositePieceList = (GetColor(pieces[move.startingX][move.startingY]) == WHITE) ? blackPieces : whitePieces;
 
-    pieceList->MovePiece(fromX, fromY, toX, toY);
-    if(pieces[toX][toY] != EMPTY)
-        oppositePieceList->RemovePiece(toX, toY);
+    pieceList->MovePiece(move.startingX, move.startingY, move.destinationX, move.destinationY);
+    if(pieces[move.destinationX][move.destinationY] != EMPTY)
+        oppositePieceList->RemovePiece(move.destinationX, move.destinationY);
 
-    pieces[toX][toY] = pieces[fromX][fromY];
-    pieces[fromX][fromY] = EMPTY;
+    pieces[move.destinationX][move.destinationY] = pieces[move.startingX][move.startingY];
+    pieces[move.startingX][move.startingY] = EMPTY;
 
 }
 

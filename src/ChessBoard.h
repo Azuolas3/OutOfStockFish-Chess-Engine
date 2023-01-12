@@ -11,6 +11,7 @@
 #include <map>
 #include <vector>
 #include "PieceList.h"
+#include "Move.h"
 
 namespace ChessEngine
 {
@@ -24,7 +25,7 @@ namespace ChessEngine
         PieceList* blackPieces = new PieceList();
 
         void RemovePiece(int x, int y);
-        void MovePiece(int fromX, int fromY, int toX, int toY);
+        void MovePiece(Move move);
         void PrintBoard();
     };
 }

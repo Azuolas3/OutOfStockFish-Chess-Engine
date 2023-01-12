@@ -41,17 +41,21 @@ int main() {
         int endX = letterToFile(moveInput[2]);
         int endY = intToRank(moveInput[3]);
 
+        Move currentMove = Move(startX, startY, endX, endY);
+
         vector<Move> generatedMoves;
         vector<Move> additionalMoves;
 
+
         //generatedMoves = moveGenerator->GeneratePieceMoves(board->pieces[startX][startY], startX, startY);
         generatedMoves = moveGenerator->GenerateAllMoves();
+        cout << "number of moves   " << generatedMoves.size() << '\n';
         //cout << position->enPassantSquareX <<  " " << position->enPassantSquareY << endl;
 
         Move pseudoLegalMove;
         if(moveGenerator->plMoveGenerator->doesContainMove(generatedMoves, Square(startX, startY), Square(endX, endY), &pseudoLegalMove))
         {
-            board->MovePiece(startX, startY, endX, endY);
+            board->MovePiece(currentMove);
 
             position->enPassantSquareX = -1;
             position->enPassantSquareY = -1;

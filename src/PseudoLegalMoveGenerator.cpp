@@ -234,7 +234,9 @@ std::vector<Move> PseudoLegalMoveGenerator::GenerateCastlingMoves(int startingX,
     if(IsKingsideEmpty(color, board.pieces) && position->HasCastlingRights(color, KINGSIDE) && GetType(board.pieces[7][kingRank]) == ROOK) // checking only for type because color doesnt matter - all castling conditions cant be met if the rook is of opposite color.
     {
         Move move(startingX, startingY, startingX + 2, startingY);
-        move.additionalAction = std::bind(&ChessBoard::MovePiece, std::ref(position->board), 7, kingRank, 5, kingRank);
+        Move rookMove(7, kingRank, 5, kingRank);
+
+        move.additionalAction = std::bind(&ChessBoard::MovePiece, std::ref(position->board), rookMove);
         pseudoLegalMoves.push_back(move);
     }
 
@@ -242,7 +244,9 @@ std::vector<Move> PseudoLegalMoveGenerator::GenerateCastlingMoves(int startingX,
     if(IsQueensideEmpty(color, board.pieces) && position->HasCastlingRights(color, QUEENSIDE) && GetType(board.pieces[0][kingRank]) == ROOK)
     {
         Move move(startingX, startingY, startingX - 2, startingY);
-        move.additionalAction = std::bind(&ChessBoard::MovePiece, std::ref(position->board), 0, kingRank, 3, kingRank);
+        Move rookMove(0, kingRank, 3, kingRank);
+
+        move.additionalAction = std::bind(&ChessBoard::MovePiece, std::ref(position->board), rookMove);
         pseudoLegalMoves.push_back(move);
     }
 
@@ -265,7 +269,7 @@ vector<Move> PseudoLegalMoveGenerator::GeneratePawnMoves(int startingX, int star
             Move move(startingX, startingY, startingX, startingY + offset);
             pseudoLegalMoves.push_back(move);
 
-            if(startingY == startingRank)
+            if(startingY == startingRank && board.pieces[startingX][startingY + (offset * 2)] == EMPTY)
             {
                 offset *= 2;
                 Move move(startingX, startingY, startingX, startingY + offset);

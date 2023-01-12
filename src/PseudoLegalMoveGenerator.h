@@ -7,28 +7,10 @@
 
 #include <iostream>
 #include <vector>
-#include <functional>
 #include "ChessBoard.h"
 #include "Position.h"
 #include "BoardUtility.h"
-
-struct Move
-{
-    Move()
-    = default;
-
-    Move(int fromX, int fromY, int toX, int toY)
-    {
-        startingX = fromX;
-        startingY = fromY;
-        destinationX = toX;
-        destinationY = toY;
-    }
-
-    int startingX, startingY;
-    int destinationX, destinationY;
-    std::function<void()> additionalAction = nullptr;
-};
+#include "Move.h"
 
 class PseudoLegalMoveGenerator
 {
