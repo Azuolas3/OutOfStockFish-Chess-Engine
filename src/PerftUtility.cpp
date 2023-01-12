@@ -6,7 +6,7 @@
 
 namespace ChessEngine
 {
-    u64 Perft(int depth, Position position, MoveGenerator moveGenerator)
+    u64 Perft(int depth, Position *position, MoveGenerator *moveGenerator)
     {
         std::vector<Move> moveList;
         int moveCount;
@@ -15,12 +15,17 @@ namespace ChessEngine
         if(depth == 0)
             return 1ULL;
 
-        moveList = moveGenerator.GenerateAllMoves();
+        moveList = moveGenerator->GenerateAllMoves();
         moveCount = moveList.size();
 
         for(int i = 0; i < moveCount; i++)
         {
-            position.board->MovePiece(moveList[i]);
+            MovePositionInfo moveInfo = position->GenerateMoveInfo(moveList[i]);
+            position->board->MovePiece(moveList[i]);
+            nodes += Perft(depth - 1, position, moveGenerator);
+            position->UndoMove(moveInfo);
         }
+
+        return nodes;
     }
 }

@@ -12,7 +12,7 @@ namespace ChessEngine
 {
     typedef unsigned long long u64;
 
-    u64 Perft(int depth, Position position, MoveGenerator moveGenerator); // generates and adds up all possible generated moves to a certain depth
+    u64 Perft(int depth, Position *position, MoveGenerator *moveGenerator); // generates and adds up all possible generated moves to a certain depth
 }
 
 

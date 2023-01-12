@@ -40,7 +40,6 @@ void ChessBoard::PrintBoard()
 
 void ChessBoard::MovePiece(Move move)
 {
-    //std::cout << this << std::endl << fromX << " " << fromY << "   " << toX << " " << toY << std::endl;
     PieceList* pieceList = (GetColor(pieces[move.startingX][move.startingY]) == WHITE) ? whitePieces : blackPieces;
     PieceList* oppositePieceList = (GetColor(pieces[move.startingX][move.startingY]) == WHITE) ? blackPieces : whitePieces;
 
@@ -53,7 +52,19 @@ void ChessBoard::MovePiece(Move move)
 
 }
 
+void ChessBoard::AddPiece(Piece piece, Square square)
+{
+    pieces[square.x][square.y] = piece;
+
+    PieceList* pieceList = (GetColor(piece) == WHITE) ? whitePieces : blackPieces;
+    pieceList->AddPiece(square.x, square.y);
+}
+
 void ChessBoard::RemovePiece(int x, int y)
 {
+    Color color = GetColor(pieces[x][y]);
+    PieceList* pieceList = (color == WHITE) ? whitePieces : blackPieces;
+
+    pieceList->RemovePiece(x, y);
     pieces[x][y] = EMPTY;
 }

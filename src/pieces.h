@@ -12,6 +12,11 @@ namespace ChessEngine
         BLACK = 1, WHITE
     };
 
+    enum CastlingRights
+    {
+        NONE, KINGSIDE, QUEENSIDE, BOTH
+    };
+
     const int pieceColorBitMask = 0b00011;
 
     enum PieceType

@@ -435,9 +435,9 @@ namespace ChessEngine
 
         //Kingside generation
         if(IsKingsideEmpty(color, board->pieces) && position->HasCastlingRights(color, KINGSIDE) && GetType(board->pieces[7][kingRank]) == ROOK
-        && !activeThreatMap[5][kingRank] && !activeThreatMap[6][kingRank]) // checking only for type because color doesnt matter - all castling conditions cant be met if the rook is of opposite color.
+        && !activeThreatMap[5][kingRank] && !activeThreatMap[6][kingRank]) // checking only for type because color doesn't matter - all castling conditions cant be met if the rook is of opposite color.
         {
-            Move move(startingX, startingY, startingX + 2, startingY);
+            Move move(startingX, startingY, startingX + 2, startingY, CASTLING);
             Move rookMove(7, kingRank, 5, kingRank);
 
             move.additionalAction = std::bind(&ChessBoard::MovePiece, std::ref(position->board), rookMove);
@@ -448,7 +448,7 @@ namespace ChessEngine
         if(IsQueensideEmpty(color, board->pieces) && position->HasCastlingRights(color, QUEENSIDE) && GetType(board->pieces[0][kingRank]) == ROOK
         && !activeThreatMap[3][kingRank] && !activeThreatMap[2][kingRank])
         {
-            Move move(startingX, startingY, startingX - 2, startingY);
+            Move move(startingX, startingY, startingX - 2, startingY, CASTLING);
             Move rookMove(0, kingRank, 3, kingRank);
 
             move.additionalAction = std::bind(&ChessBoard::MovePiece, std::ref(position->board), rookMove);

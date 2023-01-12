@@ -1,10 +1,12 @@
 #include <iostream>
 #include <vector>
 #include "pieces.h"
+#include "Move.h"
 #include "FenParser.h"
 #include "MoveGenerator.h"
 #include "BoardUtility.h"
 #include "AlgebraicNotationUtility.h"
+#include "PerftUtility.h"
 
 using namespace ChessEngine;
 using std::cout; using std::cin; using std::endl;
@@ -13,15 +15,19 @@ using std::string; using std::vector;
 void Print2darray(bool array[8][8]);
 
 int main() {
-    Piece test[8][8] = { EMPTY };
     FenParser fenParser;
+    vector<MovePositionInfo> moveList;
+
+    bool isPlaying = true;
 
     Position* position = fenParser.loadFen("r1bqkbnr/ppp1pppp/2q5/8/B7/4P3/PPPP1PPP/RNBQK1NR w KQkq - 1 2");
     ChessBoard* board = position->board;
     MoveGenerator* moveGenerator = new MoveGenerator(position);
 
+
     board->PrintBoard();
-    while(true)
+    //cout << Perft(1, position, moveGenerator);
+    while(isPlaying)
     {
         //moveGenerator->GenerateAllMoves(WHITE);
         //moveGenerator->GetCheckRayMap();
@@ -69,6 +75,7 @@ int main() {
 
             board->PrintBoard();
             cout << "\n MOVED SUCCESSFULLY \n";
+            //cout << "\n" << position->board->whitePieces->count << "\n";
         }
 
     }

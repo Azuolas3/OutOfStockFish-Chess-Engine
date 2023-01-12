@@ -11,12 +11,6 @@
 
 namespace ChessEngine
 {
-    enum CastlingRights
-    {
-        NONE, KINGSIDE, QUEENSIDE, BOTH
-    };
-
-
     class Position
     {
     public:
@@ -31,8 +25,11 @@ namespace ChessEngine
         int enPassantSquareX = -1; // -1 to represent no square
         int enPassantSquareY = -1;
 
+        void UndoMove(MovePositionInfo move);
+
         void RemoveCastlingRights(Color color, CastlingRights side);
         bool HasCastlingRights(Color color, CastlingRights side);
+        MovePositionInfo GenerateMoveInfo(Move move);
 
         void SetEnPassantSquare(int x, int y);
     };

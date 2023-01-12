@@ -25,6 +25,7 @@ namespace ChessEngine
         PieceList* blackPieces = new PieceList();
 
         void RemovePiece(int x, int y);
+        void AddPiece(Piece piece, Square square);
         void MovePiece(Move move);
         void PrintBoard();
     };
