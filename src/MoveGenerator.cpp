@@ -240,8 +240,8 @@ namespace ChessEngine
 
     void MoveGenerator::GetCheckRayMap()
     {
-        int kingX = whiteKingX;
-        int kingY = whiteKingY;
+        int kingX;
+        int kingY;
 
         memset(checkRayMap, false, sizeof(bool) * 8 * 8);
 
@@ -255,9 +255,6 @@ namespace ChessEngine
             kingX = blackKingX;
             kingY = blackKingY;
         }
-
-        kingX = whiteKingX;
-        kingY = whiteKingY;
 
         int attackerCount;
         std::pair<Square, Square> attackerPair = GetSquareAttackers(kingX, kingY, attackerCount);
@@ -441,7 +438,9 @@ namespace ChessEngine
         && !activeThreatMap[5][kingRank] && !activeThreatMap[6][kingRank]) // checking only for type because color doesnt matter - all castling conditions cant be met if the rook is of opposite color.
         {
             Move move(startingX, startingY, startingX + 2, startingY);
-            move.additionalAction = std::bind(&ChessBoard::MovePiece, std::ref(position->board), 7, kingRank, 5, kingRank);
+            Move rookMove(7, kingRank, 5, kingRank);
+
+            move.additionalAction = std::bind(&ChessBoard::MovePiece, std::ref(position->board), rookMove);
             pseudoLegalMoves.push_back(move);
         }
 
@@ -450,7 +449,9 @@ namespace ChessEngine
         && !activeThreatMap[3][kingRank] && !activeThreatMap[2][kingRank])
         {
             Move move(startingX, startingY, startingX - 2, startingY);
-            move.additionalAction = std::bind(&ChessBoard::MovePiece, std::ref(position->board), 0, kingRank, 3, kingRank);
+            Move rookMove(0, kingRank, 3, kingRank);
+
+            move.additionalAction = std::bind(&ChessBoard::MovePiece, std::ref(position->board), rookMove);
             pseudoLegalMoves.push_back(move);
         }
     }
