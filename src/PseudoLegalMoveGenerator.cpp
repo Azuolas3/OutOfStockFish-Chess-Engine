@@ -260,6 +260,7 @@ vector<Move> PseudoLegalMoveGenerator::GeneratePawnMoves(int startingX, int star
 
     int offset = (GetColor(board.pieces[startingX][startingY]) == ChessEngine::WHITE) ? 1 : -1;
     int startingRank = (GetColor(board.pieces[startingX][startingY]) == ChessEngine::WHITE) ? 1 : 6;
+    int promotionRank = (GetColor(board.pieces[startingX][startingY]) == ChessEngine::WHITE) ? 7 : 0;
     Piece possibleSquare = board.pieces[startingX][startingY + offset];
 
     if(!generatesOnlyCaptures)
@@ -267,7 +268,6 @@ vector<Move> PseudoLegalMoveGenerator::GeneratePawnMoves(int startingX, int star
         if(possibleSquare == EMPTY)
         {
             Move move(startingX, startingY, startingX, startingY + offset);
-            pseudoLegalMoves.push_back(move);
 
             if(startingY == startingRank && board.pieces[startingX][startingY + (offset * 2)] == EMPTY)
             {
@@ -276,6 +276,19 @@ vector<Move> PseudoLegalMoveGenerator::GeneratePawnMoves(int startingX, int star
                 move.additionalAction = std::bind(&Position::SetEnPassantSquare, std::ref(position), startingX, startingY + (offset/2));
                 pseudoLegalMoves.push_back(move);
                 offset /= 2;
+            }
+
+            if(move.destinationY == promotionRank)
+            {
+                for(int i = B_PROMOTION; i <= Q_PROMOTION; i *= 2)
+                {
+                    move.moveType = static_cast<MoveType>(i);
+                    pseudoLegalMoves.push_back(move);
+                }
+            }
+            else
+            {
+                pseudoLegalMoves.push_back(move);
             }
         }
     }

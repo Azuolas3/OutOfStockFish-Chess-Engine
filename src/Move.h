@@ -15,7 +15,10 @@ enum MoveType // flags
     CAPTURE = 1,
     EN_PASSANT = 2,
     CASTLING = 4,
-    PROMOTION = 8
+    B_PROMOTION = 8,
+    N_PROMOTION = 16,
+    R_PROMOTION = 32,
+    Q_PROMOTION = 64
 };
 
 inline bool HasFlag(MoveType value, MoveType flagToCheck)
