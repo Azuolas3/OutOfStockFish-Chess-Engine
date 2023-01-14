@@ -23,6 +23,7 @@ namespace ChessEngine
             MovePositionInfo moveInfo = position->GenerateMoveInfo(moveList[i]);
             position->board->MovePiece(moveList[i]);
             nodes += Perft(depth - 1, position, moveGenerator);
+            std::cout << "NODES: " << nodes << "  MOVE: " << MoveToString(moveList[i]) << " \n";
             position->UndoMove(moveInfo);
         }
 

@@ -6,6 +6,8 @@
 #define CHESS_ENGINE_ALGEBRAICNOTATIONUTILITY_H
 
 #include <map>
+#include <string>
+#include "Move.h"
 
 inline std::map<char, int> letterToFileMap =
 {
@@ -20,7 +22,9 @@ inline std::map<char, int> letterToFileMap =
 };
 
 int letterToFile(char letter);
+char IntToFile(int integer);
 int intToRank(int num);
+std::string MoveToString(Move move);
 
 
 

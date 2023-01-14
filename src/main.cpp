@@ -19,15 +19,15 @@ int main() {
     FenParser fenParser;
     vector<MovePositionInfo> moveList;
 
-    bool isPlaying = true;
+    bool isPlaying = false;
 
-    Position* position = fenParser.loadFen("rnb1kbnr/pp4pp/3P4/8/8/8/PPPP1PPP/RNBQKBNR w KQkq - 0 1");
+    Position* position = fenParser.loadFen(fenParser.startingFenString);
     ChessBoard* board = position->board;
     MoveGenerator* moveGenerator = new MoveGenerator(position);
 
 
     board->PrintBoard();
-    //cout << Perft(1, position, moveGenerator);
+    cout << Perft(2, position, moveGenerator);
     while(isPlaying)
     {
         //moveGenerator->GenerateAllMoves(WHITE);

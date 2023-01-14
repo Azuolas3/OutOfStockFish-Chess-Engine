@@ -5,6 +5,8 @@
 #ifndef CHESS_ENGINE_PERFTUTILITY_H
 #define CHESS_ENGINE_PERFTUTILITY_H
 
+#include <iostream>
+#include "AlgebraicNotationUtility.h"
 #include "MoveGenerator.h"
 #include "Position.h"
 
