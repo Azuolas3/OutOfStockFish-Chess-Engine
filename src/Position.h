@@ -25,6 +25,7 @@ namespace ChessEngine
         int enPassantSquareX = -1; // -1 to represent no square
         int enPassantSquareY = -1;
 
+        void MakeMove(Move move);
         void UndoMove(MovePositionInfo move);
 
         void RemoveCastlingRights(Color color, CastlingRights side);

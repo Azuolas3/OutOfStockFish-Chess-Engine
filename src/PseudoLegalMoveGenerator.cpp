@@ -281,6 +281,7 @@ vector<Move> PseudoLegalMoveGenerator::GeneratePawnMoves(int startingX, int star
     }
 
 
+    //capturing pieces
     if(IsInBounds(startingX - 1, startingY + offset))
     {
         if((board.pieces[startingX - 1][startingY + offset] && !IsSameColor(startingX, startingY, startingX - 1, startingY + offset)) || generatesOnlyCaptures)

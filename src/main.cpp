@@ -37,6 +37,13 @@ int main() {
         cin >> moveInput;
         if(moveInput == "STOP")
             break;
+        else if(moveInput == "UNMAKE")
+        {
+            position->UndoMove(moveList.back());
+            moveGenerator->InitThreatMaps();
+            board->PrintBoard();
+            continue;
+        }
 
 
         cout<<"MOVE START :" << position->activePlayerColor << endl;
@@ -61,16 +68,8 @@ int main() {
         Move pseudoLegalMove;
         if(moveGenerator->plMoveGenerator->doesContainMove(generatedMoves, Square(startX, startY), Square(endX, endY), &pseudoLegalMove))
         {
-            board->MovePiece(currentMove);
-
-            position->enPassantSquareX = -1;
-            position->enPassantSquareY = -1;
-
-            if(pseudoLegalMove.additionalAction != nullptr)
-                pseudoLegalMove.additionalAction();
-
-            position->activePlayerColor = (position->activePlayerColor == WHITE) ? BLACK : WHITE;
-
+            moveList.push_back(position->GenerateMoveInfo(pseudoLegalMove)); // add new move to list
+            position->MakeMove(pseudoLegalMove);
             moveGenerator->InitThreatMaps();
 
             board->PrintBoard();

@@ -9,11 +9,24 @@
 #include "pieces.h"
 #include "BoardUtility.h"
 
-enum MoveType
+enum MoveType // flags
 {
-    QUIET, CAPTURE, EN_PASSANT,
-    CASTLING, PROMOTION
+    QUIET = 0,
+    CAPTURE = 1,
+    EN_PASSANT = 2,
+    CASTLING = 4,
+    PROMOTION = 8
 };
+
+inline bool HasFlag(MoveType value, MoveType flagToCheck)
+{
+    return (value & flagToCheck) != 0;
+}
+
+inline MoveType operator|(MoveType a, MoveType b)
+{
+    return static_cast<MoveType>(static_cast<int>(a) | static_cast<int>(b));
+}
 
 struct Move
 {
@@ -53,8 +66,8 @@ struct MovePositionInfo // Larger struct which hols more information about a mov
 
     Move move;
     ChessEngine::Piece capturedPiece;
-    ChessEngine::Square capturedPieceSquare;
-    ChessEngine::Square enPassantSquare;
+    ChessEngine::Square capturedPieceSquare{};
+    ChessEngine::Square enPassantSquare{};
     ChessEngine::CastlingRights whiteCastlingRights;
     ChessEngine::CastlingRights blackCastlingRights;
 };

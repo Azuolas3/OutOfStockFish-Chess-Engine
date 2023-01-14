@@ -26,10 +26,26 @@ bool Position::HasCastlingRights(Color color, CastlingRights side)
     }
 }
 
+void Position::MakeMove(Move move)
+{
+    board->MovePiece(move);
+
+    enPassantSquareX = -1;
+    enPassantSquareY = -1;
+
+    if(move.additionalAction != nullptr)
+        move.additionalAction();
+
+    activePlayerColor = (activePlayerColor == WHITE) ? BLACK : WHITE;
+}
+
 void Position::UndoMove(MovePositionInfo move)
 {
-    board->MovePiece(InverseMove(move.move));
-    board->AddPiece(move.capturedPiece, move.capturedPieceSquare);
+    Move smallMove = move.move;
+
+    board->MovePiece(InverseMove(smallMove));
+
+    activePlayerColor = (activePlayerColor == WHITE) ? BLACK : WHITE;
 
     whiteCastlingRights = move.whiteCastlingRights;
     blackCastlingRights = move.blackCastlingRights;
@@ -37,15 +53,28 @@ void Position::UndoMove(MovePositionInfo move)
     enPassantSquareX = move.enPassantSquare.x;
     enPassantSquareY = move.enPassantSquare.y;
 
-    if(move.move.moveType == CASTLING)
+    if(HasFlag(smallMove.moveType, CAPTURE))
     {
-        int rookFromX = (move.move.startingX - move.move.destinationX > 0) ? 3 : 5; // essentially checking whether it's a queenside or kingside
-        int rookToX = (move.move.startingX - move.move.destinationX > 0) ? 0 : 7;
+        board->AddPiece(move.capturedPiece, Square(smallMove.destinationX, smallMove.destinationY));
+    }
+    else if(HasFlag(move.move.moveType, CASTLING))
+    {
+        int rookFromX = (smallMove.startingX - smallMove.destinationX > 0) ? 3 : 5; // essentially checking whether it's a queenside or kingside castle
+        int rookToX = (smallMove.startingX - smallMove.destinationX > 0) ? 0 : 7;
 
-        int kingRank = move.move.startingY; //
+        int kingRank = smallMove.startingY;
 
 
         board->MovePiece(Move(rookFromX, kingRank, rookToX, kingRank));
+    }
+    else if (HasFlag(smallMove.moveType, EN_PASSANT))
+    {
+        Piece piece = (activePlayerColor == WHITE) ? B_PAWN : W_PAWN;
+
+        int pawnY = (activePlayerColor == WHITE) ? 3 : 4;
+        int pawnX = smallMove.destinationX;
+
+        board->AddPiece(piece, Square(pawnX, pawnY));
     }
 }
 
@@ -53,6 +82,16 @@ MovePositionInfo Position::GenerateMoveInfo(Move move)
 {
     MovePositionInfo moveInfo;
     moveInfo.move = move;
+
+    if(board->pieces[move.destinationX][move.destinationY] != EMPTY)
+    {
+        moveInfo.capturedPiece = board->pieces[move.destinationX][move.destinationY];
+        moveInfo.move.moveType = CAPTURE;
+    }
+
+    moveInfo.enPassantSquare = Square(enPassantSquareX, enPassantSquareY);
+    moveInfo.whiteCastlingRights = whiteCastlingRights;
+    moveInfo.blackCastlingRights = blackCastlingRights;
 
     return moveInfo;
 
