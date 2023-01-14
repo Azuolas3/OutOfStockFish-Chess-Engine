@@ -13,6 +13,7 @@ using std::cout; using std::cin; using std::endl;
 using std::string; using std::vector;
 
 void Print2darray(bool array[8][8]);
+MoveType GetMoveTypeFromChar(char c);
 
 int main() {
     FenParser fenParser;
@@ -20,7 +21,7 @@ int main() {
 
     bool isPlaying = true;
 
-    Position* position = fenParser.loadFen("r1bqkbnr/ppp1pppp/2q5/8/B7/4P3/PPPP1PPP/RNBQK1NR w KQkq - 1 2");
+    Position* position = fenParser.loadFen("rnb1kbnr/pp4pp/3P4/8/8/8/PPPP1PPP/RNBQKBNR w KQkq - 0 1");
     ChessBoard* board = position->board;
     MoveGenerator* moveGenerator = new MoveGenerator(position);
 
@@ -40,7 +41,6 @@ int main() {
         else if(moveInput == "UNMAKE")
         {
             position->UndoMove(moveList.back());
-            moveGenerator->InitThreatMaps();
             board->PrintBoard();
             continue;
         }
@@ -56,6 +56,13 @@ int main() {
 
         Move currentMove = Move(startX, startY, endX, endY);
 
+        if(moveInput.length() >= 6)
+        {
+            char promotionPiece;
+            promotionPiece = moveInput[5];
+            currentMove.moveType = GetMoveTypeFromChar(promotionPiece);
+        }
+
         vector<Move> generatedMoves;
         vector<Move> additionalMoves;
 
@@ -66,11 +73,10 @@ int main() {
         //cout << position->enPassantSquareX <<  " " << position->enPassantSquareY << endl;
 
         Move pseudoLegalMove;
-        if(moveGenerator->plMoveGenerator->doesContainMove(generatedMoves, Square(startX, startY), Square(endX, endY), &pseudoLegalMove))
+        if(moveGenerator->plMoveGenerator->DoesContainMove(generatedMoves, currentMove, &pseudoLegalMove))
         {
             moveList.push_back(position->GenerateMoveInfo(pseudoLegalMove)); // add new move to list
             position->MakeMove(pseudoLegalMove);
-            moveGenerator->InitThreatMaps();
 
             board->PrintBoard();
             cout << "\n MOVED SUCCESSFULLY \n";
@@ -107,3 +113,17 @@ void Print2darray(bool array[8][8])
     }
 }
 
+MoveType GetMoveTypeFromChar(char c)
+{
+    switch(c)
+    {
+        case 'B':
+            return B_PROMOTION;
+        case 'N':
+            return N_PROMOTION;
+        case 'R':
+            return R_PROMOTION;
+        case 'Q':
+            return Q_PROMOTION;
+    }
+}

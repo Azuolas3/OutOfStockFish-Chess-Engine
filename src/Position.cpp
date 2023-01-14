@@ -69,12 +69,18 @@ void Position::UndoMove(MovePositionInfo move)
     }
     else if (HasFlag(smallMove.moveType, EN_PASSANT))
     {
-        Piece piece = (activePlayerColor == WHITE) ? B_PAWN : W_PAWN;
+        Piece piece = (activePlayerColor == WHITE) ? W_PAWN : B_PAWN;
 
         int pawnY = (activePlayerColor == WHITE) ? 3 : 4;
         int pawnX = smallMove.destinationX;
 
         board->AddPiece(piece, Square(pawnX, pawnY));
+    }
+
+    if (IsPromotionType(smallMove.moveType))
+    {
+        Piece piece = (activePlayerColor == WHITE) ? W_PAWN : B_PAWN;
+        board->ReplacePiece(piece, Square(smallMove.startingX, smallMove.startingY));
     }
 }
 
@@ -86,7 +92,7 @@ MovePositionInfo Position::GenerateMoveInfo(Move move)
     if(board->pieces[move.destinationX][move.destinationY] != EMPTY)
     {
         moveInfo.capturedPiece = board->pieces[move.destinationX][move.destinationY];
-        moveInfo.move.moveType = CAPTURE;
+        moveInfo.move.moveType = moveInfo.move.moveType | CAPTURE;
     }
 
     moveInfo.enPassantSquare = Square(enPassantSquareX, enPassantSquareY);

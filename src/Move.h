@@ -26,6 +26,11 @@ inline bool HasFlag(MoveType value, MoveType flagToCheck)
     return (value & flagToCheck) != 0;
 }
 
+inline bool IsPromotionType(MoveType value)
+{
+    return value >= B_PROMOTION;
+}
+
 inline MoveType operator|(MoveType a, MoveType b)
 {
     return static_cast<MoveType>(static_cast<int>(a) | static_cast<int>(b));

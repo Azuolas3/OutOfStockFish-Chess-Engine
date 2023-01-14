@@ -42,6 +42,7 @@ namespace ChessEngine
 
     std::vector<Move> MoveGenerator::GenerateAllMoves()
     {
+        InitThreatMaps();
         Color activePlayerColor = position->activePlayerColor;
 
         if(activePlayerColor == WHITE)

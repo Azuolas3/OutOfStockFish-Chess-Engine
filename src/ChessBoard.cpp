@@ -68,3 +68,11 @@ void ChessBoard::RemovePiece(int x, int y)
     pieceList->RemovePiece(x, y);
     pieces[x][y] = EMPTY;
 }
+
+void ChessBoard::ReplacePiece(Piece piece, Square square)
+{
+    RemovePiece(square.x, square.y);
+    AddPiece(piece, square);
+}
+
+

@@ -39,7 +39,7 @@ public:
     std::vector<Move> GenerateAllMoves(ChessEngine::Color color, bool generatesThreatMap = false);
 
     std::vector<Move> CombineVectors(std::vector<Move> a, std::vector<Move> b);
-    bool doesContainMove(std::vector<Move> generatedMoves, ChessEngine::Square start, ChessEngine::Square end, Move* correctMove);
+    bool DoesContainMove(std::vector<Move> generatedMoves, Move move, Move *correctMove);
 };
 
 

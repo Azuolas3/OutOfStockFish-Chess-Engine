@@ -257,10 +257,11 @@ vector<Move> PseudoLegalMoveGenerator::GeneratePawnMoves(int startingX, int star
 {
     vector<Move> pseudoLegalMoves;
     ChessBoard board = (*position->board);
+    Color pieceColor = GetColor(board.pieces[startingX][startingY]);
 
-    int offset = (GetColor(board.pieces[startingX][startingY]) == ChessEngine::WHITE) ? 1 : -1;
-    int startingRank = (GetColor(board.pieces[startingX][startingY]) == ChessEngine::WHITE) ? 1 : 6;
-    int promotionRank = (GetColor(board.pieces[startingX][startingY]) == ChessEngine::WHITE) ? 7 : 0;
+    int offset = (pieceColor == ChessEngine::WHITE) ? 1 : -1;
+    int startingRank = pieceColor == ChessEngine::WHITE ? 1 : 6;
+    int promotionRank = (pieceColor) == ChessEngine::WHITE ? 7 : 0;
     Piece possibleSquare = board.pieces[startingX][startingY + offset];
 
     if(!generatesOnlyCaptures)
@@ -280,9 +281,13 @@ vector<Move> PseudoLegalMoveGenerator::GeneratePawnMoves(int startingX, int star
 
             if(move.destinationY == promotionRank)
             {
-                for(int i = B_PROMOTION; i <= Q_PROMOTION; i *= 2)
+                for(int promotionType = B_PROMOTION, pieceType = BISHOP; promotionType <= Q_PROMOTION; promotionType *= 2, pieceType += 4)
                 {
-                    move.moveType = static_cast<MoveType>(i);
+                    move.moveType = static_cast<MoveType>(promotionType);
+                    Piece promotedPiece = static_cast<Piece>(pieceColor | pieceType);
+
+                    move.additionalAction = std::bind(&ChessBoard::ReplacePiece, std::ref(position->board), promotedPiece, Square(startingX, startingY + offset));
+
                     pseudoLegalMoves.push_back(move);
                 }
             }
@@ -300,7 +305,23 @@ vector<Move> PseudoLegalMoveGenerator::GeneratePawnMoves(int startingX, int star
         if((board.pieces[startingX - 1][startingY + offset] && !IsSameColor(startingX, startingY, startingX - 1, startingY + offset)) || generatesOnlyCaptures)
         {
             Move move(startingX, startingY, startingX - 1, startingY + offset);
-            pseudoLegalMoves.push_back(move);
+
+            if(move.destinationY == promotionRank)
+            {
+                for(int promotionType = B_PROMOTION, pieceType = BISHOP; promotionType <= Q_PROMOTION; promotionType *= 2, pieceType += 4)
+                {
+                    move.moveType = static_cast<MoveType>(promotionType);
+                    Piece promotedPiece = static_cast<Piece>(pieceColor | pieceType);
+
+                    move.additionalAction = std::bind(&ChessBoard::ReplacePiece, std::ref(position->board), promotedPiece, Square(startingX - 1, startingY + offset));
+
+                    pseudoLegalMoves.push_back(move);
+                }
+            }
+            else
+            {
+                pseudoLegalMoves.push_back(move);
+            }
         }
     }
 
@@ -309,7 +330,22 @@ vector<Move> PseudoLegalMoveGenerator::GeneratePawnMoves(int startingX, int star
         if((board.pieces[startingX + 1][startingY + offset] && !IsSameColor(startingX, startingY, startingX + 1, startingY + offset)) || generatesOnlyCaptures)
         {
             Move move(startingX, startingY, startingX + 1, startingY + offset);
-            pseudoLegalMoves.push_back(move);
+            if(move.destinationY == promotionRank)
+            {
+                for(int promotionType = B_PROMOTION, pieceType = BISHOP; promotionType <= Q_PROMOTION; promotionType *= 2, pieceType += 4)
+                {
+                    move.moveType = static_cast<MoveType>(promotionType);
+                    Piece promotedPiece = static_cast<Piece>(pieceColor | pieceType);
+
+                    move.additionalAction = std::bind(&ChessBoard::ReplacePiece, std::ref(position->board), promotedPiece, Square(startingX + 1, startingY + offset));
+
+                    pseudoLegalMoves.push_back(move);
+                }
+            }
+            else
+            {
+                pseudoLegalMoves.push_back(move);
+            }
         }
     }
 
@@ -394,12 +430,16 @@ std::vector<Move> PseudoLegalMoveGenerator::CombineVectors(std::vector<Move> a, 
     return combinedVector;
 }
 
-bool PseudoLegalMoveGenerator::doesContainMove(std::vector<Move> generatedMoves, Square start, Square end, Move* correctMove)
+bool
+PseudoLegalMoveGenerator::DoesContainMove(std::vector<Move> generatedMoves, Move move, Move *correctMove)
 {
     for(int i = 0; i < generatedMoves.size(); i++)
     {
-        if(generatedMoves[i].destinationX == end.x && generatedMoves[i].destinationY == end.y && generatedMoves[i].startingX == start.x && generatedMoves[i].startingY == start.y)
+        if(generatedMoves[i].destinationX == move.destinationX && generatedMoves[i].destinationY == move.destinationY && generatedMoves[i].startingX == move.startingX && generatedMoves[i].startingY == move.startingY)
         {
+            if(IsPromotionType(move.moveType) && move.moveType != generatedMoves[i].moveType)
+                continue;
+
             *correctMove = generatedMoves[i];
             return true;
         }
