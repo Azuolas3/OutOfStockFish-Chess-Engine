@@ -35,6 +35,7 @@ namespace ChessEngine
         std::vector<Square> GetAbsolutelyPinnedPieces(Color color);
 
         void EraseIllegalMoves(std::vector<Move>& moveList); // Erases illegal moves for every piece except king
+        void EraseIllegalEnPassantMoves(std::vector<Move>& moveList);
         void EraseIllegalPinnedMoves(std::vector<Move>& moveList, Square pinnedPiece); // Erases illegal moves for absolutely pinned pieces
 
         bool isMoveEnPassant(Move move);

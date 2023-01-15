@@ -69,9 +69,9 @@ void Position::UndoMove(MovePositionInfo move)
     }
     else if (HasFlag(smallMove.moveType, EN_PASSANT))
     {
-        Piece piece = (activePlayerColor == WHITE) ? W_PAWN : B_PAWN;
+        Piece piece = (activePlayerColor == WHITE) ? B_PAWN : W_PAWN;
 
-        int pawnY = (activePlayerColor == WHITE) ? 3 : 4;
+        int pawnY = (activePlayerColor == WHITE) ? 4 : 3;
         int pawnX = smallMove.destinationX;
 
         board->AddPiece(piece, Square(pawnX, pawnY));

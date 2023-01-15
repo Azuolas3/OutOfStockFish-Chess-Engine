@@ -143,6 +143,7 @@ namespace ChessEngine
             case PAWN:
                 generatedMoves = plMoveGenerator->GeneratePawnMoves(startingX, startingY, generatesThreatMap);
                 EraseIllegalMoves(generatedMoves);
+                EraseIllegalEnPassantMoves(generatedMoves);
                 break;
 
             case BISHOP:
@@ -348,45 +349,13 @@ namespace ChessEngine
 
     void MoveGenerator::EraseIllegalMoves(std::vector<Move>& moveList)
     {
+        if(!IsInCheck())
+            return;
+
         int moveCount = moveList.size();
         for(int i = 0; i < moveCount;)
         {
             Move move = moveList[i];
-
-            if(!IsInCheck() && !isMoveEnPassant(move))
-            {
-                i++;
-                continue;
-            }
-
-            if(isMoveEnPassant(move)) // cover for edge case where en passant causes discovered check by moving 2 pieces from same rank
-            {
-                if(move.startingY == activeKingY)
-                {
-                    int offset = (activeKingX - move.startingX > 0) ? -1 : 1; // find direction from king towards en passant square
-
-                    for(int x = activeKingX + offset; IsInBounds(x, activeKingY); x++) // go through each square in that direction
-                    {
-                        if(board->pieces[x][activeKingY] != EMPTY)
-                        {
-                            if(GetType(board->pieces[x][activeKingY]) == PAWN && (x == move.destinationX || move.startingX == x)) // if its the captured pawn or en passant pawn, continue
-                            {
-                                continue;
-                            }
-                            else if(IsCorrectSlidingPiece(board->pieces[x][activeKingY], -offset, 0)) //if you have found a piece which can move in that direction, erase
-                            {
-                                moveList.erase(moveList.begin() + i);
-                                moveCount--;
-                                break;
-                            }
-                            else // else, that's a different piece and no pins are happening
-                            {
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
 
             if(!captureCheckMap[move.destinationX][move.destinationY] && !checkRayMap[move.destinationX][move.destinationY])
             {
@@ -445,7 +414,7 @@ namespace ChessEngine
 
     bool MoveGenerator::isMoveEnPassant(Move move)
     {
-        if(GetType(board->pieces[move.startingX][move.startingY]) == PAWN && move.destinationX == position->enPassantSquareX && move.destinationY == position->enPassantSquareY)
+        if(move.moveType == EN_PASSANT)
             return true;
         else
             return false;
@@ -550,6 +519,54 @@ namespace ChessEngine
             return true;
 
         return false;
+    }
+
+    void MoveGenerator::EraseIllegalEnPassantMoves(std::vector<Move> &moveList)
+    {
+        int moveCount = moveList.size();
+        for(int i = 0; i < moveCount;) {
+            Move move = moveList[i];
+
+            if (!isMoveEnPassant(move))
+            {
+                i++;
+                continue;
+            }
+            else // cover for edge case where en passant causes discovered check by moving 2 pieces from same rank
+            {
+                if (move.startingY == activeKingY)
+                {
+                    int offset = (activeKingX - move.startingX > 0) ? -1 : 1; // find direction from king towards en passant square
+
+                    for (int x = activeKingX + offset; IsInBounds(x,activeKingY); x+= offset) // go through each square in that direction
+                    {
+                        if (board->pieces[x][activeKingY] != EMPTY)
+                        {
+                            if (GetType(board->pieces[x][activeKingY]) == PAWN && (x == move.destinationX || move.startingX == x)) // if its the captured pawn or en passant pawn, continue
+                            {
+                                continue;
+                            }
+                            else if (IsCorrectSlidingPiece(board->pieces[x][activeKingY], -offset,0)) //if you have found a piece which can move in that direction, erase
+                            {
+                                moveList.erase(moveList.begin() + i);
+                                moveCount--;
+                                break;
+                            }
+                            else // else, that's a different piece and no pins are happening
+                            {
+                                i++;
+                                break;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    i++;
+                    continue;
+                }
+            }
+        }
     }
 
 } // ChessEngine

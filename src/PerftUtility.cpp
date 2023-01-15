@@ -22,17 +22,19 @@ namespace ChessEngine
 
         for(int i = 0; i < moveCount; i++)
         {
+            u64 currNodes = 0;
             MovePositionInfo moveInfo = position->GenerateMoveInfo(moveList[i]);
             position->MakeMove(moveList[i]);
             //std::cout << "NODES: " << nodes << "  MOVE: " << MoveToString(moveList[i]) << " \n";
-            nodes += Perft(depth - 1, position, moveGenerator);
-            //std::cout << "NODES: " << nodes << "  MOVE: " << MoveToString(moveList[i]) << " " << position->board->blackPieces->count;
-//            if(depth == 4 || depth == 3)
+            currNodes = Perft(depth - 1, position, moveGenerator);
+            nodes += currNodes;
+            position->UndoMove(moveInfo);
+            //std::cout << "NODES: " << currNodes << "  MOVE: " << MoveToString(moveList[i]) << " " << position->board->blackPieces->count;
+//            if(depth <= 2)
 //            {
-//                std::cout << " HOLY";
+//                std::cout << "NODES: " << currNodes << "  MOVE: " << MoveToString(moveList[i]) << " " << position->board->blackPieces->count << std::endl;
 //            }
             //std::cout << std::endl;
-            position->UndoMove(moveInfo);
         }
 
         return nodes;

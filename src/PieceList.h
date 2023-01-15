@@ -24,7 +24,7 @@ namespace ChessEngine
         Square squares[maxPieceCount];
 
 
-        int count = 0;
+        int count = 1;
     };
 
 } // ChessEngine
