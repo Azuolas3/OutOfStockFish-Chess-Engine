@@ -538,8 +538,14 @@ namespace ChessEngine
                 {
                     int offset = (activeKingX - move.startingX > 0) ? -1 : 1; // find direction from king towards en passant square
 
-                    for (int x = activeKingX + offset; IsInBounds(x,activeKingY); x+= offset) // go through each square in that direction
+                    for (int x = activeKingX + offset;; x+= offset) // go through each square in that direction
                     {
+                        if(!IsInBounds(x,activeKingY))
+                        {
+                            i++;
+                            break;
+                        }
+
                         if (board->pieces[x][activeKingY] != EMPTY)
                         {
                             if (GetType(board->pieces[x][activeKingY]) == PAWN && (x == move.destinationX || move.startingX == x)) // if its the captured pawn or en passant pawn, continue

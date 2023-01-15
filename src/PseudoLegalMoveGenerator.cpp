@@ -11,6 +11,9 @@ vector<Move> PseudoLegalMoveGenerator::GenerateStraightMoves(int startingX, int 
 {
     vector<Move> pseudoLegalMoves;
     ChessBoard board = (*position->board);
+    Color activeColor = GetColor(board.pieces[startingX][startingY]);
+
+    Piece activeKing = static_cast<Piece>(activeColor | KING);
 
     // Horizontal moves
     for(int x = startingX + 1; x < 8; x++) // add moves to the right
@@ -20,8 +23,11 @@ vector<Move> PseudoLegalMoveGenerator::GenerateStraightMoves(int startingX, int 
         if(board.pieces[x][startingY] != EMPTY)
         {
             if(!IsSameColor(startingX, startingY, x, startingY) || (generatesThreatMap && IsSameColor(startingX, startingY, x, startingY)))
+            {
                 pseudoLegalMoves.push_back(move);
-            if(!generatesThreatMap || (generatesThreatMap && GetType(board.pieces[x][startingY]) != KING))
+                break;
+            }
+            if(!generatesThreatMap || (generatesThreatMap && board.pieces[x][startingY] != activeKing))
                 break;
         }
 
@@ -35,8 +41,11 @@ vector<Move> PseudoLegalMoveGenerator::GenerateStraightMoves(int startingX, int 
         if(board.pieces[x][startingY] != EMPTY)
         {
             if(!IsSameColor(startingX, startingY, x, startingY) || (generatesThreatMap && IsSameColor(startingX, startingY, x, startingY)))
+            {
                 pseudoLegalMoves.push_back(move);
-            if(!generatesThreatMap || (generatesThreatMap && GetType(board.pieces[x][startingY]) != KING))
+                break;
+            }
+            if(!generatesThreatMap || (generatesThreatMap && board.pieces[x][startingY] != activeKing))
                 break;
         }
 
@@ -53,8 +62,11 @@ vector<Move> PseudoLegalMoveGenerator::GenerateStraightMoves(int startingX, int 
         if(board.pieces[startingX][y] != EMPTY)
         {
             if(!IsSameColor(startingX, startingY, startingX, y) || (generatesThreatMap && IsSameColor(startingX, startingY, startingX, y)))
+            {
                 pseudoLegalMoves.push_back(move);
-            if(!generatesThreatMap || (generatesThreatMap && GetType(board.pieces[startingX][y]) != KING))
+                break;
+            }
+            if(!generatesThreatMap || (generatesThreatMap && board.pieces[startingX][y] != activeKing))
                 break;
         }
 
@@ -68,8 +80,11 @@ vector<Move> PseudoLegalMoveGenerator::GenerateStraightMoves(int startingX, int 
         if(board.pieces[startingX][y] != EMPTY)
         {
             if(!IsSameColor(startingX, startingY, startingX, y) || (generatesThreatMap && IsSameColor(startingX, startingY, startingX, y)))
+            {
                 pseudoLegalMoves.push_back(move);
-            if(!generatesThreatMap || (generatesThreatMap && GetType(board.pieces[startingX][y]) != KING))
+                break;
+            }
+            if(!generatesThreatMap || (generatesThreatMap && board.pieces[startingX][y] != activeKing))
                 break;
         }
 
@@ -107,6 +122,10 @@ vector<Move> PseudoLegalMoveGenerator::GenerateDiagonalMoves(int startingX, int 
 {
     vector<Move> pseudoLegalMoves;
     ChessBoard board = (*position->board);
+    Color activeColor = GetColor(board.pieces[startingX][startingY]);
+
+    Piece opponentKing = static_cast<Piece>(activeColor | KING);
+
 
     // Upper right moves
     for(int x = startingX + 1, y = startingY + 1; x < 8 && y < 8; x++, y++) // add moves to the right
@@ -116,8 +135,11 @@ vector<Move> PseudoLegalMoveGenerator::GenerateDiagonalMoves(int startingX, int 
         if(board.pieces[x][y] != EMPTY)
         {
             if(!IsSameColor(startingX, startingY, x, y) || (generatesThreatMap && IsSameColor(startingX, startingY, x, y)))
+            {
                 pseudoLegalMoves.push_back(move);
-            if(!generatesThreatMap || (generatesThreatMap && GetType(board.pieces[x][y]) != KING))
+                break;
+            }
+            if(!generatesThreatMap || (generatesThreatMap && board.pieces[x][y] != opponentKing))
                 break;
         }
 
@@ -132,8 +154,11 @@ vector<Move> PseudoLegalMoveGenerator::GenerateDiagonalMoves(int startingX, int 
         if(board.pieces[x][y] != EMPTY)
         {
             if(!IsSameColor(startingX, startingY, x, y) || (generatesThreatMap && IsSameColor(startingX, startingY, x, y)))
+            {
                 pseudoLegalMoves.push_back(move);
-            if(!generatesThreatMap || (generatesThreatMap && GetType(board.pieces[x][y]) != KING))
+                break;
+            }
+            if(!generatesThreatMap || (generatesThreatMap && board.pieces[x][y] != opponentKing))
                 break;
         }
 
@@ -148,8 +173,11 @@ vector<Move> PseudoLegalMoveGenerator::GenerateDiagonalMoves(int startingX, int 
         if(board.pieces[x][y] != EMPTY)
         {
             if(!IsSameColor(startingX, startingY, x, y) || (generatesThreatMap && IsSameColor(startingX, startingY, x, y)))
+            {
                 pseudoLegalMoves.push_back(move);
-            if(!generatesThreatMap || (generatesThreatMap && GetType(board.pieces[x][y]) != KING))
+                break;
+            }
+            if(!generatesThreatMap || (generatesThreatMap && board.pieces[x][y] != opponentKing))
                 break;
         }
 
@@ -164,8 +192,11 @@ vector<Move> PseudoLegalMoveGenerator::GenerateDiagonalMoves(int startingX, int 
         if(board.pieces[x][y] != EMPTY)
         {
             if(!IsSameColor(startingX, startingY, x, y) || (generatesThreatMap && IsSameColor(startingX, startingY, x, y)))
+            {
                 pseudoLegalMoves.push_back(move);
-            if(!generatesThreatMap || (generatesThreatMap && GetType(board.pieces[x][y]) != KING))
+                break;
+            }
+            if(!generatesThreatMap || (generatesThreatMap && board.pieces[x][y] != opponentKing))
                 break;
         }
 
