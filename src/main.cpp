@@ -19,15 +19,15 @@ int main() {
     FenParser fenParser;
     vector<MovePositionInfo> moveList;
 
-    bool isPlaying = false;
+    bool isPlaying = true;
 
-    Position* position = fenParser.loadFen(fenParser.startingFenString);
+    Position* position = fenParser.loadFen(fenParser.startingFenString); // rnbqkbnr/pppppppp/8/8/P7/8/1PPPPPPP/RNBQKBNR b KQkq - 0 1
     ChessBoard* board = position->board;
     MoveGenerator* moveGenerator = new MoveGenerator(position);
 
 
     board->PrintBoard();
-    cout << Perft(2, position, moveGenerator);
+    cout << Perft(3, position, moveGenerator);
     while(isPlaying)
     {
         //moveGenerator->GenerateAllMoves(WHITE);
@@ -41,6 +41,7 @@ int main() {
         else if(moveInput == "UNMAKE")
         {
             position->UndoMove(moveList.back());
+            moveList.pop_back();
             board->PrintBoard();
             continue;
         }

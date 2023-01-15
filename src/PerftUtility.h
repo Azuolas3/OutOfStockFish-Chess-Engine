@@ -6,6 +6,7 @@
 #define CHESS_ENGINE_PERFTUTILITY_H
 
 #include <iostream>
+#include <fstream>
 #include "AlgebraicNotationUtility.h"
 #include "MoveGenerator.h"
 #include "Position.h"

@@ -21,10 +21,6 @@ namespace ChessEngine
         if(!generatesThreatMap)
             absolutelyPinnedPieces = GetAbsolutelyPinnedPieces(color);
 
-        std::cout << absolutelyPinnedPieces.size() << " " << position->activePlayerColor <<  '\n';
-        if(!absolutelyPinnedPieces.empty())
-            std::cout << absolutelyPinnedPieces[0].x << " " <<  absolutelyPinnedPieces[0].y << '\n';
-
         for(int i = 0; i < pieceList->squares.size(); i++)
         {
             int x = squareList[i].x;

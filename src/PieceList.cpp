@@ -19,8 +19,8 @@ namespace ChessEngine
     void PieceList::RemovePiece(int x, int y)
     {
         int index = map[x][y];
-        squares.erase(squares.begin() + index);
-        map[x][y] = 0;
+        squares[index] = squares[count - 1];
+        map[squares[index].x][squares[index].y] = index;
         count--;
     }
 
@@ -32,5 +32,6 @@ namespace ChessEngine
         squares[index].x = toX;
         squares[index].y = toY;
         map[toX][toY] = index;
+        map[fromX][fromY] = 0;
     }
 } // ChessEngine

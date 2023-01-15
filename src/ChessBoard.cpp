@@ -43,9 +43,10 @@ void ChessBoard::MovePiece(Move move)
     PieceList* pieceList = (GetColor(pieces[move.startingX][move.startingY]) == WHITE) ? whitePieces : blackPieces;
     PieceList* oppositePieceList = (GetColor(pieces[move.startingX][move.startingY]) == WHITE) ? blackPieces : whitePieces;
 
-    pieceList->MovePiece(move.startingX, move.startingY, move.destinationX, move.destinationY);
     if(pieces[move.destinationX][move.destinationY] != EMPTY)
-        oppositePieceList->RemovePiece(move.destinationX, move.destinationY);
+        RemovePiece(move.destinationX, move.destinationY);
+
+    pieceList->MovePiece(move.startingX, move.startingY, move.destinationX, move.destinationY);
 
     pieces[move.destinationX][move.destinationY] = pieces[move.startingX][move.startingY];
     pieces[move.startingX][move.startingY] = EMPTY;

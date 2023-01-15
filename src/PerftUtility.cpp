@@ -6,6 +6,8 @@
 
 namespace ChessEngine
 {
+    //static std::ofstream perftOutput("perft.txt");
+
     u64 Perft(int depth, Position *position, MoveGenerator *moveGenerator)
     {
         std::vector<Move> moveList;
@@ -22,8 +24,10 @@ namespace ChessEngine
         {
             MovePositionInfo moveInfo = position->GenerateMoveInfo(moveList[i]);
             position->MakeMove(moveList[i]);
+            //std::cout << "NODES: " << nodes << "  MOVE: " << MoveToString(moveList[i]) << " \n";
             nodes += Perft(depth - 1, position, moveGenerator);
-            std::cout << "NODES: " << nodes << "  MOVE: " << MoveToString(moveList[i]) << " \n";
+            //std::cout << "NODES: " << nodes << "  MOVE: " << MoveToString(moveList[i]) << " " << position->board->blackPieces->squares.size();
+            //std::cout << std::endl;
             position->UndoMove(moveInfo);
         }
 

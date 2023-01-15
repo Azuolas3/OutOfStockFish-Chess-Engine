@@ -13,13 +13,13 @@ namespace ChessEngine
 {
     class PieceList
     {
-        int map[8][8];
 
 
     public:
         void AddPiece(int x, int y);
         void RemovePiece(int x, int y);
         void MovePiece(int fromX, int fromY, int toX, int toY);
+        int map[8][8];
 
         std::vector<Square> squares;
 
