@@ -13,7 +13,7 @@ namespace ChessEngine
         //absolutelyPinnedPieces[1];
 
         PieceList* pieceList = (color == WHITE) ? board->whitePieces : board->blackPieces;
-        std::vector<Square> squareList = pieceList->squares;
+        Square* squareList = pieceList->squares;
 
         activeKingX = (color == WHITE) ? whiteKingX : blackKingX;
         activeKingY = (color == WHITE) ? whiteKingY : blackKingY;
@@ -21,7 +21,7 @@ namespace ChessEngine
         if(!generatesThreatMap)
             absolutelyPinnedPieces = GetAbsolutelyPinnedPieces(color);
 
-        for(int i = 0; i < pieceList->squares.size(); i++)
+        for(int i = 0; i < pieceList->count; i++)
         {
             int x = squareList[i].x;
             int y = squareList[i].y;
@@ -255,7 +255,7 @@ namespace ChessEngine
 
         int attackerCount;
         std::pair<Square, Square> attackerPair = GetSquareAttackers(kingX, kingY, attackerCount);
-        std::cout << attackerPair.first.x << " " << attackerPair.first.y << " " << attackerPair.second.x << " " << attackerPair.second.y << " " << attackerCount << std::endl;
+        //std::cout << attackerPair.first.x << " " << attackerPair.first.y << " " << attackerPair.second.x << " " << attackerPair.second.y << " " << attackerCount << std::endl;
 
         if(attackerCount > 0 && IsSlidingPiece(board->pieces[attackerPair.first.x][attackerPair.first.y])) // probably a bug here - should cast for both pieces(attackers)
             CastRayToSquare(std::ref(checkRayMap), Square(kingX, kingY), attackerPair.first);

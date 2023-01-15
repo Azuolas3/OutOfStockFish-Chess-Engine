@@ -21,13 +21,13 @@ int main() {
 
     bool isPlaying = true;
 
-    Position* position = fenParser.loadFen(fenParser.startingFenString); // rnbqkbnr/pppppppp/8/8/P7/8/1PPPPPPP/RNBQKBNR b KQkq - 0 1
+    Position* position = fenParser.loadFen("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1"); // rnbqkbnr/pppppppp/8/8/P7/8/1PPPPPPP/RNBQKBNR b KQkq - 0 1
     ChessBoard* board = position->board;
     MoveGenerator* moveGenerator = new MoveGenerator(position);
 
 
     board->PrintBoard();
-    cout << Perft(3, position, moveGenerator);
+    cout << Perft(2, position, moveGenerator);
     while(isPlaying)
     {
         //moveGenerator->GenerateAllMoves(WHITE);

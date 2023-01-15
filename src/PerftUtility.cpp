@@ -26,7 +26,11 @@ namespace ChessEngine
             position->MakeMove(moveList[i]);
             //std::cout << "NODES: " << nodes << "  MOVE: " << MoveToString(moveList[i]) << " \n";
             nodes += Perft(depth - 1, position, moveGenerator);
-            //std::cout << "NODES: " << nodes << "  MOVE: " << MoveToString(moveList[i]) << " " << position->board->blackPieces->squares.size();
+            //std::cout << "NODES: " << nodes << "  MOVE: " << MoveToString(moveList[i]) << " " << position->board->blackPieces->count;
+//            if(depth == 4 || depth == 3)
+//            {
+//                std::cout << " HOLY";
+//            }
             //std::cout << std::endl;
             position->UndoMove(moveInfo);
         }

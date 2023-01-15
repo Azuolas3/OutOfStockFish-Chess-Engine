@@ -13,7 +13,7 @@ namespace ChessEngine
 {
     class PieceList
     {
-
+        static const int maxPieceCount = 32;
 
     public:
         void AddPiece(int x, int y);
@@ -21,7 +21,7 @@ namespace ChessEngine
         void MovePiece(int fromX, int fromY, int toX, int toY);
         int map[8][8];
 
-        std::vector<Square> squares;
+        Square squares[maxPieceCount];
 
 
         int count = 0;

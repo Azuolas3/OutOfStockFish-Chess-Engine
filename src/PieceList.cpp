@@ -10,9 +10,8 @@ namespace ChessEngine
     {
         Square newPiece = Square(x, y);
 
-        squares.push_back(newPiece);
-
-        map[x][y] = count; // index, doesn't matter whether X or Y list
+        squares[count] = newPiece;
+        map[x][y] = count;
         count++;
     }
 
