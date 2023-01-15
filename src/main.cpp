@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <chrono>
 #include "pieces.h"
 #include "Move.h"
 #include "FenParser.h"
@@ -27,7 +28,11 @@ int main() {
 
 
     board->PrintBoard();
-    cout << Perft(6, position, moveGenerator);
+    auto start  = std::chrono::steady_clock::now();
+    cout << Perft(4, position, moveGenerator) << '\n';
+    auto end = std::chrono::steady_clock::now();
+    std::chrono::duration<double> elapsed_seconds = end-start;
+    cout << "TIME: " << elapsed_seconds.count();
     while(isPlaying)
     {
         //moveGenerator->GenerateAllMoves(WHITE);
