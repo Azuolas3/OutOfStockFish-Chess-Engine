@@ -30,10 +30,10 @@ namespace ChessEngine
             nodes += currNodes;
             position->UndoMove(moveInfo);
             //std::cout << "NODES: " << currNodes << "  MOVE: " << MoveToString(moveList[i]) << " " << position->board->blackPieces->count;
-//            if(depth <= 2)
-//            {
-//                std::cout << "NODES: " << currNodes << "  MOVE: " << MoveToString(moveList[i]) << " " << position->board->blackPieces->count << std::endl;
-//            }
+            if(depth == 6)
+            {
+                std::cout << "NODES: " << currNodes << "  MOVE: " << MoveToString(moveList[i]) << " " << position->board->blackPieces->count << std::endl;
+            }
             //std::cout << std::endl;
         }
 

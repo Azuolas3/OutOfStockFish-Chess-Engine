@@ -21,7 +21,7 @@ namespace ChessEngine
         if(!generatesThreatMap)
             absolutelyPinnedPieces = GetAbsolutelyPinnedPieces(color);
 
-        for(int i = 0; i < pieceList->count; i++)
+        for(int i = 1; i < pieceList->count; i++)
         {
             int x = squareList[i].x;
             int y = squareList[i].y;

@@ -83,10 +83,7 @@ namespace ChessEngine
         int x = endingPos.x + xOffset;
         int y = endingPos.y + yOffset;
 
-        xDistance += x - xOffset;
-        yDistance += y - yOffset;
-
-        while(x < xDistance || y < yDistance)
+        while(x != startingPos.x || y != startingPos.y)
         {
             table[x][y] = true;
 
@@ -121,7 +118,7 @@ namespace ChessEngine
 
         if(vector.y == 0)
             normalizedSquare.y = 0;
-        else if (normalizedSquare.y > 0)
+        else if (vector.y > 0)
             normalizedSquare.y = 1;
         else
             normalizedSquare.y = -1;
