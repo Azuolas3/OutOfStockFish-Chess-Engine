@@ -15,9 +15,6 @@ namespace ChessEngine
         PieceList* pieceList = (color == WHITE) ? board->whitePieces : board->blackPieces;
         Square* squareList = pieceList->squares;
 
-        activeKingX = (color == WHITE) ? whiteKingX : blackKingX;
-        activeKingY = (color == WHITE) ? whiteKingY : blackKingY;
-
         if(!generatesThreatMap)
             absolutelyPinnedPieces = GetAbsolutelyPinnedPieces(color);
 
@@ -38,8 +35,12 @@ namespace ChessEngine
 
     std::vector<Move> MoveGenerator::GenerateAllMoves()
     {
-        InitThreatMaps();
         Color activePlayerColor = position->activePlayerColor;
+
+        activeKingX = (activePlayerColor == WHITE) ? whiteKingX : blackKingX;
+        activeKingY = (activePlayerColor == WHITE) ? whiteKingY : blackKingY;
+
+        InitThreatMaps();
 
         if(activePlayerColor == WHITE)
         {
@@ -96,8 +97,6 @@ namespace ChessEngine
     std::vector<Move> MoveGenerator::GenerateKingMoves(int x, int y)
     {
         std::vector<Move> generatedMoves;
-        Color color = GetColor(position->board->pieces[x][y]);
-        //bool threatMap[8][8] = (color == WHITE) ? blackThreatMap : whiteThreatMap;
 
         generatedMoves = plMoveGenerator->GenerateKingMoves(x, y);
 
@@ -105,27 +104,13 @@ namespace ChessEngine
         for(int i = 0; i < moveCount;) // Weird iteration due to erasing moves - usual loop doesn't check every move
         {
             Move move = generatedMoves[i];
-            if(color == WHITE)
+            if(activeThreatMap[move.destinationX][move.destinationY])
             {
-                if(blackThreatMap[move.destinationX][move.destinationY])
-                {
-                    generatedMoves.erase(generatedMoves.begin() + i);
-                    moveCount--;
-                }
-                else
-                    i++;
+                generatedMoves.erase(generatedMoves.begin() + i);
+                moveCount--;
             }
-
-            if(color == BLACK)
-            {
-                if(whiteThreatMap[move.destinationX][move.destinationY])
-                {
-                    generatedMoves.erase(generatedMoves.begin() + i);
-                    moveCount--;
-                }
-                else
-                    i++;
-            }
+            else
+                i++;
         }
 
         return generatedMoves;
@@ -186,31 +171,13 @@ namespace ChessEngine
 
     void MoveGenerator::InitThreatMaps()
     {
-        memset(whiteThreatMap, false, sizeof(bool) * 8 * 8);
-        memset(blackThreatMap, false, sizeof(bool) * 8 * 8);
         memset(activeThreatMap, false, sizeof(bool) * 8 * 8);
 
-        std::vector<Move> whiteMoves = plMoveGenerator->GenerateAllMoves(WHITE, true);
-        std::vector<Move> blackMoves = plMoveGenerator->GenerateAllMoves(BLACK, true);
+        std::vector<Move> opponentMoves = plMoveGenerator->GenerateAllMoves(GetOppositeColor(position->activePlayerColor), true);
 
-        for(auto & whiteMove : whiteMoves)
+        for(auto & move : opponentMoves)
         {
-            //whiteThreatMap[whiteMove.startingX][whiteMove.startingY] = true;
-            whiteThreatMap[whiteMove.destinationX][whiteMove.destinationY] = true;
-            if(position->activePlayerColor == BLACK)
-            {
-                activeThreatMap[whiteMove.destinationX][whiteMove.destinationY] = true;
-            }
-        }
-
-        for(auto & blackMove : blackMoves)
-        {
-            //blackThreatMap[blackMove.startingX][blackMove.startingY] = true;
-            blackThreatMap[blackMove.destinationX][blackMove.destinationY] = true;
-            if(position->activePlayerColor == WHITE)
-            {
-                activeThreatMap[blackMove.destinationX][blackMove.destinationY] = true;
-            }
+            activeThreatMap[move.destinationX][move.destinationY] = true;
         }
     }
 
@@ -333,16 +300,8 @@ namespace ChessEngine
 
     bool MoveGenerator::IsInCheck()
     {
-        if(position->activePlayerColor == WHITE)
-        {
-            if(blackThreatMap[whiteKingX][whiteKingY])
-                return true;
-        }
-        else
-        {
-            if(whiteThreatMap[blackKingX][blackKingY])
-                return true;
-        }
+        if(activeThreatMap[activeKingX][activeKingY])
+            return true;
 
         return false;
     }

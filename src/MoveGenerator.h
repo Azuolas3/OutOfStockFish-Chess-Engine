@@ -19,8 +19,8 @@ namespace ChessEngine
         ChessBoard* board;
         LegalityTester legalityTester;
 
-        bool whiteThreatMap[8][8]; // squares attacked by white pieces
-        // squares attacked by black pieces
+        //bool whiteThreatMap[8][8]; // squares attacked by white pieces
+        //bool blackThreatMap[8][8];// squares attacked by black pieces
 
         bool isInCheck;
 
@@ -78,8 +78,6 @@ namespace ChessEngine
         bool captureCheckMap[8][8]; // map for pieces checking the king
 
         bool IsInCheck();
-
-        bool blackThreatMap[8][8];
 
         bool IsCorrectSlidingPiece(Piece piece, int xOffset, int yOffset); // function checks if the piece can move in a certain direction (given in offsets)
     };
