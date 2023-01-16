@@ -28,6 +28,7 @@ namespace ChessEngine
         void MakeMove(Move move);
         void UndoMove(MovePositionInfo move);
 
+        void PerformCastling(Move rookMove, Color color);
         void RemoveCastlingRights(Color color, CastlingRights side);
         bool HasCastlingRights(Color color, CastlingRights side);
         MovePositionInfo GenerateMoveInfo(Move move);

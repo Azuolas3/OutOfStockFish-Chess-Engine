@@ -439,7 +439,7 @@ namespace ChessEngine
             Move move(startingX, startingY, startingX + 2, startingY, CASTLING);
             Move rookMove(7, kingRank, 5, kingRank);
 
-            move.additionalAction = std::bind(&ChessBoard::MovePiece, std::ref(position->board), rookMove);
+            move.additionalAction = std::bind(&Position::PerformCastling, std::ref(position), rookMove, color);
             pseudoLegalMoves.push_back(move);
         }
 
@@ -450,7 +450,7 @@ namespace ChessEngine
             Move move(startingX, startingY, startingX - 2, startingY, CASTLING);
             Move rookMove(0, kingRank, 3, kingRank);
 
-            move.additionalAction = std::bind(&ChessBoard::MovePiece, std::ref(position->board), rookMove);
+            move.additionalAction = std::bind(&Position::PerformCastling, std::ref(position), rookMove, color);
             pseudoLegalMoves.push_back(move);
         }
     }
@@ -524,8 +524,11 @@ namespace ChessEngine
     void MoveGenerator::EraseIllegalEnPassantMoves(std::vector<Move> &moveList)
     {
         int moveCount = moveList.size();
+        //Color activeColor = GetColor(board->pieces[][])
+
         for(int i = 0; i < moveCount;) {
             Move move = moveList[i];
+            Color activeColor = GetColor(board->pieces[move.startingX][move.startingY]);
 
             if (!isMoveEnPassant(move))
             {
@@ -552,7 +555,7 @@ namespace ChessEngine
                             {
                                 continue;
                             }
-                            else if (IsCorrectSlidingPiece(board->pieces[x][activeKingY], -offset,0)) //if you have found a piece which can move in that direction, erase
+                            else if (IsCorrectSlidingPiece(board->pieces[x][activeKingY], -offset,0) && GetColor(board->pieces[x][activeKingY]) != activeColor) //if you have found a piece which can move in that direction, erase
                             {
                                 moveList.erase(moveList.begin() + i);
                                 moveCount--;

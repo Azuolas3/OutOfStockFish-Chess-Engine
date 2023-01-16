@@ -61,6 +61,12 @@ namespace ChessEngine
         return color;
     }
 
+    inline Color GetOppositeColor(Color color)
+    {
+        Color oppositeColor = color == WHITE ? BLACK : WHITE;
+        return oppositeColor;
+    }
+
     inline PieceType GetType(Piece piece)
     {
         PieceType type = static_cast<PieceType>(piece & pieceTypeBitMask);
