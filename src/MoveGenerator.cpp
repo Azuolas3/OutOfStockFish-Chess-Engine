@@ -36,6 +36,7 @@ namespace ChessEngine
     std::vector<Move> MoveGenerator::GenerateAllMoves()
     {
         Color activePlayerColor = position->activePlayerColor;
+        FindKingPosition(activePlayerColor);
 
         activeKingX = (activePlayerColor == WHITE) ? whiteKingX : blackKingX;
         activeKingY = (activePlayerColor == WHITE) ? whiteKingY : blackKingY;
@@ -51,8 +52,6 @@ namespace ChessEngine
 
         }
 
-
-        FindKingPosition(activePlayerColor);
 
         //if active player is in check,
         if(IsInCheck())
@@ -387,18 +386,19 @@ namespace ChessEngine
         int kingRank = startingY;
         Color color = GetColor(board->pieces[startingX][startingY]);
 
+
         if(IsInCheck())
             return pseudoLegalMoves;
-
 
         //Kingside generation
         if(IsKingsideEmpty(color, board->pieces) && position->HasCastlingRights(color, KINGSIDE) && GetType(board->pieces[7][kingRank]) == ROOK
         && !activeThreatMap[5][kingRank] && !activeThreatMap[6][kingRank]) // checking only for type because color doesn't matter - all castling conditions cant be met if the rook is of opposite color.
         {
+
             Move move(startingX, startingY, startingX + 2, startingY, CASTLING);
             Move rookMove(7, kingRank, 5, kingRank);
 
-            move.additionalAction = std::bind(&Position::PerformCastling, std::ref(position), rookMove, color);
+            move.additionalAction = [this, rookMove, color] { position->PerformCastling(rookMove, color); };
             pseudoLegalMoves.push_back(move);
         }
 
@@ -409,9 +409,11 @@ namespace ChessEngine
             Move move(startingX, startingY, startingX - 2, startingY, CASTLING);
             Move rookMove(0, kingRank, 3, kingRank);
 
-            move.additionalAction = std::bind(&Position::PerformCastling, std::ref(position), rookMove, color);
+            move.additionalAction = [this, rookMove, color] { position->PerformCastling(rookMove, color); };
             pseudoLegalMoves.push_back(move);
         }
+
+        return pseudoLegalMoves;
     }
 
     std::vector<Square> MoveGenerator::GetAbsolutelyPinnedPieces(Color color)

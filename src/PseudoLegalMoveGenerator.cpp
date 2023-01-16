@@ -101,7 +101,7 @@ vector<Move> PseudoLegalMoveGenerator::GenerateStraightMoves(int startingX, int 
         if(startingX == 0) // QUEENSIDE
         {
             Color color = GetColor(board.pieces[startingX][startingY]);
-            std::function<void()> func = std::bind(&Position::RemoveCastlingRights, std::ref(position), color, QUEENSIDE);
+            std::function<void()> func = [color, this] { position->RemoveCastlingRights(color, QUEENSIDE); };
             for(int i = 0; i < pseudoLegalMoves.size(); i++)
             {
                 pseudoLegalMoves[i].additionalAction = func;
@@ -111,7 +111,7 @@ vector<Move> PseudoLegalMoveGenerator::GenerateStraightMoves(int startingX, int 
         if(startingX == 7) // KINGSIDE
         {
             Color color = GetColor(board.pieces[startingX][startingY]);
-            std::function<void()> func = std::bind(&Position::RemoveCastlingRights, std::ref(position), color, KINGSIDE);
+            std::function<void()> func = [color, this] { position->RemoveCastlingRights(color, KINGSIDE); };
             for(int i = 0; i < pseudoLegalMoves.size(); i++)
             {
                 pseudoLegalMoves[i].additionalAction = func;
@@ -253,7 +253,7 @@ vector<Move> PseudoLegalMoveGenerator::GenerateKingMoves(int startingX, int star
         {
             Move move(startingX, startingY, x, y);
             Color color = GetColor(position->board->pieces[startingX][startingY]);
-            move.additionalAction = std::bind(&Position::RemoveCastlingRights, std::ref(position), color, BOTH);
+            move.additionalAction = [this, color] { position->RemoveCastlingRights(color, BOTH); };
             pseudoLegalMoves.push_back(move);
         }
     }
@@ -275,7 +275,7 @@ std::vector<Move> PseudoLegalMoveGenerator::GenerateCastlingMoves(int startingX,
         Move move(startingX, startingY, startingX + 2, startingY, CASTLING);
         Move rookMove(7, kingRank, 5, kingRank);
 
-        move.additionalAction = std::bind(&ChessBoard::MovePiece, std::ref(position->board), rookMove);
+        move.additionalAction = [&capture0 = position->board, rookMove] { capture0->MovePiece(rookMove); };
         pseudoLegalMoves.push_back(move);
     }
 
@@ -285,7 +285,7 @@ std::vector<Move> PseudoLegalMoveGenerator::GenerateCastlingMoves(int startingX,
         Move move(startingX, startingY, startingX - 2, startingY, CASTLING);
         Move rookMove(0, kingRank, 3, kingRank);
 
-        move.additionalAction = std::bind(&ChessBoard::MovePiece, std::ref(position->board), rookMove);
+        move.additionalAction = [&capture0 = position->board, rookMove] { capture0->MovePiece(rookMove); };
         pseudoLegalMoves.push_back(move);
     }
 
@@ -313,7 +313,7 @@ vector<Move> PseudoLegalMoveGenerator::GeneratePawnMoves(int startingX, int star
             {
                 offset *= 2;
                 Move move(startingX, startingY, startingX, startingY + offset);
-                move.additionalAction = std::bind(&Position::SetEnPassantSquare, std::ref(position), startingX, startingY + (offset/2));
+                move.additionalAction = [this, startingX, capture0 = startingY + (offset/2)] { position->SetEnPassantSquare(startingX, capture0); };
                 pseudoLegalMoves.push_back(move);
                 offset /= 2;
             }
@@ -325,7 +325,7 @@ vector<Move> PseudoLegalMoveGenerator::GeneratePawnMoves(int startingX, int star
                     move.moveType = static_cast<MoveType>(promotionType);
                     Piece promotedPiece = static_cast<Piece>(pieceColor | pieceType);
 
-                    move.additionalAction = std::bind(&ChessBoard::ReplacePiece, std::ref(position->board), promotedPiece, Square(startingX, startingY + offset));
+                    move.additionalAction = [&capture0 = position->board, promotedPiece, capture1 = Square(startingX, startingY + offset)] { capture0->ReplacePiece(promotedPiece, capture1); };
 
                     pseudoLegalMoves.push_back(move);
                 }
@@ -352,7 +352,7 @@ vector<Move> PseudoLegalMoveGenerator::GeneratePawnMoves(int startingX, int star
                     move.moveType = static_cast<MoveType>(promotionType);
                     Piece promotedPiece = static_cast<Piece>(pieceColor | pieceType);
 
-                    move.additionalAction = std::bind(&ChessBoard::ReplacePiece, std::ref(position->board), promotedPiece, Square(startingX - 1, startingY + offset));
+                    move.additionalAction = [&capture0 = position->board, promotedPiece, capture1 = Square(startingX - 1, startingY + offset)] { capture0->ReplacePiece(promotedPiece, capture1); };
 
                     pseudoLegalMoves.push_back(move);
                 }
@@ -376,7 +376,7 @@ vector<Move> PseudoLegalMoveGenerator::GeneratePawnMoves(int startingX, int star
                     move.moveType = static_cast<MoveType>(promotionType);
                     Piece promotedPiece = static_cast<Piece>(pieceColor | pieceType);
 
-                    move.additionalAction = std::bind(&ChessBoard::ReplacePiece, std::ref(position->board), promotedPiece, Square(startingX + 1, startingY + offset));
+                    move.additionalAction = [&capture0 = position->board, promotedPiece, capture1 = Square(startingX + 1, startingY + offset)] { capture0->ReplacePiece(promotedPiece, capture1); };
 
                     pseudoLegalMoves.push_back(move);
                 }
@@ -394,14 +394,14 @@ vector<Move> PseudoLegalMoveGenerator::GeneratePawnMoves(int startingX, int star
         if(IsInBounds(startingX + 1, startingY + offset) && (startingX + 1) == position->enPassantSquareX && (startingY + offset) == (position->enPassantSquareY)) //adding offset to squareY to make sure its equal with the target square
         {
             Move move(startingX, startingY, startingX + 1, startingY + offset, EN_PASSANT);
-            move.additionalAction = std::bind(&ChessBoard::RemovePiece, std::ref(position->board), position->enPassantSquareX, startingY);
+            move.additionalAction = [&capture0 = position->board, capture1 = position->enPassantSquareX, startingY] { capture0->RemovePiece(capture1, startingY); };
             pseudoLegalMoves.push_back(move);
         }
 
         if(IsInBounds(startingX - 1, startingY + offset) && (startingX - 1) == position->enPassantSquareX && (startingY + offset) == (position->enPassantSquareY))
         {
             Move move(startingX, startingY, startingX - 1, startingY + offset, EN_PASSANT);
-            move.additionalAction = std::bind(&ChessBoard::RemovePiece, std::ref(position->board), startingX - 1, startingY);
+            move.additionalAction = [&capture0 = position->board, capture1 = startingX - 1, startingY] { capture0->RemovePiece(capture1, startingY); };
             pseudoLegalMoves.push_back(move);
         }
     }
