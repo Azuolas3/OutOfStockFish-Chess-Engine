@@ -40,10 +40,19 @@ Position* FenParser::loadFen(std::string fenString)
         else
             pieceColor = ChessEngine::WHITE;
 
-        //std::cout << (pieceColor | pieceType) << std::endl;
         Piece piece = static_cast<Piece>(pieceColor | pieceType);
         position->board->pieces[x][y] = piece;
-        //PieceInfo pieceInfo(piece, x, y);
+
+        if(piece == W_KING)
+        {
+            position->board->whiteKingX = x;
+            position->board->whiteKingY = y;
+        }
+        if(piece == B_KING)
+        {
+            position->board->blackKingX = x;
+            position->board->blackKingY = y;
+        }
 
         if(pieceColor == WHITE)
             position->board->whitePieces->AddPiece(x, y);

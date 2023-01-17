@@ -71,6 +71,8 @@ namespace ChessEngine
         int blackKingX;
         int blackKingY;
 
+        void UpdateKingPositions();
+
         void GetCheckRayMap();
         void UpdateCaptureCheckMap(std::pair<Square, Square> attackerPair);
 

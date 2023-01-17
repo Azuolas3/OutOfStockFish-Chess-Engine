@@ -24,11 +24,19 @@ namespace ChessEngine
         PieceList* whitePieces = new PieceList();
         PieceList* blackPieces = new PieceList();
 
+        int whiteKingX;
+        int whiteKingY;
+
+        int blackKingX;
+        int blackKingY;
+
         void RemovePiece(int x, int y);
         void AddPiece(Piece piece, Square square);
         void MovePiece(Move move);
         void ReplacePiece(Piece piece, Square square);
         void PrintBoard();
+
+        void UpdateKingPosition(const Move& move, Color color);
     };
 }
 

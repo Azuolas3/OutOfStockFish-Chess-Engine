@@ -28,6 +28,11 @@ bool Position::HasCastlingRights(Color color, CastlingRights side)
 
 void Position::MakeMove(Move move)
 {
+    if(GetType(board->pieces[move.startingX][move.startingY]) == KING)
+    {
+        board->UpdateKingPosition(move, activePlayerColor);
+    }
+
     board->MovePiece(move);
 
     enPassantSquareX = -1;
@@ -42,10 +47,17 @@ void Position::MakeMove(Move move)
 void Position::UndoMove(MovePositionInfo move)
 {
     Move smallMove = move.move;
+    Move inverseMove = InverseMove(smallMove);
+    Color previousColor = (activePlayerColor == WHITE) ? BLACK : WHITE;
 
-    board->MovePiece(InverseMove(smallMove));
+    if(GetType(board->pieces[smallMove.destinationX][smallMove.destinationY]) == KING)
+    {
+        board->UpdateKingPosition(inverseMove, previousColor);
+    }
 
-    activePlayerColor = (activePlayerColor == WHITE) ? BLACK : WHITE;
+    board->MovePiece(inverseMove);
+
+    activePlayerColor = previousColor;
 
     whiteCastlingRights = move.whiteCastlingRights;
     blackCastlingRights = move.blackCastlingRights;

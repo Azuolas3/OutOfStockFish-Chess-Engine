@@ -36,7 +36,7 @@ namespace ChessEngine
     std::vector<Move> MoveGenerator::GenerateAllMoves()
     {
         Color activePlayerColor = position->activePlayerColor;
-        FindKingPosition(activePlayerColor);
+        UpdateKingPositions();
 
         activeKingX = (activePlayerColor == WHITE) ? whiteKingX : blackKingX;
         activeKingY = (activePlayerColor == WHITE) ? whiteKingY : blackKingY;
@@ -537,6 +537,15 @@ namespace ChessEngine
                 }
             }
         }
+    }
+
+    void MoveGenerator::UpdateKingPositions()
+    {
+        whiteKingX = board->whiteKingX;
+        whiteKingY = board->whiteKingY;
+
+        blackKingX = board->blackKingX;
+        blackKingY = board->blackKingY;
     }
 
 } // ChessEngine

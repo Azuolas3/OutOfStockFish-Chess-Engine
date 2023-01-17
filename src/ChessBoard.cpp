@@ -76,5 +76,19 @@ void ChessBoard::ReplacePiece(Piece piece, Square square)
     AddPiece(piece, square);
 }
 
+void ChessBoard::UpdateKingPosition(const Move& move, Color color)
+{
+    if(color == WHITE)
+    {
+        whiteKingX = move.destinationX;
+        whiteKingY = move.destinationY;
+    }
+    else if (color == BLACK)
+    {
+        blackKingX = move.destinationX;
+        blackKingY = move.destinationY;
+    }
+}
+
 
 
