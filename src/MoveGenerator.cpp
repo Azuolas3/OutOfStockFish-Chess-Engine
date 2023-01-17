@@ -43,16 +43,6 @@ namespace ChessEngine
 
         InitThreatMaps();
 
-        if(activePlayerColor == WHITE)
-        {
-            //std::copy(&whiteThreatMap[0][0], &whiteThreatMap + 8*8, &activeThreatMap[0][0]);
-        }
-        else
-        {
-
-        }
-
-
         //if active player is in check,
         if(IsInCheck())
         {

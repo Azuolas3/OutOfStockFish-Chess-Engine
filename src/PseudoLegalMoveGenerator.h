@@ -38,7 +38,7 @@ public:
     std::vector<Move> GeneratePieceMoves(ChessEngine::Piece piece, int startingX, int startingY, bool ignoresEnemyKing = false);
     std::vector<Move> GenerateAllMoves(ChessEngine::Color color, bool generatesThreatMap = false);
 
-    std::vector<Move> CombineVectors(std::vector<Move> a, std::vector<Move> b);
+    std::vector<Move> CombineVectors(const std::vector<Move>& a, const std::vector<Move>& b);
     bool DoesContainMove(std::vector<Move> generatedMoves, Move move, Move *correctMove);
 };
 

@@ -460,7 +460,7 @@ bool PseudoLegalMoveGenerator::IsSameColor(int startingX, int startingY, int des
         return false;
 }
 
-std::vector<Move> PseudoLegalMoveGenerator::CombineVectors(std::vector<Move> a, std::vector<Move> b)
+std::vector<Move> PseudoLegalMoveGenerator::CombineVectors(const std::vector<Move>& a, const std::vector<Move>& b)
 {
     std::vector<Move> combinedVector;
     combinedVector.reserve( a.size() + b.size());
@@ -469,8 +469,7 @@ std::vector<Move> PseudoLegalMoveGenerator::CombineVectors(std::vector<Move> a, 
     return combinedVector;
 }
 
-bool
-PseudoLegalMoveGenerator::DoesContainMove(std::vector<Move> generatedMoves, Move move, Move *correctMove)
+bool PseudoLegalMoveGenerator::DoesContainMove(std::vector<Move> generatedMoves, Move move, Move *correctMove)
 {
     for(int i = 0; i < generatedMoves.size(); i++)
     {

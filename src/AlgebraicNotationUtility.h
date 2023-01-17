@@ -24,7 +24,7 @@ inline std::map<char, int> letterToFileMap =
 int letterToFile(char letter);
 char IntToFile(int integer);
 int intToRank(int num);
-std::string MoveToString(Move move);
+std::string MoveToString(const Move& move);
 
 
 

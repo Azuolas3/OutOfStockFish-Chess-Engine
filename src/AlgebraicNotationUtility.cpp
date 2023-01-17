@@ -8,7 +8,7 @@
 int letterToFile(char letter) { return letterToFileMap[letter];}
 int intToRank(int num) { return num-'0'-1;}
 
-std::string MoveToString(Move move)
+std::string MoveToString(const Move& move)
 {
     std::string resultString;
 

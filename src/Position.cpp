@@ -26,7 +26,7 @@ bool Position::HasCastlingRights(Color color, CastlingRights side)
     }
 }
 
-void Position::MakeMove(Move move)
+void Position::MakeMove(const Move& move)
 {
     if(GetType(board->pieces[move.startingX][move.startingY]) == KING)
     {
@@ -44,7 +44,7 @@ void Position::MakeMove(Move move)
     activePlayerColor = (activePlayerColor == WHITE) ? BLACK : WHITE;
 }
 
-void Position::UndoMove(MovePositionInfo move)
+void Position::UndoMove(const MovePositionInfo& move)
 {
     Move smallMove = move.move;
     Move inverseMove = InverseMove(smallMove);
@@ -96,7 +96,7 @@ void Position::UndoMove(MovePositionInfo move)
     }
 }
 
-MovePositionInfo Position::GenerateMoveInfo(Move move)
+MovePositionInfo Position::GenerateMoveInfo(const Move& move)
 {
     MovePositionInfo moveInfo;
     moveInfo.move = move;

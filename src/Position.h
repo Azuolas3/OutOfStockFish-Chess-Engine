@@ -25,13 +25,13 @@ namespace ChessEngine
         int enPassantSquareX = -1; // -1 to represent no square
         int enPassantSquareY = -1;
 
-        void MakeMove(Move move);
-        void UndoMove(MovePositionInfo move);
+        void MakeMove(const Move& move);
+        void UndoMove(const MovePositionInfo& move);
 
         void PerformCastling(Move rookMove, Color color);
         void RemoveCastlingRights(Color color, CastlingRights side);
         bool HasCastlingRights(Color color, CastlingRights side);
-        MovePositionInfo GenerateMoveInfo(Move move);
+        MovePositionInfo GenerateMoveInfo(const Move& move);
 
         void SetEnPassantSquare(int x, int y);
     };
