@@ -169,6 +169,17 @@ namespace ChessEngine
             activeThreatMap[move.destinationX][move.destinationY] = true;
         }
     }
+//
+//    void MoveGenerator::UpdateThreatMap(const Move& move)
+//    {
+//        Piece movingPiece = board->pieces[move.][]
+//        std::vector<Move> originalPieceMoves = plMoveGenerator->GeneratePieceMoves();
+//
+//        for(auto & move : originalPieceMoves)
+//        {
+//            activeThreatMap[move.destinationX][move.destinationY] = true;
+//        }
+//    }
 
     void MoveGenerator::FindKingPosition(Color color)
     {
@@ -360,7 +371,7 @@ namespace ChessEngine
         }
     }
 
-    bool MoveGenerator::isMoveEnPassant(Move move)
+    bool MoveGenerator::isMoveEnPassant(const Move& move)
     {
         if(move.moveType == EN_PASSANT)
             return true;

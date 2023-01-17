@@ -9,7 +9,11 @@ using std::vector;
 
 vector<Move> PseudoLegalMoveGenerator::GenerateStraightMoves(int startingX, int startingY, bool generatesThreatMap)
 {
-    vector<Move> pseudoLegalMoves;
+    int maxSize = 16;
+
+    vector<Move> pseudoLegalMoves; // allocating memory preemptively for performance purposes.
+    pseudoLegalMoves.reserve(maxSize);
+
     ChessBoard board = (*position->board);
     Color activeColor = GetColor(board.pieces[startingX][startingY]);
 
@@ -124,7 +128,11 @@ vector<Move> PseudoLegalMoveGenerator::GenerateStraightMoves(int startingX, int 
 
 vector<Move> PseudoLegalMoveGenerator::GenerateDiagonalMoves(int startingX, int startingY, bool generatesThreatMap)
 {
-    vector<Move> pseudoLegalMoves;
+    int maxSize = 16;
+
+    vector<Move> pseudoLegalMoves; // allocating memory preemptively for performance purposes.
+    pseudoLegalMoves.reserve(maxSize);
+
     ChessBoard board = (*position->board);
     Color activeColor = GetColor(board.pieces[startingX][startingY]);
 
@@ -216,7 +224,10 @@ vector<Move> PseudoLegalMoveGenerator::GenerateDiagonalMoves(int startingX, int 
 
 vector<Move> PseudoLegalMoveGenerator::GenerateKnightMoves(int startingX, int startingY, bool generatesThreatMap)
 {
-    vector<Move> pseudoLegalMoves;
+    int maxSize = 9;
+
+    vector<Move> pseudoLegalMoves; // allocating memory preemptively for performance purposes.
+    pseudoLegalMoves.reserve(maxSize);
 
     int xOffset[8] = { 2, 1, -1, -2, -2, -1, 1, 2 };
     int yOffset[8] = { 1, 2, 2, 1, -1, -2, -2, -1 };
@@ -238,7 +249,10 @@ vector<Move> PseudoLegalMoveGenerator::GenerateKnightMoves(int startingX, int st
 
 vector<Move> PseudoLegalMoveGenerator::GenerateKingMoves(int startingX, int startingY)
 {
-    vector<Move> pseudoLegalMoves;
+    int maxSize = 9;
+
+    vector<Move> pseudoLegalMoves; // allocating memory preemptively for performance purposes.
+    pseudoLegalMoves.reserve(maxSize);
 
     int xOffset[8] = { 0, 1, 1, 1, 0, -1, -1, -1 };
     int yOffset[8] = { 1, 1, 0, -1, -1, -1, 0, 1 };
@@ -263,7 +277,11 @@ vector<Move> PseudoLegalMoveGenerator::GenerateKingMoves(int startingX, int star
 
 std::vector<Move> PseudoLegalMoveGenerator::GenerateCastlingMoves(int startingX, int startingY)
 {
-    vector<Move> pseudoLegalMoves;
+    int maxSize = 3;
+
+    vector<Move> pseudoLegalMoves; // allocating memory preemptively for performance purposes.
+    pseudoLegalMoves.reserve(maxSize);
+
     ChessBoard board = (*position->board);
 
     int kingRank = startingY;
@@ -294,7 +312,11 @@ std::vector<Move> PseudoLegalMoveGenerator::GenerateCastlingMoves(int startingX,
 
 vector<Move> PseudoLegalMoveGenerator::GeneratePawnMoves(int startingX, int startingY, bool generatesOnlyCaptures)
 {
-    vector<Move> pseudoLegalMoves;
+    int maxSize = 14;
+
+    vector<Move> pseudoLegalMoves; // allocating memory preemptively for performance purposes.
+    pseudoLegalMoves.reserve(maxSize);
+
     ChessBoard board = (*position->board);
     Color pieceColor = GetColor(board.pieces[startingX][startingY]);
 

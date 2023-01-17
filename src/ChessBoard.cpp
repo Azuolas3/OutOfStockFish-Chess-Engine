@@ -38,17 +38,19 @@ void ChessBoard::PrintBoard()
     }
 }
 
-void ChessBoard::MovePiece(Move move)
+void ChessBoard::MovePiece(const Move& move)
 {
-    PieceList* pieceList = (GetColor(pieces[move.startingX][move.startingY]) == WHITE) ? whitePieces : blackPieces;
-    PieceList* oppositePieceList = (GetColor(pieces[move.startingX][move.startingY]) == WHITE) ? blackPieces : whitePieces;
+    Piece movingPiece = pieces[move.startingX][move.startingY];
+    Piece moveToPiece = pieces[move.destinationX][move.destinationY];
 
-    if(pieces[move.destinationX][move.destinationY] != EMPTY)
+    PieceList* pieceList = (GetColor(movingPiece) == WHITE) ? whitePieces : blackPieces;
+
+    if(moveToPiece != EMPTY)
         RemovePiece(move.destinationX, move.destinationY);
 
     pieceList->MovePiece(move.startingX, move.startingY, move.destinationX, move.destinationY);
 
-    pieces[move.destinationX][move.destinationY] = pieces[move.startingX][move.startingY];
+    pieces[move.destinationX][move.destinationY] = movingPiece;
     pieces[move.startingX][move.startingY] = EMPTY;
 
 }

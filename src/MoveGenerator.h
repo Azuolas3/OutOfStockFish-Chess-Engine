@@ -38,7 +38,7 @@ namespace ChessEngine
         void EraseIllegalEnPassantMoves(std::vector<Move>& moveList);
         void EraseIllegalPinnedMoves(std::vector<Move>& moveList, Square pinnedPiece); // Erases illegal moves for absolutely pinned pieces
 
-        bool isMoveEnPassant(Move move);
+        bool isMoveEnPassant(const Move& move);
 
     public:
         std::vector<Move> GenerateAllMoves(Color color, bool generatesThreatMap = false); // Generates all legal moves for chosen color
@@ -57,13 +57,14 @@ namespace ChessEngine
             plMoveGenerator = new PseudoLegalMoveGenerator(position);
             FindKingPosition(WHITE);
             FindKingPosition(BLACK);
-            InitThreatMaps();
+            //InitThreatMaps();
         }
 
 
         PseudoLegalMoveGenerator* plMoveGenerator;
 
         void InitThreatMaps();
+        void UpdateThreatMap(const Move& move);
 
         int whiteKingX;
         int whiteKingY;

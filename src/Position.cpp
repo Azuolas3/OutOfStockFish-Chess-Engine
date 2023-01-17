@@ -121,7 +121,7 @@ void Position::SetEnPassantSquare(int x, int y)
     enPassantSquareY = y;
 }
 
-void Position::PerformCastling(Move rookMove, Color color)
+void Position::PerformCastling(const Move& rookMove, Color color)
 {
     board->MovePiece(rookMove);
     RemoveCastlingRights(color, BOTH);
