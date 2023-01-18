@@ -7,12 +7,9 @@
 using namespace ChessEngine;
 using std::vector;
 
-vector<Move> PseudoLegalMoveGenerator::GenerateStraightMoves(int startingX, int startingY, bool generatesThreatMap)
+void PseudoLegalMoveGenerator::GenerateStraightMoves(std::vector<Move>& pseudoLegalMoves, int startingX, int startingY, bool generatesThreatMap)
 {
-    int maxSize = 16;
-
-    vector<Move> pseudoLegalMoves; // allocating memory preemptively for performance purposes.
-    pseudoLegalMoves.reserve(maxSize);
+    int initialSize = pseudoLegalMoves.size();
 
     ChessBoard board = (*position->board);
     Color activeColor = GetColor(board.pieces[startingX][startingY]);
@@ -106,7 +103,7 @@ vector<Move> PseudoLegalMoveGenerator::GenerateStraightMoves(int startingX, int 
         {
             Color color = GetColor(board.pieces[startingX][startingY]);
             std::function<void()> func = [color, this] { position->RemoveCastlingRights(color, QUEENSIDE); };
-            for(int i = 0; i < pseudoLegalMoves.size(); i++)
+            for(int i = initialSize; i < pseudoLegalMoves.size(); i++)
             {
                 pseudoLegalMoves[i].additionalAction = func;
             }
@@ -116,23 +113,16 @@ vector<Move> PseudoLegalMoveGenerator::GenerateStraightMoves(int startingX, int 
         {
             Color color = GetColor(board.pieces[startingX][startingY]);
             std::function<void()> func = [color, this] { position->RemoveCastlingRights(color, KINGSIDE); };
-            for(int i = 0; i < pseudoLegalMoves.size(); i++)
+            for(int i = initialSize; i < pseudoLegalMoves.size(); i++)
             {
                 pseudoLegalMoves[i].additionalAction = func;
             }
         }
     }
-
-    return pseudoLegalMoves;
 }
 
-vector<Move> PseudoLegalMoveGenerator::GenerateDiagonalMoves(int startingX, int startingY, bool generatesThreatMap)
+void PseudoLegalMoveGenerator::GenerateDiagonalMoves(std::vector<Move>& pseudoLegalMoves, int startingX, int startingY, bool generatesThreatMap)
 {
-    int maxSize = 16;
-
-    vector<Move> pseudoLegalMoves; // allocating memory preemptively for performance purposes.
-    pseudoLegalMoves.reserve(maxSize);
-
     ChessBoard board = (*position->board);
     Color activeColor = GetColor(board.pieces[startingX][startingY]);
 
@@ -218,17 +208,10 @@ vector<Move> PseudoLegalMoveGenerator::GenerateDiagonalMoves(int startingX, int 
 
         pseudoLegalMoves.push_back(move);
     }
-
-    return pseudoLegalMoves;
 }
 
-vector<Move> PseudoLegalMoveGenerator::GenerateKnightMoves(int startingX, int startingY, bool generatesThreatMap)
+void PseudoLegalMoveGenerator::GenerateKnightMoves(std::vector<Move>& pseudoLegalMoves, int startingX, int startingY, bool generatesThreatMap)
 {
-    int maxSize = 9;
-
-    vector<Move> pseudoLegalMoves; // allocating memory preemptively for performance purposes.
-    pseudoLegalMoves.reserve(maxSize);
-
     int xOffset[8] = { 2, 1, -1, -2, -2, -1, 1, 2 };
     int yOffset[8] = { 1, 2, 2, 1, -1, -2, -2, -1 };
 
@@ -243,17 +226,10 @@ vector<Move> PseudoLegalMoveGenerator::GenerateKnightMoves(int startingX, int st
             pseudoLegalMoves.push_back(move);
         }
     }
-
-    return pseudoLegalMoves;
 }
 
-vector<Move> PseudoLegalMoveGenerator::GenerateKingMoves(int startingX, int startingY)
+void PseudoLegalMoveGenerator::GenerateKingMoves(std::vector<Move>& pseudoLegalMoves, int startingX, int startingY)
 {
-    int maxSize = 9;
-
-    vector<Move> pseudoLegalMoves; // allocating memory preemptively for performance purposes.
-    pseudoLegalMoves.reserve(maxSize);
-
     int xOffset[8] = { 0, 1, 1, 1, 0, -1, -1, -1 };
     int yOffset[8] = { 1, 1, 0, -1, -1, -1, 0, 1 };
 
@@ -271,17 +247,10 @@ vector<Move> PseudoLegalMoveGenerator::GenerateKingMoves(int startingX, int star
             pseudoLegalMoves.push_back(move);
         }
     }
-
-    return pseudoLegalMoves;
 }
 
-std::vector<Move> PseudoLegalMoveGenerator::GenerateCastlingMoves(int startingX, int startingY)
+void PseudoLegalMoveGenerator::GenerateCastlingMoves(std::vector<Move>& pseudoLegalMoves, int startingX, int startingY)
 {
-    int maxSize = 3;
-
-    vector<Move> pseudoLegalMoves; // allocating memory preemptively for performance purposes.
-    pseudoLegalMoves.reserve(maxSize);
-
     ChessBoard board = (*position->board);
 
     int kingRank = startingY;
@@ -306,17 +275,10 @@ std::vector<Move> PseudoLegalMoveGenerator::GenerateCastlingMoves(int startingX,
         move.additionalAction = [&capture0 = position->board, rookMove] { capture0->MovePiece(rookMove); };
         pseudoLegalMoves.push_back(move);
     }
-
-    return pseudoLegalMoves;
 }
 
-vector<Move> PseudoLegalMoveGenerator::GeneratePawnMoves(int startingX, int startingY, bool generatesOnlyCaptures)
+void PseudoLegalMoveGenerator::GeneratePawnMoves(std::vector<Move>& pseudoLegalMoves, int startingX, int startingY, bool generatesOnlyCaptures)
 {
-    int maxSize = 14;
-
-    vector<Move> pseudoLegalMoves; // allocating memory preemptively for performance purposes.
-    pseudoLegalMoves.reserve(maxSize);
-
     ChessBoard board = (*position->board);
     Color pieceColor = GetColor(board.pieces[startingX][startingY]);
 
@@ -427,49 +389,40 @@ vector<Move> PseudoLegalMoveGenerator::GeneratePawnMoves(int startingX, int star
             pseudoLegalMoves.push_back(move);
         }
     }
-
-
-    return pseudoLegalMoves;
 }
 
-std::vector<Move> PseudoLegalMoveGenerator::GeneratePieceMoves(ChessEngine::Piece piece, int startingX, int startingY, bool ignoresEnemyKing)
+void PseudoLegalMoveGenerator::GeneratePieceMoves(std::vector<Move>& pseudoLegalMoves, ChessEngine::Piece piece, int startingX, int startingY, bool ignoresEnemyKing)
 {
     PieceType pieceType = GetType(piece);
-    std::vector<Move> generatedMoves;
-    std::vector<Move> additionalMoves;
 
     switch(pieceType)
     {
         case PAWN:
-            generatedMoves = GeneratePawnMoves(startingX, startingY, ignoresEnemyKing);
+            GeneratePawnMoves(pseudoLegalMoves, startingX, startingY, ignoresEnemyKing);
             break;
 
         case BISHOP:
-            generatedMoves = GenerateDiagonalMoves(startingX, startingY, ignoresEnemyKing);
+            GenerateDiagonalMoves(pseudoLegalMoves, startingX, startingY, ignoresEnemyKing);
             break;
 
         case KNIGHT:
-            generatedMoves = GenerateKnightMoves(startingX, startingY, ignoresEnemyKing);
+            GenerateKnightMoves(pseudoLegalMoves, startingX, startingY, ignoresEnemyKing);
             break;
 
         case ROOK:
-            generatedMoves = GenerateStraightMoves(startingX, startingY, ignoresEnemyKing);
+            GenerateStraightMoves(pseudoLegalMoves, startingX, startingY, ignoresEnemyKing);
             break;
 
         case QUEEN:
-            generatedMoves = GenerateStraightMoves(startingX, startingY, ignoresEnemyKing);
-            additionalMoves = GenerateDiagonalMoves(startingX, startingY, ignoresEnemyKing);
-            generatedMoves = CombineVectors(generatedMoves, additionalMoves);
+            GenerateStraightMoves(pseudoLegalMoves, startingX, startingY, ignoresEnemyKing);
+            GenerateDiagonalMoves(pseudoLegalMoves, startingX, startingY, ignoresEnemyKing);
             break;
 
         case KING:
-            generatedMoves = GenerateKingMoves(startingX, startingY);
-            additionalMoves = GenerateCastlingMoves(startingX, startingY);
-            generatedMoves = CombineVectors(generatedMoves, additionalMoves);
+            GenerateKingMoves(pseudoLegalMoves, startingX, startingY);
+            GenerateCastlingMoves(pseudoLegalMoves, startingX, startingY);
             break;
     }
-
-    return generatedMoves;
 }
 
 bool PseudoLegalMoveGenerator::IsSameColor(int startingX, int startingY, int destinationX, int destinationY)
@@ -509,7 +462,10 @@ bool PseudoLegalMoveGenerator::DoesContainMove(std::vector<Move> generatedMoves,
 
 std::vector<Move> PseudoLegalMoveGenerator::GenerateAllMoves(ChessEngine::Color color, bool generatesThreatMap)
 {
-    std::vector<Move> allGeneratedMoves;
+    int maxSize = 256; // maximum theoretical number of moves is 218, 256 just in case and since it's a beautiful number :)
+
+    std::vector<Move> generatedMoves;
+    generatedMoves.reserve(maxSize);
 
     ChessBoard* board = position->board;
 
@@ -523,10 +479,8 @@ std::vector<Move> PseudoLegalMoveGenerator::GenerateAllMoves(ChessEngine::Color 
         int y = squareList[i].y;
         //std::cout << i << " " << pieceList[i].x << " " << pieceList[i].y << " " << pieceList[i].piece << std::endl;
 
-        std::vector<Move> generatedMoves;
-        generatedMoves = GeneratePieceMoves(board->pieces[x][y], x, y, generatesThreatMap);
-        allGeneratedMoves = CombineVectors(allGeneratedMoves, generatedMoves);
+        GeneratePieceMoves(generatedMoves, board->pieces[x][y], x, y, generatesThreatMap);
     }
 
-    return allGeneratedMoves;
+    return generatedMoves;
 }

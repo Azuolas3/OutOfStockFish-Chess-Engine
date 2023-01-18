@@ -8,7 +8,11 @@ namespace ChessEngine
 {
     std::vector<Move> MoveGenerator::GenerateAllMoves(Color color, bool generatesThreatMap)
     {
-        std::vector<Move> allGeneratedMoves;
+        int maxSize = 256; // maximum theoretical number of moves is 218, 256 just in case and since it's a beautiful number :)
+
+        std::vector<Move> generatedMoves;
+        generatedMoves.reserve(maxSize);
+
         std::vector<Square> absolutelyPinnedPieces;
         //absolutelyPinnedPieces[1];
 
@@ -25,12 +29,10 @@ namespace ChessEngine
 
             bool isPinned = std::find(absolutelyPinnedPieces.begin(), absolutelyPinnedPieces.end(), Square(x, y)) != absolutelyPinnedPieces.end();
 
-            std::vector<Move> generatedMoves;
-            generatedMoves = GeneratePieceMoves(board->pieces[x][y], x, y, generatesThreatMap, isPinned);
-            allGeneratedMoves = plMoveGenerator->CombineVectors(allGeneratedMoves, generatedMoves);
+            GeneratePieceMoves(generatedMoves, board->pieces[x][y], x, y, generatesThreatMap, isPinned);
         }
 
-        return allGeneratedMoves;
+        return generatedMoves;
     }
 
     std::vector<Move> MoveGenerator::GenerateAllMoves()
@@ -67,14 +69,16 @@ namespace ChessEngine
             GetCheckRayMap();
             UpdateCaptureCheckMap(attackerPair);
 
-            // Only calculate king moves if its a double check since its impossible for any other piece to have a legal move
+            // Only calculate king moves if it's a double check since its impossible for any other piece to have a legal move
             if(attackerCount == 1)
             {
                 return GenerateAllMoves(activePlayerColor);
             }
             else
             {
-                return GenerateKingMoves(kingX, kingY);
+                std::vector<Move> kingMoves;
+                GenerateKingMoves(kingMoves, kingX, kingY);
+                return kingMoves;
             }
         }
         else
@@ -83,14 +87,13 @@ namespace ChessEngine
         }
     }
 
-    std::vector<Move> MoveGenerator::GenerateKingMoves(int x, int y)
+    void MoveGenerator::GenerateKingMoves(std::vector<Move>& generatedMoves, int x, int y)
     {
-        std::vector<Move> generatedMoves;
-
-        generatedMoves = plMoveGenerator->GenerateKingMoves(x, y);
+        int initialSize = generatedMoves.size();
+        plMoveGenerator->GenerateKingMoves(generatedMoves, x, y);
 
         int moveCount = generatedMoves.size();
-        for(int i = 0; i < moveCount;) // Weird iteration due to erasing moves - usual loop doesn't check every move
+        for(int i = initialSize; i < moveCount;) // Weird iteration due to erasing moves - usual loop doesn't check every move
         {
             Move move = generatedMoves[i];
             if(activeThreatMap[move.destinationX][move.destinationY])
@@ -101,51 +104,45 @@ namespace ChessEngine
             else
                 i++;
         }
-
-        return generatedMoves;
     }
 
 
-    std::vector<Move> MoveGenerator::GeneratePieceMoves(ChessEngine::Piece piece, int startingX, int startingY, bool generatesThreatMap, bool isPinned)
+    void MoveGenerator::GeneratePieceMoves(std::vector<Move>& generatedMoves, ChessEngine::Piece piece, int startingX, int startingY, bool generatesThreatMap, bool isPinned)
     {
         PieceType pieceType = GetType(piece);
-        std::vector<Move> generatedMoves;
-        std::vector<Move> additionalMoves;
 
         switch(pieceType)
         {
             case PAWN:
-                generatedMoves = plMoveGenerator->GeneratePawnMoves(startingX, startingY, generatesThreatMap);
+                plMoveGenerator->GeneratePawnMoves(generatedMoves, startingX, startingY, generatesThreatMap);
                 EraseIllegalMoves(generatedMoves);
                 EraseIllegalEnPassantMoves(generatedMoves);
                 break;
 
             case BISHOP:
-                generatedMoves = plMoveGenerator->GenerateDiagonalMoves(startingX, startingY, generatesThreatMap);
+                plMoveGenerator->GenerateDiagonalMoves(generatedMoves, startingX, startingY, generatesThreatMap);
                 EraseIllegalMoves(generatedMoves);
                 break;
 
             case KNIGHT:
-                generatedMoves = plMoveGenerator->GenerateKnightMoves(startingX, startingY, generatesThreatMap);
+                plMoveGenerator->GenerateKnightMoves(generatedMoves, startingX, startingY, generatesThreatMap);
                 EraseIllegalMoves(generatedMoves);
                 break;
 
             case ROOK:
-                generatedMoves = plMoveGenerator->GenerateStraightMoves(startingX, startingY, generatesThreatMap);
+                plMoveGenerator->GenerateStraightMoves(generatedMoves, startingX, startingY, generatesThreatMap);
                 EraseIllegalMoves(generatedMoves);
                 break;
 
             case QUEEN:
-                generatedMoves = plMoveGenerator->GenerateStraightMoves(startingX, startingY, generatesThreatMap);
-                additionalMoves = plMoveGenerator->GenerateDiagonalMoves(startingX, startingY, generatesThreatMap);
-                generatedMoves = plMoveGenerator->CombineVectors(generatedMoves, additionalMoves);
+                plMoveGenerator->GenerateStraightMoves(generatedMoves, startingX, startingY, generatesThreatMap);
+                plMoveGenerator->GenerateDiagonalMoves(generatedMoves, startingX, startingY, generatesThreatMap);
                 EraseIllegalMoves(generatedMoves);
                 break;
 
             case KING:
-                generatedMoves = GenerateKingMoves(startingX, startingY);
-                additionalMoves = GenerateCastlingMoves(startingX, startingY);
-                generatedMoves = plMoveGenerator->CombineVectors(generatedMoves, additionalMoves);
+                GenerateKingMoves(generatedMoves, startingX, startingY);
+                GenerateCastlingMoves(generatedMoves, startingX, startingY);
                 break;
         }
 
@@ -153,8 +150,6 @@ namespace ChessEngine
         {
             EraseIllegalPinnedMoves(generatedMoves, Square(startingX, startingY));
         }
-
-        return generatedMoves;
     }
 
 
@@ -231,7 +226,8 @@ namespace ChessEngine
 
     std::pair<Square, Square> MoveGenerator::GetSquareAttackers(int x, int y, int &attackerCount)
     {
-        std::vector<Move> generatedMoves = plMoveGenerator->GenerateKnightMoves(x, y);
+        std::vector<Move> generatedMoves;
+        plMoveGenerator->GenerateKnightMoves(generatedMoves, x, y);
 
         Square attackers[2] = {Square(-1, -1), Square(-1, -1)};
         attackerCount = 0;
@@ -248,8 +244,8 @@ namespace ChessEngine
             }
         }
 
-
-        generatedMoves = plMoveGenerator->GenerateStraightMoves(x, y);
+        generatedMoves.clear();
+        plMoveGenerator->GenerateStraightMoves(generatedMoves, x, y);
 
         for(Move& move : generatedMoves)
         {
@@ -266,7 +262,8 @@ namespace ChessEngine
         if(attackerCount == 2)
             return std::pair<Square, Square>(attackers[0], attackers[1]);
 
-        generatedMoves = plMoveGenerator->GenerateDiagonalMoves(x, y);
+        generatedMoves.clear();
+        plMoveGenerator->GenerateDiagonalMoves(generatedMoves, x, y);
 
         for(Move& move : generatedMoves)
         {
@@ -282,7 +279,8 @@ namespace ChessEngine
         if(attackerCount == 2)
             return std::pair<Square, Square>(attackers[0], attackers[1]);
 
-        generatedMoves = plMoveGenerator->GeneratePawnMoves(x, y, true);
+        generatedMoves.clear();
+        plMoveGenerator->GeneratePawnMoves(generatedMoves, x, y, true);
 
         for(Move& move : generatedMoves)
         {
@@ -312,10 +310,15 @@ namespace ChessEngine
             return;
 
         int moveCount = moveList.size();
-        for(int i = 0; i < moveCount;)
+        for(int i = moveCount - 1; i >= 0; i--)
         {
             Move move = moveList[i];
+            Piece currentPiece = board->pieces[move.startingX][move.startingY];
 
+            if(IsKing(currentPiece))
+            {
+                break;
+            }
             if(!captureCheckMap[move.destinationX][move.destinationY] && !checkRayMap[move.destinationX][move.destinationY])
             {
                 if(isMoveEnPassant(move)) // cover for edge case where move square doesn't coincide with capture square - en passant
@@ -323,16 +326,12 @@ namespace ChessEngine
                     int offset = (position->activePlayerColor == WHITE) ? -1 : 1;
                     if(captureCheckMap[move.destinationX][move.destinationY + offset])
                     {
-                        i++;
                         continue;
                     }
                 }
 
                 moveList.erase(moveList.begin() + i);
-                moveCount--;
             }
-            else
-                i++;
         }
     }
 
@@ -346,16 +345,17 @@ namespace ChessEngine
         CastRayInDirection(pinnedRay, Square(activeKingX, activeKingY), direction);
 
         int moveCount = moveList.size();
-        for(int i = 0; i < moveCount;)
+        for(int i = moveCount - 1; i >= 0; i--)
         {
             Move move = moveList[i];
+            if(move.startingX != pinnedPiece.x || move.startingY != pinnedPiece.y)
+            {
+                break;
+            }
             if(!pinnedRay[move.destinationX][move.destinationY])
             {
                 moveList.erase(moveList.begin() + i);
-                moveCount--;
             }
-            else
-                i++;
         }
     }
 
@@ -379,17 +379,14 @@ namespace ChessEngine
             return false;
     }
 
-    std::vector<Move> MoveGenerator::GenerateCastlingMoves(int startingX, int startingY)
+    void MoveGenerator::GenerateCastlingMoves(std::vector<Move>& generatedMoves, int startingX, int startingY)
     {
-
-        std::vector<Move> pseudoLegalMoves;
-
         int kingRank = startingY;
         Color color = GetColor(board->pieces[startingX][startingY]);
 
 
         if(IsInCheck())
-            return pseudoLegalMoves;
+            return;
 
         //Kingside generation
         if(IsKingsideEmpty(color, board->pieces) && position->HasCastlingRights(color, KINGSIDE) && GetType(board->pieces[7][kingRank]) == ROOK
@@ -400,7 +397,7 @@ namespace ChessEngine
             Move rookMove(7, kingRank, 5, kingRank);
 
             move.additionalAction = [this, rookMove, color] { position->PerformCastling(rookMove, color); };
-            pseudoLegalMoves.push_back(move);
+            generatedMoves.push_back(move);
         }
 
         //Queenside generation
@@ -411,10 +408,8 @@ namespace ChessEngine
             Move rookMove(0, kingRank, 3, kingRank);
 
             move.additionalAction = [this, rookMove, color] { position->PerformCastling(rookMove, color); };
-            pseudoLegalMoves.push_back(move);
+            generatedMoves.push_back(move);
         }
-
-        return pseudoLegalMoves;
     }
 
     std::vector<Square> MoveGenerator::GetAbsolutelyPinnedPieces(Color color)

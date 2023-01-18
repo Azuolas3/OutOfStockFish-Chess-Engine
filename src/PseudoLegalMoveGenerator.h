@@ -28,14 +28,14 @@ public:
         //board = position.board;
     }
 
-    std::vector<Move> GenerateStraightMoves(int startingX, int startingY, bool generatesThreatMap = false);
-    std::vector<Move> GenerateDiagonalMoves(int startingX, int startingY, bool generatesThreatMap = false);
-    std::vector<Move> GenerateKnightMoves(int startingX, int startingY, bool generatesThreatMap = false);
-    std::vector<Move> GenerateKingMoves(int startingX, int startingY);
-    std::vector<Move> GenerateCastlingMoves(int startingX, int startingY);
-    std::vector<Move> GeneratePawnMoves(int startingX, int startingY, bool generatesOnlyCaptures = false);
+    void GenerateStraightMoves(std::vector<Move>& pseudoLegalMoves, int startingX, int startingY, bool generatesThreatMap = false);
+    void GenerateDiagonalMoves(std::vector<Move>& pseudoLegalMoves, int startingX, int startingY, bool generatesThreatMap = false);
+    void GenerateKnightMoves(std::vector<Move>& pseudoLegalMoves, int startingX, int startingY, bool generatesThreatMap = false);
+    void GenerateKingMoves(std::vector<Move>& pseudoLegalMoves, int startingX, int startingY);
+    void GenerateCastlingMoves(std::vector<Move>& pseudoLegalMoves, int startingX, int startingY);
+    void GeneratePawnMoves(std::vector<Move>& pseudoLegalMoves, int startingX, int startingY, bool generatesOnlyCaptures = false);
 
-    std::vector<Move> GeneratePieceMoves(ChessEngine::Piece piece, int startingX, int startingY, bool ignoresEnemyKing = false);
+    void GeneratePieceMoves(std::vector<Move>& pseudoLegalMoves, ChessEngine::Piece piece, int startingX, int startingY, bool ignoresEnemyKing = false);
     std::vector<Move> GenerateAllMoves(ChessEngine::Color color, bool generatesThreatMap = false);
 
     std::vector<Move> CombineVectors(const std::vector<Move>& a, const std::vector<Move>& b);

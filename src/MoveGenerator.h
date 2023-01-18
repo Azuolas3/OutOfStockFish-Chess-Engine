@@ -45,10 +45,10 @@ namespace ChessEngine
         std::vector<Move> GenerateAllMoves(); // Efficiently generates all legal moves for current active Color
 
 
-        std::vector<Move> GenerateKingMoves(int x, int y);
-        std::vector<Move> GenerateCastlingMoves(int x, int y);
+        void GenerateKingMoves(std::vector<Move>& generatedMoves, int x, int y);
+        void GenerateCastlingMoves(std::vector<Move>& generatedMoves, int x, int y);
 
-        std::vector<Move> GeneratePieceMoves(ChessEngine::Piece piece, int startingX, int startingY, bool generatesThreatMap = false, bool isPinned = false);
+        void GeneratePieceMoves(std::vector<Move>& generatedMoves, ChessEngine::Piece piece, int startingX, int startingY, bool generatesThreatMap = false, bool isPinned = false);
 
         MoveGenerator(Position* position)
         {
