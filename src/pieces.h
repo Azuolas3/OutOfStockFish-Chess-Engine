@@ -89,6 +89,14 @@ namespace ChessEngine
             return false;
     }
 
+    inline bool IsPawn(Piece piece)
+    {
+        if(GetType(piece) == PAWN)
+            return true;
+        else
+            return false;
+    }
+
     inline bool IsRookOrQueen(Piece piece)
     {
         if(GetType(piece) == ROOK || GetType(piece) == QUEEN)
