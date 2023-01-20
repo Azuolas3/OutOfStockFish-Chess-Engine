@@ -29,7 +29,7 @@ int main() {
 
     board->PrintBoard();
     auto start  = std::chrono::steady_clock::now();
-    cout << Perft(6,  position, moveGenerator) << '\n';
+    cout << Perft(6,  position, moveGenerator, true) << '\n';
     auto end = std::chrono::steady_clock::now();
     std::chrono::duration<double> elapsed_seconds = end-start;
     cout << "TIME: " << elapsed_seconds.count();

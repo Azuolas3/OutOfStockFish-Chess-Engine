@@ -8,7 +8,7 @@ namespace ChessEngine
 {
     //static std::ofstream perftOutput("perft.txt");
 
-    u64 Perft(int depth, Position *position, MoveGenerator *moveGenerator)
+    u64 Perft(int depth, Position *position, MoveGenerator *moveGenerator, bool isBulkCountingEnabled)
     {
         std::vector<Move> moveList;
         int moveCount;
@@ -16,6 +16,9 @@ namespace ChessEngine
 
         if(depth == 0)
             return 1ULL;
+
+        if(isBulkCountingEnabled && depth == 1)
+            return moveGenerator->GenerateAllMoves().size();
 
         moveList = moveGenerator->GenerateAllMoves();
         moveCount = moveList.size();
@@ -26,7 +29,7 @@ namespace ChessEngine
             MovePositionInfo moveInfo = position->GenerateMoveInfo(moveList[i]);
             position->MakeMove(moveList[i]);
             //std::cout << "NODES: " << nodes << "  MOVE: " << MoveToString(moveList[i]) << " \n";
-            currNodes = Perft(depth - 1, position, moveGenerator);
+            currNodes = Perft(depth - 1, position, moveGenerator, isBulkCountingEnabled);
             nodes += currNodes;
             position->UndoMove(moveInfo);
             //std::cout << "NODES: " << currNodes << "  MOVE: " << MoveToString(moveList[i]) << " " << position->board->blackPieces->count;
