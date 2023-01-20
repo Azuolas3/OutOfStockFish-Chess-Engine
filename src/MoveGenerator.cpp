@@ -361,57 +361,48 @@ namespace ChessEngine
 
     void MoveGenerator::EraseIllegalEnPassantMoves(std::vector<Move> &moveList)
     {
-        int moveCount = moveList.size();
+        int moveNumber = moveList.size() - 1;
         //Color activeColor = GetColor(board->pieces[][])
+        if(moveList.empty())
+            return;
 
-        for(int i = moveCount - 1; i >= 0; i--) {
-            Move move = moveList[i];
-            Piece activePiece = board->pieces[move.startingX][move.startingY];
-            Color activeColor = GetColor(activePiece);
+        Move move = moveList[moveNumber];
+        Piece activePiece = board->pieces[move.startingX][move.startingY];
+        Color activeColor = GetColor(activePiece);
 
-            if(!IsPawn(activePiece))
+        if (!isMoveEnPassant(move))
+        {
+            return;
+        }
+        else // cover for edge case where en passant causes discovered check by moving 2 pieces from same rank
+        {
+            if (move.startingY == activeKingY)
             {
-                break;
-            }
-            if (!isMoveEnPassant(move))
-            {
-                continue;
-            }
-            else // cover for edge case where en passant causes discovered check by moving 2 pieces from same rank
-            {
-                if (move.startingY == activeKingY)
+                int offset = (activeKingX - move.startingX > 0) ? -1 : 1; // find direction from king towards en passant square
+
+                for (int x = activeKingX + offset;; x+= offset) // go through each square in that direction
                 {
-                    int offset = (activeKingX - move.startingX > 0) ? -1 : 1; // find direction from king towards en passant square
-
-                    for (int x = activeKingX + offset;; x+= offset) // go through each square in that direction
+                    if(!IsInBounds(x,activeKingY))
                     {
-                        if(!IsInBounds(x,activeKingY))
+                        break;
+                    }
+
+                    if (board->pieces[x][activeKingY] != EMPTY)
+                    {
+                        if (GetType(board->pieces[x][activeKingY]) == PAWN && (x == move.destinationX || move.startingX == x)) // if its the captured pawn or en passant pawn, continue
+                        {
+                            continue;
+                        }
+                        else if (IsCorrectSlidingPiece(board->pieces[x][activeKingY], -offset,0) && GetColor(board->pieces[x][activeKingY]) != activeColor) //if you have found a piece which can move in that direction, erase
+                        {
+                            moveList.erase(moveList.begin() + moveNumber);
+                            break;
+                        }
+                        else // else, that's a different piece and no pins are happening
                         {
                             break;
                         }
-
-                        if (board->pieces[x][activeKingY] != EMPTY)
-                        {
-                            if (GetType(board->pieces[x][activeKingY]) == PAWN && (x == move.destinationX || move.startingX == x)) // if its the captured pawn or en passant pawn, continue
-                            {
-                                continue;
-                            }
-                            else if (IsCorrectSlidingPiece(board->pieces[x][activeKingY], -offset,0) && GetColor(board->pieces[x][activeKingY]) != activeColor) //if you have found a piece which can move in that direction, erase
-                            {
-                                moveList.erase(moveList.begin() + i);
-                                break;
-                            }
-                            else // else, that's a different piece and no pins are happening
-                            {
-                                i++;
-                                break;
-                            }
-                        }
                     }
-                }
-                else
-                {
-                    continue;
                 }
             }
         }
