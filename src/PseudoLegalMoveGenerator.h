@@ -17,7 +17,7 @@ class PseudoLegalMoveGenerator
     ChessEngine::Position* position;
     //ChessEngine::ChessBoard* board;
 
-    bool IsSameColor(int startingX, int startingY, int destinationX, int destinationY);
+    //bool IsSameColor(int startingX, int startingY, int destinationX, int destinationY);
 
 public:
     PseudoLegalMoveGenerator() = default;

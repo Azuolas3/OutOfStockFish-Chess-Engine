@@ -25,9 +25,7 @@ namespace ChessEngine
 
     void PieceList::MovePiece(int fromX, int fromY, int toX, int toY)
     {
-        int index; //= map[toX][toY];
-
-        index = map[fromX][fromY];
+        int index = map[fromX][fromY];
         squares[index].x = toX;
         squares[index].y = toY;
         map[toX][toY] = index;

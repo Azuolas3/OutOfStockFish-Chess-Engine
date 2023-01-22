@@ -67,6 +67,14 @@ namespace ChessEngine
         return oppositeColor;
     }
 
+//    inline bool IsSameColor(Color a, Color b)
+//    {
+//        if(GetType(piece) == ROOK || GetType(piece) == BISHOP ||  GetType(piece) == QUEEN)
+//            return true;
+//        else
+//            return false;
+//    }
+
     inline PieceType GetType(Piece piece)
     {
         PieceType type = static_cast<PieceType>(piece & pieceTypeBitMask);

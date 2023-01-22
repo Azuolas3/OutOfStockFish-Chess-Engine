@@ -11,8 +11,9 @@ void PseudoLegalMoveGenerator::GenerateStraightMoves(std::vector<Move>& pseudoLe
 {
     int initialSize = pseudoLegalMoves.size();
 
-    ChessBoard board = (*position->board);
-    Color activeColor = GetColor(board.pieces[startingX][startingY]);
+    ChessBoard* board = position->board;
+    Piece activePiece = board->pieces[startingX][startingY];
+    Color activeColor = GetColor(activePiece);
 
     Piece activeKing = static_cast<Piece>(GetOppositeColor(activeColor) | KING);
 
@@ -20,16 +21,19 @@ void PseudoLegalMoveGenerator::GenerateStraightMoves(std::vector<Move>& pseudoLe
     for(int x = startingX + 1; x < 8; x++) // add moves to the right
     {
         Move move(startingX, startingY, x, startingY);
+        Piece currentPiece = board->pieces[x][startingY];
 
-        if(board.pieces[x][startingY] != EMPTY)
+        if(currentPiece != EMPTY)
         {
-            if(!IsSameColor(startingX, startingY, x, startingY) || (generatesThreatMap && IsSameColor(startingX, startingY, x, startingY)))
+            Color currentColor = GetColor(currentPiece);
+
+            if(activeColor != currentColor || (generatesThreatMap && activeColor == currentColor))
             {
                 pseudoLegalMoves.push_back(move);
-                if(board.pieces[x][startingY] != activeKing)
+                if(currentPiece != activeKing)
                     break;
             }
-            if(!generatesThreatMap || (generatesThreatMap && board.pieces[x][startingY] != activeKing))
+            if(!generatesThreatMap || (generatesThreatMap && currentPiece != activeKing))
                 break;
         }
 
@@ -39,16 +43,19 @@ void PseudoLegalMoveGenerator::GenerateStraightMoves(std::vector<Move>& pseudoLe
     for(int x = startingX - 1; x >= 0; x--) // add moves to the left
     {
         Move move(startingX, startingY, x, startingY);
+        Piece currentPiece = board->pieces[x][startingY];
 
-        if(board.pieces[x][startingY] != EMPTY)
+        if(currentPiece != EMPTY)
         {
-            if(!IsSameColor(startingX, startingY, x, startingY) || (generatesThreatMap && IsSameColor(startingX, startingY, x, startingY)))
+            Color currentColor = GetColor(currentPiece);
+
+            if(activeColor != currentColor || (generatesThreatMap && activeColor == currentColor))
             {
                 pseudoLegalMoves.push_back(move);
-                if(board.pieces[x][startingY] != activeKing)
+                if(currentPiece != activeKing)
                     break;
             }
-            if(!generatesThreatMap || (generatesThreatMap && board.pieces[x][startingY] != activeKing))
+            if(!generatesThreatMap || (generatesThreatMap && currentPiece != activeKing))
                 break;
         }
 
@@ -61,16 +68,19 @@ void PseudoLegalMoveGenerator::GenerateStraightMoves(std::vector<Move>& pseudoLe
     for(int y = startingY + 1; y < 8; y++) // add moves going up
     {
         Move move(startingX, startingY, startingX, y);
+        Piece currentPiece = board->pieces[startingX][y];
 
-        if(board.pieces[startingX][y] != EMPTY)
+        if(currentPiece != EMPTY)
         {
-            if(!IsSameColor(startingX, startingY, startingX, y) || (generatesThreatMap && IsSameColor(startingX, startingY, startingX, y)))
+            Color currentColor = GetColor(currentPiece);
+
+            if(activeColor != currentColor || (generatesThreatMap && activeColor == currentColor))
             {
                 pseudoLegalMoves.push_back(move);
-                if(board.pieces[startingX][y] != activeKing)
+                if(currentPiece != activeKing)
                     break;
             }
-            if(!generatesThreatMap || (generatesThreatMap && board.pieces[startingX][y] != activeKing))
+            if(!generatesThreatMap || (generatesThreatMap && currentPiece != activeKing))
                 break;
         }
 
@@ -80,16 +90,19 @@ void PseudoLegalMoveGenerator::GenerateStraightMoves(std::vector<Move>& pseudoLe
     for(int y = startingY - 1; y >= 0; y--) // add moves going down
     {
         Move move(startingX, startingY, startingX, y);
+        Piece currentPiece = board->pieces[startingX][y];
 
-        if(board.pieces[startingX][y] != EMPTY)
+        if(currentPiece != EMPTY)
         {
-            if(!IsSameColor(startingX, startingY, startingX, y) || (generatesThreatMap && IsSameColor(startingX, startingY, startingX, y)))
+            Color currentColor = GetColor(currentPiece);
+
+            if(activeColor != currentColor || (generatesThreatMap && activeColor == currentColor))
             {
                 pseudoLegalMoves.push_back(move);
-                if(board.pieces[startingX][y] != activeKing)
+                if(currentPiece != activeKing)
                     break;
             }
-            if(!generatesThreatMap || (generatesThreatMap && board.pieces[startingX][y] != activeKing))
+            if(!generatesThreatMap || (generatesThreatMap && currentPiece != activeKing))
                 break;
         }
 
@@ -97,12 +110,11 @@ void PseudoLegalMoveGenerator::GenerateStraightMoves(std::vector<Move>& pseudoLe
     }
 
     if(position->whiteCastlingRights != NONE && position->blackCastlingRights != NONE &&
-            GetType(board.pieces[startingX][startingY]) == ROOK) // Adding RemoveCastleRights to each rook move
+            GetType(activePiece) == ROOK) // Adding RemoveCastleRights to each rook move
     {
         if(startingX == 0) // QUEENSIDE
         {
-            Color color = GetColor(board.pieces[startingX][startingY]);
-            std::function<void()> func = [color, this] { position->RemoveCastlingRights(color, QUEENSIDE); };
+            std::function<void()> func = [activeColor, this] { position->RemoveCastlingRights(activeColor, QUEENSIDE); };
             for(int i = initialSize; i < pseudoLegalMoves.size(); i++)
             {
                 pseudoLegalMoves[i].additionalAction = func;
@@ -111,8 +123,7 @@ void PseudoLegalMoveGenerator::GenerateStraightMoves(std::vector<Move>& pseudoLe
 
         if(startingX == 7) // KINGSIDE
         {
-            Color color = GetColor(board.pieces[startingX][startingY]);
-            std::function<void()> func = [color, this] { position->RemoveCastlingRights(color, KINGSIDE); };
+            std::function<void()> func = [activeColor, this] { position->RemoveCastlingRights(activeColor, KINGSIDE); };
             for(int i = initialSize; i < pseudoLegalMoves.size(); i++)
             {
                 pseudoLegalMoves[i].additionalAction = func;
@@ -123,8 +134,9 @@ void PseudoLegalMoveGenerator::GenerateStraightMoves(std::vector<Move>& pseudoLe
 
 void PseudoLegalMoveGenerator::GenerateDiagonalMoves(std::vector<Move>& pseudoLegalMoves, int startingX, int startingY, bool generatesThreatMap)
 {
-    ChessBoard board = (*position->board);
-    Color activeColor = GetColor(board.pieces[startingX][startingY]);
+    ChessBoard* board = position->board;
+    Piece activePiece = board->pieces[startingX][startingY];
+    Color activeColor = GetColor(activePiece);
 
     Piece activeKing = static_cast<Piece>(GetOppositeColor(activeColor) | KING);
 
@@ -133,16 +145,19 @@ void PseudoLegalMoveGenerator::GenerateDiagonalMoves(std::vector<Move>& pseudoLe
     for(int x = startingX + 1, y = startingY + 1; x < 8 && y < 8; x++, y++) // add moves to the right
     {
         Move move(startingX, startingY, x, y);
+        Piece currentPiece = board->pieces[x][y];
 
-        if(board.pieces[x][y] != EMPTY)
+        if(currentPiece != EMPTY)
         {
-            if(!IsSameColor(startingX, startingY, x, y) || (generatesThreatMap && IsSameColor(startingX, startingY, x, y)))
+            Color currentColor = GetColor(currentPiece);
+
+            if(activeColor != currentColor || (generatesThreatMap && activeColor == currentColor))
             {
                 pseudoLegalMoves.push_back(move);
-                if(board.pieces[x][y] != activeKing)
+                if(currentPiece != activeKing)
                     break;
             }
-            if(!generatesThreatMap || (generatesThreatMap && board.pieces[x][y] != activeKing))
+            if(!generatesThreatMap || (generatesThreatMap && currentPiece != activeKing))
                 break;
         }
 
@@ -153,16 +168,19 @@ void PseudoLegalMoveGenerator::GenerateDiagonalMoves(std::vector<Move>& pseudoLe
     for(int x = startingX - 1, y = startingY + 1; x >= 0 && y < 8; x--, y++) // add moves to the right
     {
         Move move(startingX, startingY, x, y);
+        Piece currentPiece = board->pieces[x][y];
 
-        if(board.pieces[x][y] != EMPTY)
+        if(currentPiece != EMPTY)
         {
-            if(!IsSameColor(startingX, startingY, x, y) || (generatesThreatMap && IsSameColor(startingX, startingY, x, y)))
+            Color currentColor = GetColor(currentPiece);
+
+            if(activeColor != currentColor || (generatesThreatMap && activeColor == currentColor))
             {
                 pseudoLegalMoves.push_back(move);
-                if(board.pieces[x][y] != activeKing)
+                if(currentPiece != activeKing)
                     break;
             }
-            if(!generatesThreatMap || (generatesThreatMap && board.pieces[x][y] != activeKing))
+            if(!generatesThreatMap || (generatesThreatMap && currentPiece != activeKing))
                 break;
         }
 
@@ -173,16 +191,19 @@ void PseudoLegalMoveGenerator::GenerateDiagonalMoves(std::vector<Move>& pseudoLe
     for(int x = startingX + 1, y = startingY - 1; x < 8 && y >= 0; x++, y--) // add moves to the right
     {
         Move move(startingX, startingY, x, y);
+        Piece currentPiece = board->pieces[x][y];
 
-        if(board.pieces[x][y] != EMPTY)
+        if(currentPiece != EMPTY)
         {
-            if(!IsSameColor(startingX, startingY, x, y) || (generatesThreatMap && IsSameColor(startingX, startingY, x, y)))
+            Color currentColor = GetColor(currentPiece);
+
+            if(activeColor != currentColor || (generatesThreatMap && activeColor == currentColor))
             {
                 pseudoLegalMoves.push_back(move);
-                if(board.pieces[x][y] != activeKing)
+                if(currentPiece != activeKing)
                     break;
             }
-            if(!generatesThreatMap || (generatesThreatMap && board.pieces[x][y] != activeKing))
+            if(!generatesThreatMap || (generatesThreatMap && currentPiece != activeKing))
                 break;
         }
 
@@ -193,16 +214,19 @@ void PseudoLegalMoveGenerator::GenerateDiagonalMoves(std::vector<Move>& pseudoLe
     for(int x = startingX - 1, y = startingY - 1; x >= 0 && y >= 0; x--, y--) // add moves to the right
     {
         Move move(startingX, startingY, x, y);
+        Piece currentPiece = board->pieces[x][y];
 
-        if(board.pieces[x][y] != EMPTY)
+        if(currentPiece != EMPTY)
         {
-            if(!IsSameColor(startingX, startingY, x, y) || (generatesThreatMap && IsSameColor(startingX, startingY, x, y)))
+            Color currentColor = GetColor(currentPiece);
+
+            if(activeColor != currentColor || (generatesThreatMap && activeColor == currentColor))
             {
                 pseudoLegalMoves.push_back(move);
-                if(board.pieces[x][y] != activeKing)
+                if(currentPiece != activeKing)
                     break;
             }
-            if(!generatesThreatMap || (generatesThreatMap && board.pieces[x][y] != activeKing))
+            if(!generatesThreatMap || (generatesThreatMap && currentPiece != activeKing))
                 break;
         }
 
@@ -220,7 +244,10 @@ void PseudoLegalMoveGenerator::GenerateKnightMoves(std::vector<Move>& pseudoLega
         int x = startingX + xOffset[i];
         int y = startingY + yOffset[i];
 
-        if(IsInBounds(x, y) && (!IsSameColor(startingX, startingY, x, y) || (generatesThreatMap && IsSameColor(startingX, startingY, x, y))))
+        Color color = GetColor(position->board->pieces[startingX][startingY]);
+        Color currentColor = GetColor(position->board->pieces[x][y]);
+
+        if(IsInBounds(x, y) && (color != currentColor || (generatesThreatMap && color == currentColor)))
         {
             Move move(startingX, startingY, x, y);
             pseudoLegalMoves.push_back(move);
@@ -239,10 +266,12 @@ void PseudoLegalMoveGenerator::GenerateKingMoves(std::vector<Move>& pseudoLegalM
         int x = startingX + xOffset[i];
         int y = startingY + yOffset[i];
 
-        if(IsInBounds(x, y) && (!IsSameColor(startingX, startingY, x, y)))
+        Color color = GetColor(position->board->pieces[startingX][startingY]);
+        Color currentColor = GetColor(position->board->pieces[x][y]);
+
+        if(IsInBounds(x, y) && color != currentColor)
         {
             Move move(startingX, startingY, x, y);
-            Color color = GetColor(position->board->pieces[startingX][startingY]);
             move.additionalAction = [this, color] { position->RemoveCastlingRights(color, BOTH); };
             pseudoLegalMoves.push_back(move);
         }
@@ -251,41 +280,41 @@ void PseudoLegalMoveGenerator::GenerateKingMoves(std::vector<Move>& pseudoLegalM
 
 void PseudoLegalMoveGenerator::GenerateCastlingMoves(std::vector<Move>& pseudoLegalMoves, int startingX, int startingY)
 {
-    ChessBoard board = (*position->board);
+    ChessBoard* board = position->board;
 
     int kingRank = startingY;
-    Color color = GetColor(board.pieces[startingX][startingY]);
+    Color color = GetColor(board->pieces[startingX][startingY]);
 
     //Kingside generation
-    if(IsKingsideEmpty(color, board.pieces) && position->HasCastlingRights(color, KINGSIDE) && GetType(board.pieces[7][kingRank]) == ROOK) // checking only for type because color doesnt matter - all castling conditions cant be met if the rook is of opposite color.
+    if(IsKingsideEmpty(color, board->pieces) && position->HasCastlingRights(color, KINGSIDE) && GetType(board->pieces[7][kingRank]) == ROOK) // checking only for type because color doesnt matter - all castling conditions cant be met if the rook is of opposite color.
     {
         Move move(startingX, startingY, startingX + 2, startingY, CASTLING);
         Move rookMove(7, kingRank, 5, kingRank);
 
-        move.additionalAction = [&capture0 = position->board, rookMove] { capture0->MovePiece(rookMove); };
+        move.additionalAction = [&capture0 = board, rookMove] { capture0->MovePiece(rookMove); };
         pseudoLegalMoves.push_back(move);
     }
 
     //Queenside generation
-    if(IsQueensideEmpty(color, board.pieces) && position->HasCastlingRights(color, QUEENSIDE) && GetType(board.pieces[0][kingRank]) == ROOK)
+    if(IsQueensideEmpty(color, board->pieces) && position->HasCastlingRights(color, QUEENSIDE) && GetType(board->pieces[0][kingRank]) == ROOK)
     {
         Move move(startingX, startingY, startingX - 2, startingY, CASTLING);
         Move rookMove(0, kingRank, 3, kingRank);
 
-        move.additionalAction = [&capture0 = position->board, rookMove] { capture0->MovePiece(rookMove); };
+        move.additionalAction = [&capture0 = board, rookMove] { capture0->MovePiece(rookMove); };
         pseudoLegalMoves.push_back(move);
     }
 }
 
 void PseudoLegalMoveGenerator::GeneratePawnMoves(std::vector<Move>& pseudoLegalMoves, int startingX, int startingY, bool generatesOnlyCaptures)
 {
-    ChessBoard board = (*position->board);
-    Color pieceColor = GetColor(board.pieces[startingX][startingY]);
+    ChessBoard* board = position->board;
+    Color pieceColor = GetColor(board->pieces[startingX][startingY]);
 
     int offset = (pieceColor == ChessEngine::WHITE) ? 1 : -1;
     int startingRank = pieceColor == ChessEngine::WHITE ? 1 : 6;
     int promotionRank = (pieceColor) == ChessEngine::WHITE ? 7 : 0;
-    Piece possibleSquare = board.pieces[startingX][startingY + offset];
+    Piece possibleSquare = board->pieces[startingX][startingY + offset];
 
     if(!generatesOnlyCaptures)
     {
@@ -293,7 +322,7 @@ void PseudoLegalMoveGenerator::GeneratePawnMoves(std::vector<Move>& pseudoLegalM
         {
             Move move(startingX, startingY, startingX, startingY + offset);
 
-            if(startingY == startingRank && board.pieces[startingX][startingY + (offset * 2)] == EMPTY)
+            if(startingY == startingRank && board->pieces[startingX][startingY + (offset * 2)] == EMPTY)
             {
                 offset *= 2;
                 Move move(startingX, startingY, startingX, startingY + offset);
@@ -325,7 +354,10 @@ void PseudoLegalMoveGenerator::GeneratePawnMoves(std::vector<Move>& pseudoLegalM
     //capturing pieces
     if(IsInBounds(startingX - 1, startingY + offset))
     {
-        if((board.pieces[startingX - 1][startingY + offset] && !IsSameColor(startingX, startingY, startingX - 1, startingY + offset)) || generatesOnlyCaptures)
+        Piece currentPiece = board->pieces[startingX - 1][startingY + offset];
+        Color currentColor = GetColor(currentPiece);
+
+        if((currentPiece != EMPTY && pieceColor != currentColor) || generatesOnlyCaptures)
         {
             Move move(startingX, startingY, startingX - 1, startingY + offset);
 
@@ -350,7 +382,10 @@ void PseudoLegalMoveGenerator::GeneratePawnMoves(std::vector<Move>& pseudoLegalM
 
     if(IsInBounds(startingX + 1, startingY + offset))
     {
-        if((board.pieces[startingX + 1][startingY + offset] && !IsSameColor(startingX, startingY, startingX + 1, startingY + offset)) || generatesOnlyCaptures)
+        Piece currentPiece = board->pieces[startingX + 1][startingY + offset];
+        Color currentColor = GetColor(currentPiece);
+
+        if((currentPiece != EMPTY && pieceColor != currentColor) || generatesOnlyCaptures)
         {
             Move move(startingX, startingY, startingX + 1, startingY + offset);
             if(move.destinationY == promotionRank)
@@ -425,15 +460,15 @@ void PseudoLegalMoveGenerator::GeneratePieceMoves(std::vector<Move>& pseudoLegal
     }
 }
 
-bool PseudoLegalMoveGenerator::IsSameColor(int startingX, int startingY, int destinationX, int destinationY)
-{
-    ChessBoard board = (*position->board);
-
-    if(GetColor(board.pieces[startingX][startingY]) == GetColor(board.pieces[destinationX][destinationY]))
-        return true;
-    else
-        return false;
-}
+//bool PseudoLegalMoveGenerator::IsSameColor(int startingX, int startingY, int destinationX, int destinationY)
+//{
+//    ChessBoard* board = position->board;
+//
+//    if(GetColor(board->pieces[startingX][startingY]) == GetColor(board->pieces[destinationX][destinationY]))
+//        return true;
+//    else
+//        return false;
+//}
 
 std::vector<Move> PseudoLegalMoveGenerator::CombineVectors(const std::vector<Move>& a, const std::vector<Move>& b)
 {
