@@ -8,34 +8,52 @@ using namespace ChessEngine;
 
 void ChessBoard::PrintBoard()
 {
-    std::map<Piece, wchar_t> symbolDictionary =
+//    std::map<Piece, wchar_t> symbolDictionary =
+//    {
+//            {EMPTY, L'\u26DA'}, //Unicode symbol codes for each piece and its color
+//            {B_PAWN, L'\u2659'},
+//            {W_PAWN, L'\u265F'},
+//            {B_BISHOP, L'\u2657'},
+//            {W_BISHOP, L'\u265D'},
+//            {B_KNIGHT, L'\u2658'},
+//            {W_KNIGHT, L'\u265E'},
+//            {B_ROOK, L'\u2656'},
+//            {W_ROOK, L'\u265C'},
+//            {B_QUEEN, L'\u2655'},
+//            {W_QUEEN, L'\u265B'},
+//            {B_KING, L'\u2654'},
+//            {W_KING, L'\u265A'}
+//    };
+
+    std::map<Piece, char> symbolDictionary =
     {
-            {EMPTY, L'\u26DA'}, //Unicode symbol codes for each piece and its color
-            {B_PAWN, L'\u2659'},
-            {W_PAWN, L'\u265F'},
-            {B_BISHOP, L'\u2657'},
-            {W_BISHOP, L'\u265D'},
-            {B_KNIGHT, L'\u2658'},
-            {W_KNIGHT, L'\u265E'},
-            {B_ROOK, L'\u2656'},
-            {W_ROOK, L'\u265C'},
-            {B_QUEEN, L'\u2655'},
-            {W_QUEEN, L'\u265B'},
-            {B_KING, L'\u2654'},
-            {W_KING, L'\u265A'}
+            {EMPTY, ' '}, //Unicode symbol codes for each piece and its color
+            {B_PAWN, 'p'},
+            {W_PAWN, 'P'},
+            {B_BISHOP, 'b'},
+            {W_BISHOP, 'B'},
+            {B_KNIGHT, 'n'},
+            {W_KNIGHT, 'N'},
+            {B_ROOK, 'r'},
+            {W_ROOK, 'R'},
+            {B_QUEEN, 'q'},
+            {W_QUEEN, 'Q'},
+            {B_KING, 'k'},
+            {W_KING, 'K'}
     };
 
+    std::cout << "\n +---+---+---+---+---+---+---+---+\n";
     for(int i = 7; i >= 0; i--)
     {
         for(int j = 0; j < 8; j++)
         {
-            HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
-            DWORD written = 0;
-            // explicitly call the wide version (which always accepts UTF-16)
-            WriteConsoleW(handle, &(symbolDictionary[pieces[j][i]]), 1, &written, NULL);
+            std::cout << " | " << symbolDictionary[pieces[j][i]];
         }
-        std::cout << std::endl;
+
+        std::cout << " | " << (1 + i) << "\n +---+---+---+---+---+---+---+---+\n";
     }
+
+    std::cout << "   a   b   c   d   e   f   g   h\n";
 }
 
 void ChessBoard::MovePiece(const Move& move)
