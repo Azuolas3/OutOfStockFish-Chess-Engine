@@ -30,6 +30,8 @@ namespace ChessEngine {
         }
 
         int Search(int depth);
+
+        Move currentBestMove;
     };
 
 

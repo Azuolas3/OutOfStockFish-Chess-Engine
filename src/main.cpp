@@ -24,7 +24,7 @@ int main() {
 
     bool isPlaying = true;
 
-    Position* position = fenParser.loadFen("6qk/8/8/8/8/2r5/1K6/8 w - - 0 1"); // 8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - 0 1
+    Position* position = fenParser.loadFen("6qk/8/8/8/8/r1n5/1K6/8 w - - 0 1"); // 8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - 0 1
     ChessBoard* board = position->board;
     MoveGenerator* moveGenerator = new MoveGenerator(position);
     Evaluator* evaluator = new Evaluator(position);
@@ -44,6 +44,7 @@ int main() {
         //Print2darray(moveGenerator->captureCheckMap);
         cout << evaluator->EvaluatePosition() << '\n';
         cout << searcher->Search(2) << '\n';
+        cout << MoveToString(searcher->currentBestMove) << '\n';
         string moveInput;
         cin >> moveInput;
         if(moveInput == "STOP")

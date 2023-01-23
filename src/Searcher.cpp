@@ -4,7 +4,8 @@
 
 #include "Searcher.h"
 
-namespace ChessEngine {
+namespace ChessEngine
+{
     int Searcher::Search(int depth)
     {
         if (depth == 0)
@@ -22,15 +23,21 @@ namespace ChessEngine {
                 return 0; // draw eval for stalemate
         }
 
+        Move bestMove;
         for (auto & move : moveList)
         {
             MovePositionInfo moveInfo = position->GenerateMoveInfo(move);
             position->MakeMove(move);
             int currentEvaluation = -Search(depth - 1);
-            bestEvaluation = std::max(currentEvaluation, bestEvaluation);
+            if(currentEvaluation > bestEvaluation)
+            {
+                bestEvaluation = currentEvaluation;
+                bestMove = move;
+            }
             position->UndoMove(moveInfo);
         }
 
+        currentBestMove = bestMove;
         return bestEvaluation;
     }
 } // ChessEngine
