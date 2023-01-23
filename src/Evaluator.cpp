@@ -10,8 +10,12 @@ namespace ChessEngine {
         int whiteEval = GetMaterialCount(WHITE);
         int blackEval = GetMaterialCount(BLACK);
 
+        int evaluation = whiteEval - blackEval;
 
-        return whiteEval - blackEval;
+        if(currentPosition->activePlayerColor == BLACK)
+            evaluation *= -1;
+
+        return evaluation;
     }
 
     int Evaluator::GetMaterialCount(Color side)

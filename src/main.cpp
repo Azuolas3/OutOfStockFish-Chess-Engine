@@ -8,6 +8,8 @@
 #include "BoardUtility.h"
 #include "AlgebraicNotationUtility.h"
 #include "PerftUtility.h"
+#include "Evaluator.h"
+#include "Searcher.h"
 
 using namespace ChessEngine;
 using std::cout; using std::cin; using std::endl;
@@ -22,23 +24,26 @@ int main() {
 
     bool isPlaying = true;
 
-    Position* position = fenParser.loadFen(fenParser.startingFenString); // 8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - 0 1
+    Position* position = fenParser.loadFen("6qk/8/8/8/8/2r5/1K6/8 w - - 0 1"); // 8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - 0 1
     ChessBoard* board = position->board;
     MoveGenerator* moveGenerator = new MoveGenerator(position);
+    Evaluator* evaluator = new Evaluator(position);
+    Searcher* searcher = new Searcher(evaluator, moveGenerator);
 
 
     board->PrintBoard();
-    auto start  = std::chrono::steady_clock::now();
-    cout << Perft(3,  position, moveGenerator) << '\n';
-    auto end = std::chrono::steady_clock::now();
-    std::chrono::duration<double> elapsed_seconds = end-start;
-    cout << "TIME: " << elapsed_seconds.count();
+    //auto start  = std::chrono::steady_clock::now();
+    //cout << Perft(3,  position, moveGenerator) << '\n';
+    //auto end = std::chrono::steady_clock::now();
+    //std::chrono::duration<double> elapsed_seconds = end-start;
+    //cout << "TIME: " << elapsed_seconds.count();
     while(isPlaying)
     {
         //moveGenerator->GenerateAllMoves(WHITE);
         //moveGenerator->GetCheckRayMap();
         //Print2darray(moveGenerator->captureCheckMap);
-
+        cout << evaluator->EvaluatePosition() << '\n';
+        cout << searcher->Search(2) << '\n';
         string moveInput;
         cin >> moveInput;
         if(moveInput == "STOP")

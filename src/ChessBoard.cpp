@@ -27,7 +27,7 @@ void ChessBoard::PrintBoard()
 
     std::map<Piece, char> symbolDictionary =
     {
-            {EMPTY, ' '}, //Unicode symbol codes for each piece and its color
+            {EMPTY, ' '},
             {B_PAWN, 'p'},
             {W_PAWN, 'P'},
             {B_BISHOP, 'b'},
