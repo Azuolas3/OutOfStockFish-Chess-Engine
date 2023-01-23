@@ -18,7 +18,7 @@ namespace ChessEngine
         if(moveList.empty()) // if you have 0 moves, its either checkmate or stalemate
         {
             if(moveGenerator->IsInCheck())
-                return INT_MIN; // worst possible eval for checkmate
+                return INT_MIN + 1; // worst possible eval for checkmate
             else
                 return 0; // draw eval for stalemate
         }
