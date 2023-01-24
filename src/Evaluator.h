@@ -6,6 +6,7 @@
 #define CHESS_ENGINE_EVALUATOR_H
 
 #include "Position.h"
+#include "PieceSquareTables.h"
 
 namespace ChessEngine
 {
@@ -24,6 +25,7 @@ namespace ChessEngine
         ChessBoard* currentBoard;
 
         int GetMaterialCount(Color side);
+        int EvaluatePieceSquareTables(Color side);
 
     public:
         explicit Evaluator(Position* position)

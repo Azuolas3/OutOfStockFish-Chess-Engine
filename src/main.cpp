@@ -24,14 +24,14 @@ int main() {
 
     bool isPlaying = true;
 
-    Position* position = fenParser.loadFen("2k4r/5bb1/8/8/8/8/PPP5/K7 w - - 0 1"); // 8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - 0 1
+    Position* position = fenParser.loadFen(fenParser.startingFenString); // 8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - 0 1
     ChessBoard* board = position->board;
     MoveGenerator* moveGenerator = new MoveGenerator(position);
     Evaluator* evaluator = new Evaluator(position);
     Searcher* searcher = new Searcher(evaluator, moveGenerator);
 
 
-    board->PrintBoard();
+    //board->PrintBoard();
     //cout << -(INT_MIN + 1) << '\n';
     //auto start  = std::chrono::steady_clock::now();
     //cout << Perft(3,  position, moveGenerator) << '\n';
@@ -45,6 +45,12 @@ int main() {
         //Print2darray(moveGenerator->captureCheckMap);
         cout << evaluator->EvaluatePosition() << '\n';
         cout << searcher->Search(3) << '\n';
+        if(position->activePlayerColor == BLACK)
+        {
+            searcher->Search(3);
+            position->MakeMove(searcher->currentBestMove);
+        }
+        board->PrintBoard();
         cout << MoveToString(searcher->currentBestMove) << '\n';
         string moveInput;
         cin >> moveInput;
@@ -91,7 +97,6 @@ int main() {
             moveList.push_back(position->GenerateMoveInfo(pseudoLegalMove)); // add new move to list
             position->MakeMove(pseudoLegalMove);
 
-            board->PrintBoard();
             cout << "\n MOVED SUCCESSFULLY \n";
             //cout << "\n" << position->board->whitePieces->count << "\n";
         }

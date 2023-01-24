@@ -4,11 +4,15 @@
 
 #include "Evaluator.h"
 
-namespace ChessEngine {
+namespace ChessEngine
+{
     float Evaluator::EvaluatePosition()
     {
         int whiteEval = GetMaterialCount(WHITE);
         int blackEval = GetMaterialCount(BLACK);
+
+        whiteEval += EvaluatePieceSquareTables(WHITE);
+        blackEval += EvaluatePieceSquareTables(BLACK);
 
         int evaluation = whiteEval - blackEval;
 
@@ -35,5 +39,24 @@ namespace ChessEngine {
         }
 
         return totalMaterial;
+    }
+
+    int Evaluator::EvaluatePieceSquareTables(Color side)
+    {
+        int eval = 0;
+
+        PieceList* pieceList = (side == WHITE) ? currentBoard->whitePieces : currentBoard->blackPieces;
+        Square* squareList = pieceList->squares;
+
+        for(int i = 1; i < pieceList->count; i++)
+        {
+            int x = squareList[i].x;
+            int y = squareList[i].y;
+
+            PieceType currentPieceType = GetType(currentBoard->pieces[x][y]);
+            eval += GetPieceSquareValue(x, y, currentPieceType, side);
+        }
+
+        return eval;
     }
 } // ChessEngine
