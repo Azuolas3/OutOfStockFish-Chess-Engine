@@ -6,7 +6,7 @@
 
 namespace ChessEngine
 {
-    int Searcher::Search(int depth)
+    int Searcher::Search(int depth, int alpha, int beta)
     {
         if (depth == 0)
             return evaluator->EvaluatePosition();
@@ -28,13 +28,17 @@ namespace ChessEngine
         {
             MovePositionInfo moveInfo = position->GenerateMoveInfo(move);
             position->MakeMove(move);
-            int currentEvaluation = -Search(depth - 1);
+            int currentEvaluation = -Search(depth - 1, -beta, -alpha);
             if(currentEvaluation > bestEvaluation)
             {
                 bestEvaluation = currentEvaluation;
                 bestMove = move;
             }
             position->UndoMove(moveInfo);
+
+            alpha = std::max(alpha, bestEvaluation);
+            if(alpha > beta)
+                break;
         }
 
         currentBestMove = bestMove;

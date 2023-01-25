@@ -29,7 +29,7 @@ namespace ChessEngine {
             board = position->board;
         }
 
-        int Search(int depth);
+        int Search(int depth, int alpha, int beta);
 
         Move currentBestMove;
     };
