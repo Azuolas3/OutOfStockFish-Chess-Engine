@@ -30,6 +30,7 @@ namespace ChessEngine {
         }
 
         int Search(int depth, int alpha, int beta);
+        int QuiescenceSearch(int alpha, int beta);
 
         Move currentBestMove;
     };

@@ -9,7 +9,7 @@ namespace ChessEngine
     int Searcher::Search(int depth, int alpha, int beta)
     {
         if (depth == 0)
-            return evaluator->EvaluatePosition();
+            return QuiescenceSearch(alpha, beta);
 
         int bestEvaluation = INT_MIN;
 
@@ -43,5 +43,31 @@ namespace ChessEngine
 
         currentBestMove = bestMove;
         return bestEvaluation;
+    }
+
+    int Searcher::QuiescenceSearch(int alpha, int beta)
+    {
+        int eval = evaluator->EvaluatePosition();
+        if(eval >= beta)
+            return beta;
+        if(eval > alpha)
+            alpha = eval;
+
+        std::vector<Move> moveList = moveGenerator->GenerateAllCaptureMoves();
+
+        for (auto & move : moveList)
+        {
+            MovePositionInfo moveInfo = position->GenerateMoveInfo(move);
+            position->MakeMove(move);
+            int currentEvaluation = -QuiescenceSearch(-beta, -alpha);
+            position->UndoMove(moveInfo);
+
+            if (currentEvaluation >= beta)
+                return beta;
+            if(currentEvaluation > alpha)
+                alpha = currentEvaluation;
+        }
+
+        return alpha;
     }
 } // ChessEngine
