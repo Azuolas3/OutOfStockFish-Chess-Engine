@@ -41,14 +41,16 @@ namespace ChessEngine
         bool isMoveEnPassant(const Move& move);
 
     public:
-        std::vector<Move> GenerateAllMoves(Color color, bool generatesThreatMap = false); // Generates all legal moves for chosen color
+        std::vector<Move> GenerateAllMoves(Color color, MoveGenerationType generationType = NORMAL); // Generates all legal moves for chosen color
         std::vector<Move> GenerateAllMoves(); // Efficiently generates all legal moves for current active Color
 
+        std::vector<Move> GenerateAllCaptureMoves(); // Efficiently generates all legal moves for current active Color
 
-        void GenerateKingMoves(std::vector<Move>& generatedMoves, int x, int y);
+
+        void EraseIllegalKingMoves(std::vector<Move>& generatedMoves);
         void GenerateCastlingMoves(std::vector<Move>& generatedMoves, int x, int y);
 
-        void GeneratePieceMoves(std::vector<Move>& generatedMoves, ChessEngine::Piece piece, int startingX, int startingY, bool generatesThreatMap = false, bool isPinned = false);
+        void GeneratePieceMoves(std::vector<Move>& generatedMoves, ChessEngine::Piece piece, int startingX, int startingY, MoveGenerationType generationType = NORMAL, bool isPinned = false);
 
         MoveGenerator(Position* position)
         {
@@ -64,7 +66,6 @@ namespace ChessEngine
         PseudoLegalMoveGenerator* plMoveGenerator;
 
         void InitThreatMaps();
-        void UpdateThreatMap(const Move& move);
 
         int whiteKingX;
         int whiteKingY;
@@ -84,7 +85,6 @@ namespace ChessEngine
 
         bool IsCorrectSlidingPiece(Piece piece, int xOffset, int yOffset); // function checks if the piece can move in a certain direction (given in offsets)
     };
-
 } // ChessEngine
 
 #endif //CHESS_ENGINE_MOVEGENERATOR_H

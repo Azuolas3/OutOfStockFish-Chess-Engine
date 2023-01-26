@@ -7,7 +7,7 @@
 using namespace ChessEngine;
 using std::vector;
 
-void PseudoLegalMoveGenerator::GenerateStraightMoves(std::vector<Move>& pseudoLegalMoves, int startingX, int startingY, bool generatesThreatMap)
+void PseudoLegalMoveGenerator::GenerateStraightMoves(std::vector<Move>& pseudoLegalMoves, int startingX, int startingY, MoveGenerationType generationType)
 {
     int initialSize = pseudoLegalMoves.size();
 
@@ -27,14 +27,18 @@ void PseudoLegalMoveGenerator::GenerateStraightMoves(std::vector<Move>& pseudoLe
         {
             Color currentColor = GetColor(currentPiece);
 
-            if(activeColor != currentColor || (generatesThreatMap && activeColor == currentColor))
+            if(activeColor != currentColor || (generationType == THREAT_MAP && activeColor == currentColor))
             {
                 pseudoLegalMoves.push_back(move);
                 if(currentPiece != activeKing)
                     break;
             }
-            if(!generatesThreatMap || (generatesThreatMap && currentPiece != activeKing))
+            if(generationType != THREAT_MAP || (generationType == THREAT_MAP && currentPiece != activeKing))
                 break;
+        }
+        else if(generationType == CAPTURE_ONLY)
+        {
+            continue;
         }
 
         pseudoLegalMoves.push_back(move);
@@ -49,16 +53,19 @@ void PseudoLegalMoveGenerator::GenerateStraightMoves(std::vector<Move>& pseudoLe
         {
             Color currentColor = GetColor(currentPiece);
 
-            if(activeColor != currentColor || (generatesThreatMap && activeColor == currentColor))
+            if(activeColor != currentColor || (generationType == THREAT_MAP && activeColor == currentColor))
             {
                 pseudoLegalMoves.push_back(move);
                 if(currentPiece != activeKing)
                     break;
             }
-            if(!generatesThreatMap || (generatesThreatMap && currentPiece != activeKing))
+            if(generationType != THREAT_MAP || (generationType == THREAT_MAP && currentPiece != activeKing))
                 break;
         }
-
+        else if(generationType == CAPTURE_ONLY)
+        {
+            continue;
+        }
 
         pseudoLegalMoves.push_back(move);
     }
@@ -74,14 +81,18 @@ void PseudoLegalMoveGenerator::GenerateStraightMoves(std::vector<Move>& pseudoLe
         {
             Color currentColor = GetColor(currentPiece);
 
-            if(activeColor != currentColor || (generatesThreatMap && activeColor == currentColor))
+            if(activeColor != currentColor || (generationType == THREAT_MAP && activeColor == currentColor))
             {
                 pseudoLegalMoves.push_back(move);
                 if(currentPiece != activeKing)
                     break;
             }
-            if(!generatesThreatMap || (generatesThreatMap && currentPiece != activeKing))
+            if(generationType != THREAT_MAP || (generationType == THREAT_MAP && currentPiece != activeKing))
                 break;
+        }
+        else if(generationType == CAPTURE_ONLY)
+        {
+            continue;
         }
 
         pseudoLegalMoves.push_back(move);
@@ -96,14 +107,18 @@ void PseudoLegalMoveGenerator::GenerateStraightMoves(std::vector<Move>& pseudoLe
         {
             Color currentColor = GetColor(currentPiece);
 
-            if(activeColor != currentColor || (generatesThreatMap && activeColor == currentColor))
+            if(activeColor != currentColor || (generationType == THREAT_MAP && activeColor == currentColor))
             {
                 pseudoLegalMoves.push_back(move);
                 if(currentPiece != activeKing)
                     break;
             }
-            if(!generatesThreatMap || (generatesThreatMap && currentPiece != activeKing))
+            if(generationType != THREAT_MAP || (generationType == THREAT_MAP && currentPiece != activeKing))
                 break;
+        }
+        else if(generationType == CAPTURE_ONLY)
+        {
+            continue;
         }
 
         pseudoLegalMoves.push_back(move);
@@ -132,7 +147,7 @@ void PseudoLegalMoveGenerator::GenerateStraightMoves(std::vector<Move>& pseudoLe
     }
 }
 
-void PseudoLegalMoveGenerator::GenerateDiagonalMoves(std::vector<Move>& pseudoLegalMoves, int startingX, int startingY, bool generatesThreatMap)
+void PseudoLegalMoveGenerator::GenerateDiagonalMoves(std::vector<Move>& pseudoLegalMoves, int startingX, int startingY, MoveGenerationType generationType)
 {
     ChessBoard* board = position->board;
     Piece activePiece = board->pieces[startingX][startingY];
@@ -151,14 +166,18 @@ void PseudoLegalMoveGenerator::GenerateDiagonalMoves(std::vector<Move>& pseudoLe
         {
             Color currentColor = GetColor(currentPiece);
 
-            if(activeColor != currentColor || (generatesThreatMap && activeColor == currentColor))
+            if(activeColor != currentColor || (generationType == THREAT_MAP && activeColor == currentColor))
             {
                 pseudoLegalMoves.push_back(move);
                 if(currentPiece != activeKing)
                     break;
             }
-            if(!generatesThreatMap || (generatesThreatMap && currentPiece != activeKing))
+            if(generationType != THREAT_MAP || (generationType == THREAT_MAP && currentPiece != activeKing))
                 break;
+        }
+        else if(generationType == CAPTURE_ONLY)
+        {
+            continue;
         }
 
         pseudoLegalMoves.push_back(move);
@@ -174,14 +193,18 @@ void PseudoLegalMoveGenerator::GenerateDiagonalMoves(std::vector<Move>& pseudoLe
         {
             Color currentColor = GetColor(currentPiece);
 
-            if(activeColor != currentColor || (generatesThreatMap && activeColor == currentColor))
+            if(activeColor != currentColor || (generationType == THREAT_MAP && activeColor == currentColor))
             {
                 pseudoLegalMoves.push_back(move);
                 if(currentPiece != activeKing)
                     break;
             }
-            if(!generatesThreatMap || (generatesThreatMap && currentPiece != activeKing))
+            if(generationType != THREAT_MAP || (generationType == THREAT_MAP && currentPiece != activeKing))
                 break;
+        }
+        else if(generationType == CAPTURE_ONLY)
+        {
+            continue;
         }
 
         pseudoLegalMoves.push_back(move);
@@ -197,14 +220,18 @@ void PseudoLegalMoveGenerator::GenerateDiagonalMoves(std::vector<Move>& pseudoLe
         {
             Color currentColor = GetColor(currentPiece);
 
-            if(activeColor != currentColor || (generatesThreatMap && activeColor == currentColor))
+            if(activeColor != currentColor || (generationType == THREAT_MAP && activeColor == currentColor))
             {
                 pseudoLegalMoves.push_back(move);
                 if(currentPiece != activeKing)
                     break;
             }
-            if(!generatesThreatMap || (generatesThreatMap && currentPiece != activeKing))
+            if(generationType != THREAT_MAP || (generationType == THREAT_MAP && currentPiece != activeKing))
                 break;
+        }
+        else if(generationType == CAPTURE_ONLY)
+        {
+            continue;
         }
 
         pseudoLegalMoves.push_back(move);
@@ -220,21 +247,25 @@ void PseudoLegalMoveGenerator::GenerateDiagonalMoves(std::vector<Move>& pseudoLe
         {
             Color currentColor = GetColor(currentPiece);
 
-            if(activeColor != currentColor || (generatesThreatMap && activeColor == currentColor))
+            if(activeColor != currentColor || (generationType == THREAT_MAP && activeColor == currentColor))
             {
                 pseudoLegalMoves.push_back(move);
                 if(currentPiece != activeKing)
                     break;
             }
-            if(!generatesThreatMap || (generatesThreatMap && currentPiece != activeKing))
+            if(generationType != THREAT_MAP || (generationType == THREAT_MAP && currentPiece != activeKing))
                 break;
+        }
+        else if(generationType == CAPTURE_ONLY)
+        {
+            continue;
         }
 
         pseudoLegalMoves.push_back(move);
     }
 }
 
-void PseudoLegalMoveGenerator::GenerateKnightMoves(std::vector<Move>& pseudoLegalMoves, int startingX, int startingY, bool generatesThreatMap)
+void PseudoLegalMoveGenerator::GenerateKnightMoves(std::vector<Move>& pseudoLegalMoves, int startingX, int startingY, MoveGenerationType generationType)
 {
     int xOffset[8] = { 2, 1, -1, -2, -2, -1, 1, 2 };
     int yOffset[8] = { 1, 2, 2, 1, -1, -2, -2, -1 };
@@ -247,15 +278,23 @@ void PseudoLegalMoveGenerator::GenerateKnightMoves(std::vector<Move>& pseudoLega
         Color color = GetColor(position->board->pieces[startingX][startingY]);
         Color currentColor = GetColor(position->board->pieces[x][y]);
 
-        if(IsInBounds(x, y) && (color != currentColor || (generatesThreatMap && color == currentColor)))
+        if(IsInBounds(x, y))
         {
-            Move move(startingX, startingY, x, y);
-            pseudoLegalMoves.push_back(move);
+            if(generationType == CAPTURE_ONLY && color != currentColor && position->board->pieces[x][y] != EMPTY)
+            {
+                Move move(startingX, startingY, x, y);
+                pseudoLegalMoves.push_back(move);
+            }
+            else if(generationType != CAPTURE_ONLY && (color != currentColor || (generationType == THREAT_MAP && color == currentColor)))
+            {
+                Move move(startingX, startingY, x, y);
+                pseudoLegalMoves.push_back(move);
+            }
         }
     }
 }
 
-void PseudoLegalMoveGenerator::GenerateKingMoves(std::vector<Move>& pseudoLegalMoves, int startingX, int startingY)
+void PseudoLegalMoveGenerator::GenerateKingMoves(std::vector<Move>& pseudoLegalMoves, int startingX, int startingY, MoveGenerationType generationType)
 {
     int xOffset[8] = { 0, 1, 1, 1, 0, -1, -1, -1 };
     int yOffset[8] = { 1, 1, 0, -1, -1, -1, 0, 1 };
@@ -269,11 +308,20 @@ void PseudoLegalMoveGenerator::GenerateKingMoves(std::vector<Move>& pseudoLegalM
         Color color = GetColor(position->board->pieces[startingX][startingY]);
         Color currentColor = GetColor(position->board->pieces[x][y]);
 
-        if(IsInBounds(x, y) && color != currentColor)
+        if(IsInBounds(x, y))
         {
-            Move move(startingX, startingY, x, y);
-            move.additionalAction = [this, color] { position->RemoveCastlingRights(color, BOTH); };
-            pseudoLegalMoves.push_back(move);
+            if(generationType == CAPTURE_ONLY && color != currentColor && position->board->pieces[x][y] != EMPTY)
+            {
+                Move move(startingX, startingY, x, y);
+                move.additionalAction = [this, color] { position->RemoveCastlingRights(color, BOTH); };
+                pseudoLegalMoves.push_back(move);
+            }
+            else if(generationType != CAPTURE_ONLY && color != currentColor)
+            {
+                Move move(startingX, startingY, x, y);
+                move.additionalAction = [this, color] { position->RemoveCastlingRights(color, BOTH); };
+                pseudoLegalMoves.push_back(move);
+            }
         }
     }
 }
@@ -306,7 +354,7 @@ void PseudoLegalMoveGenerator::GenerateCastlingMoves(std::vector<Move>& pseudoLe
     }
 }
 
-void PseudoLegalMoveGenerator::GeneratePawnMoves(std::vector<Move>& pseudoLegalMoves, int startingX, int startingY, bool generatesOnlyCaptures)
+void PseudoLegalMoveGenerator::GeneratePawnMoves(std::vector<Move>& pseudoLegalMoves, int startingX, int startingY, MoveGenerationType generationType)
 {
     ChessBoard* board = position->board;
     Color pieceColor = GetColor(board->pieces[startingX][startingY]);
@@ -316,7 +364,7 @@ void PseudoLegalMoveGenerator::GeneratePawnMoves(std::vector<Move>& pseudoLegalM
     int promotionRank = (pieceColor) == ChessEngine::WHITE ? 7 : 0;
     Piece possibleSquare = board->pieces[startingX][startingY + offset];
 
-    if(!generatesOnlyCaptures)
+    if(generationType == NORMAL)
     {
         if(possibleSquare == EMPTY)
         {
@@ -357,7 +405,7 @@ void PseudoLegalMoveGenerator::GeneratePawnMoves(std::vector<Move>& pseudoLegalM
         Piece currentPiece = board->pieces[startingX - 1][startingY + offset];
         Color currentColor = GetColor(currentPiece);
 
-        if((currentPiece != EMPTY && pieceColor != currentColor) || generatesOnlyCaptures)
+        if((currentPiece != EMPTY && pieceColor != currentColor) || generationType == THREAT_MAP)
         {
             Move move(startingX, startingY, startingX - 1, startingY + offset);
 
@@ -385,7 +433,7 @@ void PseudoLegalMoveGenerator::GeneratePawnMoves(std::vector<Move>& pseudoLegalM
         Piece currentPiece = board->pieces[startingX + 1][startingY + offset];
         Color currentColor = GetColor(currentPiece);
 
-        if((currentPiece != EMPTY && pieceColor != currentColor) || generatesOnlyCaptures)
+        if((currentPiece != EMPTY && pieceColor != currentColor) || generationType == THREAT_MAP)
         {
             Move move(startingX, startingY, startingX + 1, startingY + offset);
             if(move.destinationY == promotionRank)
@@ -426,31 +474,31 @@ void PseudoLegalMoveGenerator::GeneratePawnMoves(std::vector<Move>& pseudoLegalM
     }
 }
 
-void PseudoLegalMoveGenerator::GeneratePieceMoves(std::vector<Move>& pseudoLegalMoves, ChessEngine::Piece piece, int startingX, int startingY, bool ignoresEnemyKing)
+void PseudoLegalMoveGenerator::GeneratePieceMoves(std::vector<Move>& pseudoLegalMoves, ChessEngine::Piece piece, int startingX, int startingY, MoveGenerationType generationType)
 {
     PieceType pieceType = GetType(piece);
 
     switch(pieceType)
     {
         case PAWN:
-            GeneratePawnMoves(pseudoLegalMoves, startingX, startingY, ignoresEnemyKing);
+            GeneratePawnMoves(pseudoLegalMoves, startingX, startingY, generationType);
             break;
 
         case BISHOP:
-            GenerateDiagonalMoves(pseudoLegalMoves, startingX, startingY, ignoresEnemyKing);
+            GenerateDiagonalMoves(pseudoLegalMoves, startingX, startingY, generationType);
             break;
 
         case KNIGHT:
-            GenerateKnightMoves(pseudoLegalMoves, startingX, startingY, ignoresEnemyKing);
+            GenerateKnightMoves(pseudoLegalMoves, startingX, startingY, generationType);
             break;
 
         case ROOK:
-            GenerateStraightMoves(pseudoLegalMoves, startingX, startingY, ignoresEnemyKing);
+            GenerateStraightMoves(pseudoLegalMoves, startingX, startingY, generationType);
             break;
 
         case QUEEN:
-            GenerateStraightMoves(pseudoLegalMoves, startingX, startingY, ignoresEnemyKing);
-            GenerateDiagonalMoves(pseudoLegalMoves, startingX, startingY, ignoresEnemyKing);
+            GenerateStraightMoves(pseudoLegalMoves, startingX, startingY, generationType);
+            GenerateDiagonalMoves(pseudoLegalMoves, startingX, startingY, generationType);
             break;
 
         case KING:
@@ -470,15 +518,6 @@ void PseudoLegalMoveGenerator::GeneratePieceMoves(std::vector<Move>& pseudoLegal
 //        return false;
 //}
 
-std::vector<Move> PseudoLegalMoveGenerator::CombineVectors(const std::vector<Move>& a, const std::vector<Move>& b)
-{
-    std::vector<Move> combinedVector;
-    combinedVector.reserve( a.size() + b.size());
-    combinedVector.insert(combinedVector.end(), a.begin(), a.end());
-    combinedVector.insert( combinedVector.end(), b.begin(), b.end() );
-    return combinedVector;
-}
-
 bool PseudoLegalMoveGenerator::DoesContainMove(std::vector<Move> generatedMoves, Move move, Move *correctMove)
 {
     for(int i = 0; i < generatedMoves.size(); i++)
@@ -495,7 +534,7 @@ bool PseudoLegalMoveGenerator::DoesContainMove(std::vector<Move> generatedMoves,
     return false;
 }
 
-std::vector<Move> PseudoLegalMoveGenerator::GenerateAllMoves(ChessEngine::Color color, bool generatesThreatMap)
+std::vector<Move> PseudoLegalMoveGenerator::GenerateAllMoves(ChessEngine::Color color, MoveGenerationType generatesThreatMap)
 {
     int maxSize = 256; // maximum theoretical number of moves is 218, 256 just in case and since it's a beautiful number :)
 

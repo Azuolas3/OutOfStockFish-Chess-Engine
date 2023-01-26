@@ -12,35 +12,44 @@
 #include "BoardUtility.h"
 #include "Move.h"
 
-class PseudoLegalMoveGenerator
+namespace ChessEngine
 {
-    ChessEngine::Position* position;
-    //ChessEngine::ChessBoard* board;
-
-    //bool IsSameColor(int startingX, int startingY, int destinationX, int destinationY);
-
-public:
-    PseudoLegalMoveGenerator() = default;
-
-    PseudoLegalMoveGenerator(ChessEngine::Position* position)
+    enum MoveGenerationType // Since we often need to slightly change move generation (generate only captures, generate for attack map, etc.)
     {
-        this-> position = position;
-        //board = position.board;
-    }
+        NORMAL,
+        THREAT_MAP,
+        CAPTURE_ONLY
+    };
 
-    void GenerateStraightMoves(std::vector<Move>& pseudoLegalMoves, int startingX, int startingY, bool generatesThreatMap = false);
-    void GenerateDiagonalMoves(std::vector<Move>& pseudoLegalMoves, int startingX, int startingY, bool generatesThreatMap = false);
-    void GenerateKnightMoves(std::vector<Move>& pseudoLegalMoves, int startingX, int startingY, bool generatesThreatMap = false);
-    void GenerateKingMoves(std::vector<Move>& pseudoLegalMoves, int startingX, int startingY);
-    void GenerateCastlingMoves(std::vector<Move>& pseudoLegalMoves, int startingX, int startingY);
-    void GeneratePawnMoves(std::vector<Move>& pseudoLegalMoves, int startingX, int startingY, bool generatesOnlyCaptures = false);
+    class PseudoLegalMoveGenerator
+    {
+        ChessEngine::Position* position;
+        //ChessEngine::ChessBoard* board;
 
-    void GeneratePieceMoves(std::vector<Move>& pseudoLegalMoves, ChessEngine::Piece piece, int startingX, int startingY, bool ignoresEnemyKing = false);
-    std::vector<Move> GenerateAllMoves(ChessEngine::Color color, bool generatesThreatMap = false);
+        //bool IsSameColor(int startingX, int startingY, int destinationX, int destinationY);
 
-    std::vector<Move> CombineVectors(const std::vector<Move>& a, const std::vector<Move>& b);
-    bool DoesContainMove(std::vector<Move> generatedMoves, Move move, Move *correctMove);
-};
+    public:
+        PseudoLegalMoveGenerator() = default;
+
+        PseudoLegalMoveGenerator(ChessEngine::Position* position)
+        {
+            this-> position = position;
+            //board = position.board;
+        }
+
+        void GenerateStraightMoves(std::vector<Move>& pseudoLegalMoves, int startingX, int startingY, MoveGenerationType generationType = NORMAL);
+        void GenerateDiagonalMoves(std::vector<Move>& pseudoLegalMoves, int startingX, int startingY, MoveGenerationType generationType = NORMAL);
+        void GenerateKnightMoves(std::vector<Move>& pseudoLegalMoves, int startingX, int startingY, MoveGenerationType generationType = NORMAL);
+        void GenerateKingMoves(std::vector<Move>& pseudoLegalMoves, int startingX, int startingY, MoveGenerationType generationType = NORMAL);
+        void GenerateCastlingMoves(std::vector<Move>& pseudoLegalMoves, int startingX, int startingY);
+        void GeneratePawnMoves(std::vector<Move>& pseudoLegalMoves, int startingX, int startingY, MoveGenerationType generationType = NORMAL);
+
+        void GeneratePieceMoves(std::vector<Move>& pseudoLegalMoves, ChessEngine::Piece piece, int startingX, int startingY, MoveGenerationType generationType = NORMAL);
+        std::vector<Move> GenerateAllMoves(ChessEngine::Color color, MoveGenerationType generationType = NORMAL);
+
+        bool DoesContainMove(std::vector<Move> generatedMoves, Move move, Move *correctMove);
+    };
+}
 
 
 #endif //CHESS_ENGINE_PSEUDOLEGALMOVEGENERATOR_H

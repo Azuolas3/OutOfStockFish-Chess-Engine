@@ -6,7 +6,7 @@
 
 namespace ChessEngine
 {
-    std::vector<Move> MoveGenerator::GenerateAllMoves(Color color, bool generatesThreatMap)
+    std::vector<Move> MoveGenerator::GenerateAllMoves(Color color, MoveGenerationType generationType)
     {
         int maxSize = 256; // maximum theoretical number of moves is 218, 256 just in case and since it's a beautiful number :)
 
@@ -19,8 +19,7 @@ namespace ChessEngine
         PieceList* pieceList = (color == WHITE) ? board->whitePieces : board->blackPieces;
         Square* squareList = pieceList->squares;
 
-        if(!generatesThreatMap)
-            absolutelyPinnedPieces = GetAbsolutelyPinnedPieces(color);
+        absolutelyPinnedPieces = GetAbsolutelyPinnedPieces(color);
 
         for(int i = 1; i < pieceList->count; i++)
         {
@@ -29,7 +28,7 @@ namespace ChessEngine
 
             bool isPinned = std::find(absolutelyPinnedPieces.begin(), absolutelyPinnedPieces.end(), Square(x, y)) != absolutelyPinnedPieces.end();
 
-            GeneratePieceMoves(generatedMoves, board->pieces[x][y], x, y, generatesThreatMap, isPinned);
+            GeneratePieceMoves(generatedMoves, board->pieces[x][y], x, y, generationType, isPinned);
         }
 
         return generatedMoves;
@@ -77,7 +76,8 @@ namespace ChessEngine
             else
             {
                 std::vector<Move> kingMoves;
-                GenerateKingMoves(kingMoves, kingX, kingY);
+                plMoveGenerator->GenerateKingMoves(kingMoves, kingX, kingY);
+                EraseIllegalKingMoves(kingMoves);
                 return kingMoves;
             }
         }
@@ -87,62 +87,44 @@ namespace ChessEngine
         }
     }
 
-    void MoveGenerator::GenerateKingMoves(std::vector<Move>& generatedMoves, int x, int y)
-    {
-        int initialSize = generatedMoves.size();
-        plMoveGenerator->GenerateKingMoves(generatedMoves, x, y);
-
-        int moveCount = generatedMoves.size();
-        for(int i = initialSize; i < moveCount;) // Weird iteration due to erasing moves - usual loop doesn't check every move
-        {
-            Move move = generatedMoves[i];
-            if(activeThreatMap[move.destinationX][move.destinationY])
-            {
-                generatedMoves.erase(generatedMoves.begin() + i);
-                moveCount--;
-            }
-            else
-                i++;
-        }
-    }
-
-
-    void MoveGenerator::GeneratePieceMoves(std::vector<Move>& generatedMoves, ChessEngine::Piece piece, int startingX, int startingY, bool generatesThreatMap, bool isPinned)
+    void MoveGenerator::GeneratePieceMoves(std::vector<Move>& generatedMoves, ChessEngine::Piece piece, int startingX, int startingY, MoveGenerationType generationType,  bool isPinned)
     {
         PieceType pieceType = GetType(piece);
 
         switch(pieceType)
         {
             case PAWN:
-                plMoveGenerator->GeneratePawnMoves(generatedMoves, startingX, startingY, generatesThreatMap);
+                plMoveGenerator->GeneratePawnMoves(generatedMoves, startingX, startingY, generationType);
                 EraseIllegalMoves(generatedMoves);
                 EraseIllegalEnPassantMoves(generatedMoves);
                 break;
 
             case BISHOP:
-                plMoveGenerator->GenerateDiagonalMoves(generatedMoves, startingX, startingY, generatesThreatMap);
+                plMoveGenerator->GenerateDiagonalMoves(generatedMoves, startingX, startingY, generationType);
                 EraseIllegalMoves(generatedMoves);
                 break;
 
             case KNIGHT:
-                plMoveGenerator->GenerateKnightMoves(generatedMoves, startingX, startingY, generatesThreatMap);
+                plMoveGenerator->GenerateKnightMoves(generatedMoves, startingX, startingY, generationType);
                 EraseIllegalMoves(generatedMoves);
                 break;
 
             case ROOK:
-                plMoveGenerator->GenerateStraightMoves(generatedMoves, startingX, startingY, generatesThreatMap);
+                plMoveGenerator->GenerateStraightMoves(generatedMoves, startingX, startingY, generationType);
                 EraseIllegalMoves(generatedMoves);
                 break;
 
             case QUEEN:
-                plMoveGenerator->GenerateStraightMoves(generatedMoves, startingX, startingY, generatesThreatMap);
-                plMoveGenerator->GenerateDiagonalMoves(generatedMoves, startingX, startingY, generatesThreatMap);
+                plMoveGenerator->GenerateStraightMoves(generatedMoves, startingX, startingY, generationType);
+                plMoveGenerator->GenerateDiagonalMoves(generatedMoves, startingX, startingY, generationType);
                 EraseIllegalMoves(generatedMoves);
                 break;
 
             case KING:
-                GenerateKingMoves(generatedMoves, startingX, startingY);
-                GenerateCastlingMoves(generatedMoves, startingX, startingY);
+                plMoveGenerator->GenerateKingMoves(generatedMoves, startingX, startingY, generationType);
+                EraseIllegalKingMoves(generatedMoves);
+                if(generationType == NORMAL)
+                    GenerateCastlingMoves(generatedMoves, startingX, startingY);
                 break;
         }
 
@@ -157,7 +139,7 @@ namespace ChessEngine
     {
         memset(activeThreatMap, false, sizeof(bool) * 8 * 8);
 
-        std::vector<Move> opponentMoves = plMoveGenerator->GenerateAllMoves(GetOppositeColor(position->activePlayerColor), true);
+        std::vector<Move> opponentMoves = plMoveGenerator->GenerateAllMoves(GetOppositeColor(position->activePlayerColor), THREAT_MAP);
 
         for(auto & move : opponentMoves)
         {
@@ -280,7 +262,7 @@ namespace ChessEngine
             return std::pair<Square, Square>(attackers[0], attackers[1]);
 
         generatedMoves.clear();
-        plMoveGenerator->GeneratePawnMoves(generatedMoves, x, y, true);
+        plMoveGenerator->GeneratePawnMoves(generatedMoves, x, y, THREAT_MAP);
 
         for(Move& move : generatedMoves)
         {
@@ -331,6 +313,26 @@ namespace ChessEngine
                 }
 
                 moveList.erase(moveList.begin() + i);
+            }
+        }
+    }
+
+    void MoveGenerator::EraseIllegalKingMoves(std::vector<Move>& generatedMoves)
+    {
+        int moveCount = generatedMoves.size();
+        for(int i = moveCount - 1; i >= 0; i--)
+        {
+            Move move = generatedMoves[i];
+            Piece currentPiece = board->pieces[move.startingX][move.startingY];
+
+            if(!IsKing(currentPiece))
+            {
+                break;
+            }
+            if(activeThreatMap[move.destinationX][move.destinationY])
+            {
+                generatedMoves.erase(generatedMoves.begin() + i);
+                moveCount--;
             }
         }
     }
@@ -534,6 +536,55 @@ namespace ChessEngine
 
         blackKingX = board->blackKingX;
         blackKingY = board->blackKingY;
+    }
+
+    std::vector<Move> MoveGenerator::GenerateAllCaptureMoves()
+    {
+        Color activePlayerColor = position->activePlayerColor;
+        UpdateKingPositions();
+
+        activeKingX = (activePlayerColor == WHITE) ? whiteKingX : blackKingX;
+        activeKingY = (activePlayerColor == WHITE) ? whiteKingY : blackKingY;
+
+        InitThreatMaps();
+
+        if(IsInCheck())
+        {
+            std::pair<Square, Square> attackerPair;
+            int attackerCount;
+
+            int kingX, kingY;
+
+            if(activePlayerColor == WHITE)
+            {
+                kingX = whiteKingX;
+                kingY = whiteKingY;
+            }
+            else
+            {
+                kingX = blackKingX;
+                kingY = blackKingY;
+            }
+
+            attackerPair = GetSquareAttackers(kingX, kingY, attackerCount);
+
+            GetCheckRayMap();
+            UpdateCaptureCheckMap(attackerPair);
+
+            // Only calculate king moves if it's a double check since its impossible for any other piece to have a legal move
+            if(attackerCount == 1)
+            {
+                return GenerateAllMoves(activePlayerColor, CAPTURE_ONLY);
+            }
+            else
+            {
+                return {}; // return empty vector if double checked
+            }
+        }
+        else
+        {
+            return GenerateAllMoves(activePlayerColor, CAPTURE_ONLY);
+        }
     }
 
 } // ChessEngine
