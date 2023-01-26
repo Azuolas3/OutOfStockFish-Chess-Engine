@@ -10,7 +10,8 @@
 #include "Evaluator.h"
 #include "MoveGenerator.h"
 
-namespace ChessEngine {
+namespace ChessEngine
+{
 
     class Searcher
     {
@@ -31,10 +32,13 @@ namespace ChessEngine {
 
         int Search(int depth, int alpha, int beta);
         int QuiescenceSearch(int alpha, int beta);
+        bool SortCaptures(const Move& leftMove, const Move& rightMove);
+
+        const int DELTA = pieceValueMap[QUEEN]; // for delta pruning Quiescence search
 
         Move currentBestMove;
+        int posEvaluated = 0;
     };
-
 
 } // ChessEngine
 

@@ -48,13 +48,23 @@ namespace ChessEngine
     int Searcher::QuiescenceSearch(int alpha, int beta)
     {
         int eval = evaluator->EvaluatePosition();
+        posEvaluated++;
+
+
         if(eval >= beta)
             return beta;
+
         if(eval > alpha)
             alpha = eval;
 
+//        if(eval < alpha - DELTA)
+//        {
+//            return alpha;
+//        }
+
         std::vector<Move> moveList = moveGenerator->GenerateAllCaptureMoves();
 
+        std::sort(moveList.begin(), moveList.end(), [this](const Move& a, const Move& b){return this->SortCaptures(a, b);});
         for (auto & move : moveList)
         {
             MovePositionInfo moveInfo = position->GenerateMoveInfo(move);
@@ -69,5 +79,19 @@ namespace ChessEngine
         }
 
         return alpha;
+    }
+
+    bool Searcher::SortCaptures(const Move &leftMove, const Move &rightMove)
+    {
+        PieceType leftStartingPieceType = GetType(board->pieces[leftMove.startingX][leftMove.startingY]);
+        PieceType leftCapturedPieceType = GetType(board->pieces[leftMove.destinationX][leftMove.destinationY]);
+
+        PieceType rightStartingPieceType = GetType(board->pieces[rightMove.startingX][rightMove.startingY]);
+        PieceType rightCapturedPieceType = GetType(board->pieces[rightMove.destinationX][rightMove.destinationY]);
+
+        int leftHandCaptureValue = pieceValueMap[leftStartingPieceType] - pieceValueMap[leftCapturedPieceType];
+        int rightHandCaptureValue = pieceValueMap[rightStartingPieceType] - pieceValueMap[rightCapturedPieceType];
+
+        return leftHandCaptureValue < rightHandCaptureValue;
     }
 } // ChessEngine

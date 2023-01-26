@@ -87,7 +87,7 @@ namespace ChessEngine
          {60, 100,  85,   0,   0,  35,  100,  60}
     }};
 
-    inline std::map<PieceType, PieceSquareTable> pieceValueMap =
+    inline std::map<PieceType, PieceSquareTable> pieceSquareValueMap =
     {
         {PAWN, pawnTable},
         {BISHOP, bishopTable},
@@ -102,8 +102,8 @@ namespace ChessEngine
         if(color == WHITE)
             y = 7 - y;
 
-        array array1 = pieceValueMap[pieceType];
-        return pieceValueMap[pieceType][y][x];
+        array array1 = pieceSquareValueMap[pieceType];
+        return pieceSquareValueMap[pieceType][y][x];
     }
 }
 

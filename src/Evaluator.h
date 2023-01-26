@@ -10,18 +10,18 @@
 
 namespace ChessEngine
 {
+    inline std::map<PieceType, int> pieceValueMap =
+    {
+            {PAWN, 100},
+            {BISHOP, 300},
+            {KNIGHT, 300},
+            {ROOK, 500},
+            {QUEEN, 900},
+            {KING, 0} // dont need king value to influence material count
+    };
+
     class Evaluator
     {
-        std::map<PieceType, int> pieceValueMap =
-        {
-                {PAWN, 100},
-                {BISHOP, 300},
-                {KNIGHT, 300},
-                {ROOK, 500},
-                {QUEEN, 900},
-                {KING, 0} // dont need king value to influence material count
-        };
-
         ChessBoard* currentBoard;
 
         int GetMaterialCount(Color side);
