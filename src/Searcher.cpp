@@ -48,7 +48,7 @@ namespace ChessEngine
     int Searcher::QuiescenceSearch(int alpha, int beta)
     {
         int standPat = evaluator->EvaluatePosition();
-        qposEvaluated++;
+        posEvaluated++;
 
         if(standPat >= beta)
             return beta;
