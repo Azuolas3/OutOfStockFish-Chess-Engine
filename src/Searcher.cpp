@@ -47,20 +47,20 @@ namespace ChessEngine
 
     int Searcher::QuiescenceSearch(int alpha, int beta)
     {
-        int eval = evaluator->EvaluatePosition();
-        posEvaluated++;
+        int standPat = evaluator->EvaluatePosition();
+        qposEvaluated++;
 
-
-        if(eval >= beta)
+        if(standPat >= beta)
             return beta;
 
-        if(eval > alpha)
-            alpha = eval;
+        if(standPat < alpha - DELTA)
+        {
+            return alpha;
+        }
 
-//        if(eval < alpha - DELTA)
-//        {
-//            return alpha;
-//        }
+        if(standPat > alpha)
+            alpha = standPat;
+
 
         std::vector<Move> moveList = moveGenerator->GenerateAllCaptureMoves();
 

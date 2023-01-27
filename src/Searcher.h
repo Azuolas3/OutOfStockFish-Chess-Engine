@@ -34,10 +34,10 @@ namespace ChessEngine
         int QuiescenceSearch(int alpha, int beta);
         bool SortCaptures(const Move& leftMove, const Move& rightMove);
 
-        const int DELTA = pieceValueMap[QUEEN]; // for delta pruning Quiescence search
+        const int DELTA = pieceValueMap[ROOK]; // for delta pruning Quiescence search
 
         Move currentBestMove;
-        int posEvaluated = 0;
+        unsigned long long posEvaluated = 0;
     };
 
 } // ChessEngine
