@@ -10,11 +10,10 @@
 #include "AlgebraicNotationUtility.h"
 #include "MoveGenerator.h"
 #include "Position.h"
+#include "u64.h"
 
 namespace ChessEngine
 {
-    typedef unsigned long long u64;
-
     u64 Perft(int depth, Position *position, MoveGenerator *moveGenerator, bool isBulkCountingEnabled = false); // generates and adds up all possible generated moves to a certain depth
 }
 
