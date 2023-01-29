@@ -12,7 +12,7 @@
 
 namespace ChessEngine
 {
-    inline u64 pieceKeys[64][12];
+    inline u64 pieceKeys[8][8][12];
     inline u64 castleKeys[16];
     inline u64 enPassantKeys[8];
     inline u64 sideToMoveKey;
@@ -20,6 +20,9 @@ namespace ChessEngine
     void InitializeZobrist();
     u64 GeneratePositionHashKey(Position* position);
     u64 GetRandomU64Number();
+
+    int GetPieceIndex(Piece piece);
+    int GetCastlingRightsIndex(CastlingRights white, CastlingRights black);
 }
 
 

@@ -107,7 +107,7 @@ Position* FenParser::loadFen(std::string fenString)
 
     charIterator++;
 
-    if(fenString[charIterator] != '-')
+    if(fenString[charIterator-1] != '-')
     {
         position->enPassantSquareX = letterToFile(fenString[charIterator]);
         position->enPassantSquareY = intToRank(fenString[charIterator+1]);
@@ -116,6 +116,7 @@ Position* FenParser::loadFen(std::string fenString)
     charIterator += 2;
 
     position->fiftyMoveRuleCounter = std::stoi(&fenString[charIterator]);
+    position->zobristKey = GeneratePositionHashKey(position);
 
     return position;
 }

@@ -8,6 +8,7 @@
 #include "ChessBoard.h"
 #include <iostream>
 #include "BoardUtility.h"
+#include "u64.h"
 
 namespace ChessEngine
 {
@@ -24,6 +25,8 @@ namespace ChessEngine
 
         int enPassantSquareX = -1; // -1 to represent no square
         int enPassantSquareY = -1;
+
+        u64 zobristKey;
 
         void MakeMove(const Move& move);
         void UndoMove(const MovePositionInfo& move);

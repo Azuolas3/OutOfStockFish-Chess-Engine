@@ -6,11 +6,14 @@
 
 void ChessEngine::InitializeZobrist()
 {
-    for(int square = 0; square < 64; square++)
+    for(int x = 0; x < 8; x++)
     {
-        for(int piece = 0; piece < 12; piece++)
+        for(int y = 0; y < 8; y++)
         {
-            pieceKeys[square][piece] = GetRandomU64Number();
+            for(int piece = 0; piece < 12; piece++)
+            {
+                pieceKeys[x][y][piece] = GetRandomU64Number();
+            }
         }
     }
 
@@ -51,13 +54,7 @@ u64 ChessEngine::GeneratePositionHashKey(Position* position)
 
             if(currentPiece != EMPTY)
             {
-                int square = x * 8 + y;
-
-                int pieceIndex = (currentPiece / 4) - 1;
-                if(GetColor(currentPiece) == BLACK)
-                    pieceIndex += 6;
-
-                key ^= pieceKeys[square][pieceIndex];
+                key ^= pieceKeys[x][y][GetPieceIndex(currentPiece)];
             }
         }
     }
@@ -65,11 +62,26 @@ u64 ChessEngine::GeneratePositionHashKey(Position* position)
     if(position->enPassantSquareX != -1)
         key ^= enPassantKeys[position->enPassantSquareX];
 
-    int castleIndex = (position->whiteCastlingRights << 2) | position->blackCastlingRights;
+    int castleIndex = GetCastlingRightsIndex(position->whiteCastlingRights, position->blackCastlingRights);
     key ^= castleKeys[castleIndex];
 
     if(position->activePlayerColor == BLACK)
         key ^= sideToMoveKey;
 
     return key;
+}
+
+int ChessEngine::GetPieceIndex(ChessEngine::Piece piece)
+{
+    int pieceIndex = (piece / 4) - 1;
+    if(GetColor(piece) == BLACK)
+        pieceIndex += 6;
+
+    return pieceIndex;
+}
+
+int ChessEngine::GetCastlingRightsIndex(ChessEngine::CastlingRights white, ChessEngine::CastlingRights black)
+{
+    int castleIndex = (white << 2) | black;
+    return castleIndex;
 }

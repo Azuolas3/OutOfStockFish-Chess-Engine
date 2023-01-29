@@ -11,6 +11,7 @@
 #include "pieces.h"
 #include "Position.h"
 #include "AlgebraicNotationUtility.h"
+#include "ZobristUtility.h"
 
 namespace ChessEngine
 {

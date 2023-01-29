@@ -10,6 +10,7 @@
 #include "PerftUtility.h"
 #include "Evaluator.h"
 #include "Searcher.h"
+#include "ZobristUtility.h"
 
 using namespace ChessEngine;
 using std::cout; using std::cin; using std::endl;
@@ -22,36 +23,50 @@ int main() {
     FenParser fenParser;
     vector<MovePositionInfo> moveList;
 
+    InitializeZobrist();
     bool isPlaying = true;
 
-    Position* position = fenParser.loadFen(fenParser.startingFenString); // 8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - 0 1
+    Position* position = fenParser.loadFen(fenParser.startingFenString); // "r1bq1rk1/ppbn2pp/2p1pn2/3pNp2/3P1B2/4P2P/PPPNBPP1/R2Q1RK1 w - - 9 10"
     ChessBoard* board = position->board;
     MoveGenerator* moveGenerator = new MoveGenerator(position);
     Evaluator* evaluator = new Evaluator(position);
     Searcher* searcher = new Searcher(evaluator, moveGenerator);
 
 
+//    for(int i = 0; i< 10; i++)
+//    {
+//        cout << GetRandomU64Number() << '\n';
+//    }
+    cout << position->zobristKey << '\n';
     //board->PrintBoard();
-    //cout << -(INT_MIN + 1) << '\n';
-    //auto start  = std::chrono::steady_clock::now();
-    //cout << Perft(3,  position, moveGenerator) << '\n';
-    //auto end = std::chrono::steady_clock::now();
-    //std::chrono::duration<double> elapsed_seconds = end-start;
-    //cout << "TIME: " << elapsed_seconds.count();
+    //cout << -(INT_MAX) << '\n';
+    auto start  = std::chrono::steady_clock::now();
+    cout << Perft(6, position, moveGenerator) << '\n';
+    //cout << searcher->Search(4, INT_MIN + 9000, INT_MAX - 9000) << " " << searcher->posEvaluated << '\n';
+    auto end = std::chrono::steady_clock::now();
+    std::chrono::duration<double> elapsed_seconds = end-start;
+    cout << "TIME: " << elapsed_seconds.count();
+//    std::vector<Move> moves = moveGenerator->GenerateAllCaptureMoves();
+//    for (auto & move : moves)
+//    {
+//        cout << MoveToString(move) << '\n';
+//    }
+//    cout << moves.size() << "  ";
+    //cout << "VALUE: " << GetPieceSquareValue(2, 5, KNIGHT, BLACK) << endl;
     while(isPlaying)
     {
         //moveGenerator->GenerateAllMoves(WHITE);
         //moveGenerator->GetCheckRayMap();
         //Print2darray(moveGenerator->captureCheckMap);
-        cout << evaluator->EvaluatePosition() << '\n';
-        cout << searcher->Search(3) << '\n';
-        if(position->activePlayerColor == BLACK)
-        {
-            searcher->Search(3);
-            position->MakeMove(searcher->currentBestMove);
-        }
+        //cout << evaluator->EvaluatePosition() << '\n';
+        //cout << searcher->Search(3) << '\n';
+//        if(position->activePlayerColor == BLACK)
+//        {
+//            searcher->Search(4, INT_MIN + 9000, INT_MAX-9000);
+//            position->MakeMove(searcher->currentBestMove);
+//            cout << MoveToString(searcher->currentBestMove) << '\n';
+//        }
         board->PrintBoard();
-        cout << MoveToString(searcher->currentBestMove) << '\n';
         string moveInput;
         cin >> moveInput;
         if(moveInput == "STOP")
@@ -60,7 +75,7 @@ int main() {
         {
             position->UndoMove(moveList.back());
             moveList.pop_back();
-            board->PrintBoard();
+            //board->PrintBoard();
             continue;
         }
 
@@ -102,16 +117,6 @@ int main() {
         }
 
     }
-    //cout << position->enPassantSquareX << " " << position->enPassantSquareY << endl;
-    //generatedMoves = moveGenerator.GenerateStraightMoves(0, 0);
-    //std::cout << "HELLO WORLD BLET " << test[2][0] << std::endl;
-
-    //board->PrintBoard();
-
-    /*for(int i = 0; i < generatedMoves.size(); i++)
-    {
-        cout << generatedMoves[i].destinationX << " " << generatedMoves[i].destinationY << endl;
-    }*/
 
     return 0;
 }
