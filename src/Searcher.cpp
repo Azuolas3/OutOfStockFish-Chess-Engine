@@ -44,7 +44,9 @@ namespace ChessEngine
 
             if(currentEvaluation >= beta)
             {
-                tt->RecordEntry(move, beta, depth, tt->betaFlag);
+                if(depth >= 2)
+                    tt->RecordEntry(move, beta, depth, tt->betaFlag);
+
                 return beta;
             }
             if(currentEvaluation > alpha)
@@ -57,7 +59,9 @@ namespace ChessEngine
 
         currentBestMove = bestMove;
 
-        tt->RecordEntry(bestMove, alpha, depth, evalFlag);
+        if(depth >= 2)
+            tt->RecordEntry(bestMove, alpha, depth, evalFlag);
+
         return alpha;
     }
 
