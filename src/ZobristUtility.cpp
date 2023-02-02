@@ -29,18 +29,37 @@ void ChessEngine::InitializeZobrist()
 
     sideToMoveKey = GetRandomU64Number();
 }
+unsigned int state = 1804289371;
+
+unsigned int get_random_U32_number()
+{
+    // get current state
+    unsigned int number = state;
+
+    // XOR shift algorithm
+    number ^= number << 13;
+    number ^= number >> 17;
+    number ^= number << 5;
+
+    // update random number state
+    state = number;
+
+    // return random number
+    return number;
+}
 
 u64 ChessEngine::GetRandomU64Number()
 {
-    std::random_device rd;
+    u64 n1, n2, n3, n4;
 
-    /* Random number generator */
-    std::default_random_engine generator(rd());
+    // init random numbers slicing 16 bits from MS1B side
+    n1 = (u64)(get_random_U32_number()) & 0xFFFF;
+    n2 = (u64)(get_random_U32_number()) & 0xFFFF;
+    n3 = (u64)(get_random_U32_number()) & 0xFFFF;
+    n4 = (u64)(get_random_U32_number()) & 0xFFFF;
 
-    /* Distribution on which to apply the generator */
-    std::uniform_int_distribution<long long unsigned> distribution(0,0xFFFFFFFFFFFFFFFF);
-
-    return distribution(generator);
+    // return random number
+    return n1 | (n2 << 16) | (n3 << 32) | (n4 << 48);
 }
 
 u64 ChessEngine::GeneratePositionHashKey(Position* position)
