@@ -18,9 +18,9 @@ namespace ChessEngine
             return 1ULL;
 
         if(isBulkCountingEnabled && depth == 1)
-            return moveGenerator->GenerateAllMoves().size();
+            return moveGenerator->GenerateAllMoves(NORMAL).size();
 
-        moveList = moveGenerator->GenerateAllMoves();
+        moveList = moveGenerator->GenerateAllMoves(NORMAL);
         moveCount = moveList.size();
 
         for(int i = 0; i < moveCount; i++)
@@ -33,7 +33,7 @@ namespace ChessEngine
             nodes += currNodes;
             position->UndoMove(moveInfo);
             //std::cout << "NODES: " << currNodes << "  MOVE: " << MoveToString(moveList[i]) << " " << position->board->blackPieces->count;
-            if(depth == 7)
+            if(depth == 6)
             {
                 std::cout << "NODES: " << currNodes << "  MOVE: " << MoveToString(moveList[i]) << " " << position->board->blackPieces->count << std::endl;
             }

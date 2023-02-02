@@ -17,7 +17,8 @@ namespace ChessEngine
             {KNIGHT, 300},
             {ROOK, 500},
             {QUEEN, 900},
-            {KING, 0} // dont need king value to influence material count
+            {KING, 0}, // dont need king value to influence material count
+            {static_cast<PieceType>(EMPTY), 0} // dont need king value to influence material count
     };
 
     class Evaluator

@@ -102,6 +102,9 @@ void Position::MakeMove(const Move& move)
     zobristKey ^= pieceKeys[move.destinationX][move.destinationY][GetPieceIndex(movedPiece)]; // moving piece in hash key
     zobristKey ^= sideToMoveKey; // changing side to move in hash key
 
+
+//    if(zobristKey != GeneratePositionHashKey(this))
+//        std::cout << "WHAT THE HEEEEEEEEEELL MAKE" << '\n';
 //    std::cout << "updated key: " << zobristKey << '\n';
 //    std::cout << "should be:   " << GeneratePositionHashKey(this);
 }
@@ -187,6 +190,8 @@ void Position::UndoMove(const MovePositionInfo& move)
     zobristKey ^= pieceKeys[inverseMove.destinationX][inverseMove.destinationY][GetPieceIndex(movedPiece)]; // moving piece in hash key
     zobristKey ^= sideToMoveKey;
 
+//    if(zobristKey != GeneratePositionHashKey(this))
+//        std::cout << "WHAT THE HEEEEEEEEEELL UNMAKE" << '\n';
 //    std::cout << "updated key: " << zobristKey << '\n';
 //    std::cout << "should be:   " << GeneratePositionHashKey(this);
 }

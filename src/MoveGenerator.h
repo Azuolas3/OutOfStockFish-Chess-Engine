@@ -42,7 +42,7 @@ namespace ChessEngine
 
     public:
         std::vector<Move> GenerateAllMoves(Color color, MoveGenerationType generationType = NORMAL); // Generates all legal moves for chosen color
-        std::vector<Move> GenerateAllMoves(); // Efficiently generates all legal moves for current active Color
+        std::vector<Move> GenerateAllMoves(MoveGenerationType generationType = NORMAL); // Efficiently generates all legal moves for current active Color
 
         std::vector<Move> GenerateAllCaptureMoves(); // Efficiently generates all legal moves for current active Color
 

@@ -3,17 +3,27 @@
 //
 
 #include "Searcher.h"
+#include "AlgebraicNotationUtility.h"
 
 namespace ChessEngine
 {
     int Searcher::Search(int depth, int alpha, int beta)
     {
+        tt->times++;
+        int ttLookup = tt->ReadHashEntry(depth, alpha, beta);
+
+        if(ttLookup != NOT_FOUND)
+        {
+            //std::cout << bestEvaluation << '\n';
+            transposFound++;
+            return ttLookup;
+        }
+
         if (depth == 0)
             return QuiescenceSearch(alpha, beta);
 
-        int bestEvaluation = INT_MIN;
 
-        std::vector<Move> moveList = moveGenerator->GenerateAllMoves();
+        std::vector<Move> moveList = moveGenerator->GenerateAllMoves(NORMAL);
 
         if(moveList.empty()) // if you have 0 moves, its either checkmate or stalemate
         {
@@ -24,31 +34,37 @@ namespace ChessEngine
         }
 
         Move bestMove;
+        int evalFlag = tt->alphaFlag;
         for (auto & move : moveList)
         {
             MovePositionInfo moveInfo = position->GenerateMoveInfo(move);
             position->MakeMove(move);
             int currentEvaluation = -Search(depth - 1, -beta, -alpha);
-            if(currentEvaluation > bestEvaluation)
-            {
-                bestEvaluation = currentEvaluation;
-                bestMove = move;
-            }
             position->UndoMove(moveInfo);
 
-            alpha = std::max(alpha, bestEvaluation);
-            if(alpha > beta)
-                break;
+            if(currentEvaluation >= beta)
+            {
+                tt->RecordEntry(move, beta, depth, tt->betaFlag);
+                return beta;
+            }
+            if(currentEvaluation > alpha)
+            {
+                evalFlag = tt->exactFlag;
+                bestMove = move;
+                alpha = currentEvaluation;
+            }
         }
 
         currentBestMove = bestMove;
-        return bestEvaluation;
+
+        tt->RecordEntry(bestMove, alpha, depth, evalFlag);
+        return alpha;
     }
 
     int Searcher::QuiescenceSearch(int alpha, int beta)
     {
-        int standPat = evaluator->EvaluatePosition();
         posEvaluated++;
+        int standPat = evaluator->EvaluatePosition();
 
         if(standPat >= beta)
             return beta;
@@ -62,7 +78,7 @@ namespace ChessEngine
             alpha = standPat;
 
 
-        std::vector<Move> moveList = moveGenerator->GenerateAllCaptureMoves();
+        std::vector<Move> moveList = moveGenerator->GenerateAllMoves(CAPTURE_ONLY);
 
         std::sort(moveList.begin(), moveList.end(), [this](const Move& a, const Move& b){return this->SortCaptures(a, b);});
         for (auto & move : moveList)
@@ -88,6 +104,9 @@ namespace ChessEngine
 
         PieceType rightStartingPieceType = GetType(board->pieces[rightMove.startingX][rightMove.startingY]);
         PieceType rightCapturedPieceType = GetType(board->pieces[rightMove.destinationX][rightMove.destinationY]);
+
+        if(leftCapturedPieceType == 0 || rightCapturedPieceType == 0) // in case of any errors where a quiet move would be sorted
+            return false;
 
         int leftHandCaptureValue = pieceValueMap[leftStartingPieceType] - pieceValueMap[leftCapturedPieceType];
         int rightHandCaptureValue = pieceValueMap[rightStartingPieceType] - pieceValueMap[rightCapturedPieceType];

@@ -9,6 +9,7 @@
 
 #include "Evaluator.h"
 #include "MoveGenerator.h"
+#include "TranspositionTable.h"
 
 namespace ChessEngine
 {
@@ -17,7 +18,6 @@ namespace ChessEngine
     {
         Evaluator *evaluator;
         MoveGenerator* moveGenerator;
-        Position *position;
         ChessBoard *board;
 
     public:
@@ -28,6 +28,9 @@ namespace ChessEngine
 
             position = evaluator->currentPosition;
             board = position->board;
+
+            tt = new TranspositionTable(position);
+            tt->ClearTable();
         }
 
         int Search(int depth, int alpha, int beta);
@@ -37,7 +40,10 @@ namespace ChessEngine
         const int DELTA = pieceValueMap[ROOK]; // for delta pruning Quiescence search
 
         Move currentBestMove;
-        unsigned long long posEvaluated = 0;
+        u64 posEvaluated = 0;
+        u64 transposFound = 0;
+        TranspositionTable* tt;
+        Position *position;
     };
 
 } // ChessEngine

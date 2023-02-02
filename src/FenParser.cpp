@@ -74,40 +74,41 @@ Position* FenParser::loadFen(std::string fenString)
     }
 
     charIterator += 2; // Skip empty char and move to castling rights specifier
-    std::string fenSubString = fenString.substr(charIterator-1);
 
-    if(fenSubString.find('-') != std::string::npos)
+    if(fenString[46] != '-')
     {
-        charIterator++;
-    }
+        std::string fenSubString = fenString.substr(charIterator-1);
 
-    if(fenSubString.find('K') != std::string::npos)
-    {
-        charIterator++;
-        position->whiteCastlingRights = static_cast<CastlingRights>(position->whiteCastlingRights | KINGSIDE);
-    }
+        if(fenSubString.find('K') != std::string::npos)
+        {
+            charIterator++;
+            position->whiteCastlingRights = static_cast<CastlingRights>(position->whiteCastlingRights | KINGSIDE);
+        }
 
-    if(fenSubString.find('Q') != std::string::npos)
-    {
-        charIterator++;
-        position->whiteCastlingRights = static_cast<CastlingRights>(position->whiteCastlingRights | QUEENSIDE);
-    }
+        if(fenSubString.find('Q') != std::string::npos)
+        {
+            charIterator++;
+            position->whiteCastlingRights = static_cast<CastlingRights>(position->whiteCastlingRights | QUEENSIDE);
+        }
 
-    if(fenSubString.find('k') != std::string::npos)
-    {
-        charIterator++;
-        position->blackCastlingRights = static_cast<CastlingRights>(position->blackCastlingRights | KINGSIDE);
-    }
+        if(fenSubString.find('k') != std::string::npos)
+        {
+            charIterator++;
+            position->blackCastlingRights = static_cast<CastlingRights>(position->blackCastlingRights | KINGSIDE);
+        }
 
-    if(fenSubString.find('q') != std::string::npos)
-    {
-        charIterator++;
-        position->blackCastlingRights = static_cast<CastlingRights>(position->blackCastlingRights | QUEENSIDE);
+        if(fenSubString.find('q') != std::string::npos)
+        {
+            charIterator++;
+            position->blackCastlingRights = static_cast<CastlingRights>(position->blackCastlingRights | QUEENSIDE);
+        }
     }
+    else
+        charIterator++;
 
     charIterator++;
 
-    if(fenString[charIterator-1] != '-')
+    if(fenString[charIterator] != '-')
     {
         position->enPassantSquareX = letterToFile(fenString[charIterator]);
         position->enPassantSquareY = intToRank(fenString[charIterator+1]);

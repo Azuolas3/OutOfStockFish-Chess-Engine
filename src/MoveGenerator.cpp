@@ -34,7 +34,7 @@ namespace ChessEngine
         return generatedMoves;
     }
 
-    std::vector<Move> MoveGenerator::GenerateAllMoves()
+    std::vector<Move> MoveGenerator::GenerateAllMoves(MoveGenerationType generationType)
     {
         Color activePlayerColor = position->activePlayerColor;
         UpdateKingPositions();
@@ -71,7 +71,7 @@ namespace ChessEngine
             // Only calculate king moves if it's a double check since its impossible for any other piece to have a legal move
             if(attackerCount == 1)
             {
-                return GenerateAllMoves(activePlayerColor);
+                return GenerateAllMoves(activePlayerColor, generationType);
             }
             else
             {
@@ -83,7 +83,7 @@ namespace ChessEngine
         }
         else
         {
-            return GenerateAllMoves(activePlayerColor);
+            return GenerateAllMoves(activePlayerColor, generationType);
         }
     }
 
@@ -538,53 +538,56 @@ namespace ChessEngine
         blackKingY = board->blackKingY;
     }
 
-    std::vector<Move> MoveGenerator::GenerateAllCaptureMoves()
-    {
-        Color activePlayerColor = position->activePlayerColor;
-        UpdateKingPositions();
-
-        activeKingX = (activePlayerColor == WHITE) ? whiteKingX : blackKingX;
-        activeKingY = (activePlayerColor == WHITE) ? whiteKingY : blackKingY;
-
-        InitThreatMaps();
-
-        if(IsInCheck())
-        {
-            std::pair<Square, Square> attackerPair;
-            int attackerCount;
-
-            int kingX, kingY;
-
-            if(activePlayerColor == WHITE)
-            {
-                kingX = whiteKingX;
-                kingY = whiteKingY;
-            }
-            else
-            {
-                kingX = blackKingX;
-                kingY = blackKingY;
-            }
-
-            attackerPair = GetSquareAttackers(kingX, kingY, attackerCount);
-
-            GetCheckRayMap();
-            UpdateCaptureCheckMap(attackerPair);
-
-            // Only calculate king moves if it's a double check since its impossible for any other piece to have a legal move
-            if(attackerCount == 1)
-            {
-                return GenerateAllMoves(activePlayerColor, CAPTURE_ONLY);
-            }
-            else
-            {
-                return {}; // return empty vector if double checked
-            }
-        }
-        else
-        {
-            return GenerateAllMoves(activePlayerColor, CAPTURE_ONLY);
-        }
-    }
+//    std::vector<Move> MoveGenerator::GenerateAllCaptureMoves()
+//    {
+//        Color activePlayerColor = position->activePlayerColor;
+//        UpdateKingPositions();
+//
+//        activeKingX = (activePlayerColor == WHITE) ? whiteKingX : blackKingX;
+//        activeKingY = (activePlayerColor == WHITE) ? whiteKingY : blackKingY;
+//
+//        InitThreatMaps();
+//
+//        if(IsInCheck())
+//        {
+//            std::pair<Square, Square> attackerPair;
+//            int attackerCount;
+//
+//            int kingX, kingY;
+//
+//            if(activePlayerColor == WHITE)
+//            {
+//                kingX = whiteKingX;
+//                kingY = whiteKingY;
+//            }
+//            else
+//            {
+//                kingX = blackKingX;
+//                kingY = blackKingY;
+//            }
+//
+//            attackerPair = GetSquareAttackers(kingX, kingY, attackerCount);
+//
+//            GetCheckRayMap();
+//            UpdateCaptureCheckMap(attackerPair);
+//
+//            // Only calculate king moves if it's a double check since its impossible for any other piece to have a legal move
+//            if(attackerCount == 1)
+//            {
+//                return GenerateAllMoves(activePlayerColor, CAPTURE_ONLY);
+//            }
+//            else
+//            {
+//                std::vector<Move> kingMoves;
+//                plMoveGenerator->GenerateKingMoves(kingMoves, kingX, kingY, CAPTURE_ONLY);
+//                EraseIllegalKingMoves(kingMoves);
+//                return kingMoves;
+//            }
+//        }
+//        else
+//        {
+//            return GenerateAllMoves(activePlayerColor, CAPTURE_ONLY);
+//        }
+//    }
 
 } // ChessEngine
