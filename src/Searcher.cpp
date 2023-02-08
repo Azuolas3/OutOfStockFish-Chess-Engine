@@ -140,10 +140,10 @@ namespace ChessEngine
         Move storedTTMove = tt->ReadHashEntryMove();
 
         if(firstMove == storedTTMove)
-            return false;
+            return true;
 
         if(secondMove == storedTTMove)
-            return true;
+            return false;
 
         int firstMoveCaptureValue = EvaluateCapture(firstMove);
         int secondMoveCaptureValue = EvaluateCapture(secondMove);
