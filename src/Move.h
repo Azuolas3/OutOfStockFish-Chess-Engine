@@ -57,6 +57,14 @@ struct Move
     std::function<void()> additionalAction = nullptr;
 };
 
+inline bool operator==(Move a, Move b)
+{
+    if(a.startingX == b.startingX && a.startingY == b.startingY && a.destinationX == b.destinationX && a.destinationY == b.destinationY && a.moveType == b.moveType)
+        return true;
+
+    return false;
+}
+
 struct MovePositionInfo // Larger struct which hols more information about a move, used for undoing a move
 {
     MovePositionInfo()

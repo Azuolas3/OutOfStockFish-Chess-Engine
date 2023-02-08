@@ -68,6 +68,7 @@ namespace ChessEngine
 
         Move bestMove;
         int evalFlag = tt->alphaFlag;
+        OrderMoves(moveList);
         for (auto & move : moveList)
         {
             MovePositionInfo moveInfo = position->GenerateMoveInfo(move);
@@ -134,21 +135,45 @@ namespace ChessEngine
         return alpha;
     }
 
-    bool Searcher::SortCaptures(const Move &leftMove, const Move &rightMove)
+    bool Searcher::SortMoves(const Move &firstMove, const Move &secondMove)
     {
-        PieceType leftStartingPieceType = GetType(board->pieces[leftMove.startingX][leftMove.startingY]);
-        PieceType leftCapturedPieceType = GetType(board->pieces[leftMove.destinationX][leftMove.destinationY]);
+        Move storedTTMove = tt->ReadHashEntryMove();
 
-        PieceType rightStartingPieceType = GetType(board->pieces[rightMove.startingX][rightMove.startingY]);
-        PieceType rightCapturedPieceType = GetType(board->pieces[rightMove.destinationX][rightMove.destinationY]);
-
-        if(leftCapturedPieceType == 0 || rightCapturedPieceType == 0) // in case of any errors where a quiet move would be sorted
+        if(firstMove == storedTTMove)
             return false;
 
-        int leftHandCaptureValue = pieceValueMap[leftStartingPieceType] - pieceValueMap[leftCapturedPieceType];
-        int rightHandCaptureValue = pieceValueMap[rightStartingPieceType] - pieceValueMap[rightCapturedPieceType];
+        if(secondMove == storedTTMove)
+            return true;
 
-        return leftHandCaptureValue < rightHandCaptureValue;
+        int firstMoveCaptureValue = EvaluateCapture(firstMove);
+        int secondMoveCaptureValue = EvaluateCapture(secondMove);
+
+        return firstMoveCaptureValue < secondMoveCaptureValue;
+    }
+
+    bool Searcher::SortCaptures(const Move &firstMove, const Move &secondMove)
+    {
+        int firstMoveCaptureValue = EvaluateCapture(firstMove);
+        int secondMoveCaptureValue = EvaluateCapture(secondMove);
+
+        return firstMoveCaptureValue < secondMoveCaptureValue;
+    }
+
+    int Searcher::EvaluateCapture(const Move &capture)
+    {
+        PieceType startingPieceType = GetType(board->pieces[capture.startingX][capture.startingY]);
+        PieceType capturedPieceType = GetType(board->pieces[capture.destinationX][capture.destinationY]);
+
+        if(startingPieceType == 0 || capturedPieceType == 0) // in case of bug where a quiet move would be evaluated here
+            return 0;
+
+        int captureValue = pieceValueMap[startingPieceType] - pieceValueMap[capturedPieceType];
+        return captureValue;
+    }
+
+    void Searcher::OrderMoves(std::vector<Move> &moveList)
+    {
+        std::sort(moveList.begin(), moveList.end(), [this](const Move& a, const Move& b){return this->SortMoves(a, b);});
     }
 
     void Searcher::EndSearch()

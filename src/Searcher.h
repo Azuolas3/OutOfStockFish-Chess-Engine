@@ -39,7 +39,10 @@ namespace ChessEngine
         int Search(int depth, int alpha, int beta);
         int SearchIteratively(int allocatedSearchTime); // search using iterative deepening
         int QuiescenceSearch(int alpha, int beta);
-        bool SortCaptures(const Move& leftMove, const Move& rightMove);
+        bool SortCaptures(const Move& firstMove, const Move& secondMove);
+        bool SortMoves(const Move& firstMove, const Move& secondMove);
+        int EvaluateCapture(const Move& capture);
+        void OrderMoves(std::vector<Move> &moveList);
         void EndSearch();
 
         const int DELTA = pieceValueMap[ROOK]; // for delta pruning Quiescence search
