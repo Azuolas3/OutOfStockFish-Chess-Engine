@@ -143,10 +143,10 @@ void Position::UndoMove(const MovePositionInfo& move)
             zobristKey ^= enPassantKeys[enPassantSquareX];
         if(move.enPassantSquare.x != -1)
             zobristKey ^= enPassantKeys[move.enPassantSquare.x];
-
-        enPassantSquareX = move.enPassantSquare.x;
-        enPassantSquareY = move.enPassantSquare.y;
     }
+
+    enPassantSquareX = move.enPassantSquare.x;
+    enPassantSquareY = move.enPassantSquare.y;
 
     if(HasFlag(smallMove.moveType, CAPTURE))
     {
@@ -190,8 +190,8 @@ void Position::UndoMove(const MovePositionInfo& move)
     zobristKey ^= pieceKeys[inverseMove.destinationX][inverseMove.destinationY][GetPieceIndex(movedPiece)]; // moving piece in hash key
     zobristKey ^= sideToMoveKey;
 
-//    if(zobristKey != GeneratePositionHashKey(this))
-//        std::cout << "WHAT THE HEEEEEEEEEELL UNMAKE" << '\n';
+    if(zobristKey != GeneratePositionHashKey(this))
+        std::cout << "WHAT THE HEEEEEEEEEELL UNMAKE" << '\n';
 //    std::cout << "updated key: " << zobristKey << '\n';
 //    std::cout << "should be:   " << GeneratePositionHashKey(this);
 }
