@@ -10,6 +10,7 @@
 #include "Evaluator.h"
 #include "MoveGenerator.h"
 #include "TranspositionTable.h"
+#include "Timer.h"
 
 namespace ChessEngine
 {
@@ -19,6 +20,8 @@ namespace ChessEngine
         Evaluator *evaluator;
         MoveGenerator* moveGenerator;
         ChessBoard *board;
+
+        bool isSearchRunning = true;
 
     public:
         explicit Searcher(Evaluator* evaluator, MoveGenerator* moveGenerator)
@@ -34,8 +37,10 @@ namespace ChessEngine
         }
 
         int Search(int depth, int alpha, int beta);
+        int SearchIteratively(int allocatedSearchTime); // search using iterative deepening
         int QuiescenceSearch(int alpha, int beta);
         bool SortCaptures(const Move& leftMove, const Move& rightMove);
+        void EndSearch();
 
         const int DELTA = pieceValueMap[ROOK]; // for delta pruning Quiescence search
 

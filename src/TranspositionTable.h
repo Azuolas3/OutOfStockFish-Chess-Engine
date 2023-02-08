@@ -36,7 +36,8 @@ namespace ChessEngine
 
         u64 GetIndex();
         void ClearTable();
-        int ReadHashEntry(int depth, int alpha, int beta);
+        int ReadHashEntryEval(int depth, int alpha, int beta);
+        Move ReadHashEntryMove();
         void RecordEntry(const Move &move, int eval, int depth, int flags);
 
         const int exactFlag = 0;

@@ -7,15 +7,48 @@
 
 namespace ChessEngine
 {
+    int Searcher::SearchIteratively(int allocatedSearchTime)
+    {
+        isSearchRunning = true;
+
+        int currentDepth = 1; // start from 1 ply depth
+        int latestEval = 0;
+
+        auto future = std::async(StartTimer, allocatedSearchTime, [this] {EndSearch();});
+        std::cout << "HELLO" << '\n';
+        while(isSearchRunning)
+        {
+            Move previousIterationBestMove = currentBestMove;
+            int previousIterationEval = latestEval;
+
+            latestEval = Search(currentDepth, INT_MIN + 9999, INT_MAX - 9999);
+            std::cout << "current depth:   " << currentDepth << '\n';
+            currentDepth++;
+
+            if(!isSearchRunning) // in case allocated time ends before search is over, revert back to previous iteration's best move
+            {
+                currentBestMove = previousIterationBestMove;
+                latestEval = previousIterationEval;
+            }
+        }
+
+        std::cout << "Last depth:   " << currentDepth - 1 << '\n';
+        return latestEval;
+    }
+
     int Searcher::Search(int depth, int alpha, int beta)
     {
+        if(!isSearchRunning)
+            return 0;
+
         tt->times++;
-        int ttLookup = tt->ReadHashEntry(depth, alpha, beta);
+        int ttLookup = tt->ReadHashEntryEval(depth, alpha, beta);
 
         if(ttLookup != NOT_FOUND)
         {
             //std::cout << bestEvaluation << '\n';
             transposFound++;
+            currentBestMove = tt->ReadHashEntryMove();
             return ttLookup;
         }
 
@@ -73,10 +106,10 @@ namespace ChessEngine
         if(standPat >= beta)
             return beta;
 
-        if(standPat < alpha - DELTA)
-        {
-            return alpha;
-        }
+//        if(standPat < alpha - DELTA) //delta pruning
+//        {
+//            return alpha;
+//        }
 
         if(standPat > alpha)
             alpha = standPat;
@@ -116,5 +149,10 @@ namespace ChessEngine
         int rightHandCaptureValue = pieceValueMap[rightStartingPieceType] - pieceValueMap[rightCapturedPieceType];
 
         return leftHandCaptureValue < rightHandCaptureValue;
+    }
+
+    void Searcher::EndSearch()
+    {
+        isSearchRunning = false;
     }
 } // ChessEngine

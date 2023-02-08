@@ -22,7 +22,7 @@ namespace ChessEngine {
         }
     }
 
-    int TranspositionTable::ReadHashEntry(int depth, int alpha, int beta)
+    int TranspositionTable::ReadHashEntryEval(int depth, int alpha, int beta)
     {
         Entry* entry = &entries[GetIndex()];
         if(position->zobristKey == entry->key)
@@ -77,5 +77,11 @@ namespace ChessEngine {
         entry->eval = eval;
         entry->depth = depth;
         entry->flags = flags;
+    }
+
+    Move TranspositionTable::ReadHashEntryMove()
+    {
+        Entry* entry = &entries[GetIndex()];
+        return entry->bestMove;
     }
 } // ChessEngine

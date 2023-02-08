@@ -17,7 +17,6 @@ using namespace ChessEngine;
 using std::cout; using std::cin; using std::endl;
 using std::string; using std::vector;
 
-void Print2darray(bool array[8][8]);
 MoveType GetMoveTypeFromChar(char c);
 
 int main() {
@@ -25,63 +24,36 @@ int main() {
     vector<MovePositionInfo> moveList;
 
     InitializeZobrist();
-    bool isPlaying = false;
+    bool isPlaying = true;
 
     Position* position = fenParser.loadFen(fenParser.startingFenString); // "r1bq1rk1/ppbn2pp/2p1pn2/3pNp2/3P1B2/4P2P/PPPNBPP1/R2Q1RK1 w - - 9 10"
     ChessBoard* board = position->board;
     MoveGenerator* moveGenerator = new MoveGenerator(position);
     Evaluator* evaluator = new Evaluator(position);
     Searcher* searcher = new Searcher(evaluator, moveGenerator);
-    //TranspositionTable* tt = new TranspositionTable(position);
 
-    //tt->ClearTable();
-    //cout << NOT_FOUND;
 //    for(int i = 0; i< 10; i++)
 //    {
 //        cout << GetRandomU64Number() << '\n';
 //    }
-    //cout << position->zobristKey << '\n';
-    //board->PrintBoard();
-    //cout << -(INT_MAX) << '\n';
-//    auto start  = std::chrono::steady_clock::now();
-//    cout << Perft(6, position, moveGenerator) << '\n';
-//    auto end = std::chrono::steady_clock::now();
-//    std::chrono::duration<double> elapsed_seconds = end-start;
-//    cout << "TIME: " << elapsed_seconds.count() << '\n';
-    for(int i = 0; i < 2; i++)
-    {
-        auto start  = std::chrono::steady_clock::now();
-        //cout << Perft(6, position, moveGenerator) << '\n';
-        cout << searcher->posEvaluated << " " << searcher->transposFound << " " << searcher->tt->times << " " << searcher->tt->otherTimes << '\n';
-        cout << searcher->Search(7, INT_MIN + 9999, INT_MAX - 9999) << " " << searcher->posEvaluated << " " << searcher->transposFound << " " << searcher->tt->times << " " << searcher->tt->otherTimes << '\n';
-        searcher->posEvaluated = 0;
-        searcher->tt->times = 0;
-        auto end = std::chrono::steady_clock::now();
-        std::chrono::duration<double> elapsed_seconds = end-start;
-        cout << "TIME: " << elapsed_seconds.count() << '\n';
-    }
-//    std::vector<Move> moves = moveGenerator->GenerateAllCaptureMoves();
-//    for (auto & move : moves)
-//    {
-//        cout << MoveToString(move) << '\n';
-//    }
-//    cout << moves.size() << "  ";
-    //cout << "VALUE: " << GetPieceSquareValue(2, 5, KNIGHT, BLACK) << endl;
+
+    auto start  = std::chrono::steady_clock::now();
+    cout << searcher->Search(1, INT_MIN + 9999, INT_MAX - 9999) << " " << searcher->posEvaluated << " " << searcher->transposFound << " " << searcher->tt->times << " " << searcher->tt->otherTimes << '\n';
+    cout << MoveToString(searcher->currentBestMove) << '\n';
+     auto end = std::chrono::steady_clock::now();
+    std::chrono::duration<double> elapsed_seconds = end-start;
+    cout << "TIME: " << elapsed_seconds.count() << '\n';
+
     while(isPlaying)
     {
-//        tt->RecordEntry(Move(), evaluator->EvaluatePosition(), 1, 0);
-        //cout << tt->ReadHashEntry(0, -1, 1) << '\n';
-        //moveGenerator->GenerateAllMoves(WHITE);
-        //moveGenerator->GetCheckRayMap();
-        //Print2darray(moveGenerator->captureCheckMap);
-        //cout << evaluator->EvaluatePosition() << '\n';
-        //cout << searcher->Search(3) << '\n';
         if(position->activePlayerColor == BLACK)
         {
-            searcher->Search(5, INT_MIN + 9000, INT_MAX-9000);
+            cout << "eval:   " << searcher->SearchIteratively(2) << '\n';
+            //searcher->Search(6, INT_MIN + 9999, INT_MAX - 9999);
             position->MakeMove(searcher->currentBestMove);
             cout << MoveToString(searcher->currentBestMove) << '\n';
         }
+
         board->PrintBoard();
         string moveInput;
         cin >> moveInput;
@@ -166,3 +138,5 @@ MoveType GetMoveTypeFromChar(char c)
             return Q_PROMOTION;
     }
 }
+
+
