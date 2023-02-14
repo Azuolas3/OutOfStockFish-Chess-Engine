@@ -21,7 +21,7 @@ namespace ChessEngine
             Move previousIterationBestMove = currentBestMove;
             int previousIterationEval = latestEval;
 
-            latestEval = Search(currentDepth, INT_MIN + 9999, INT_MAX - 9999);
+            latestEval = Search(currentDepth, -STARTING_VALUE, STARTING_VALUE);
             std::cout << "current depth:   " << currentDepth << '\n';
             currentDepth++;
 
@@ -61,7 +61,7 @@ namespace ChessEngine
         if(moveList.empty()) // if you have 0 moves, its either checkmate or stalemate
         {
             if(moveGenerator->IsInCheck())
-                return INT_MIN + 1; // worst possible eval for checkmate
+                return MATED; // worst possible eval for checkmate
             else
                 return 0; // draw eval for stalemate
         }

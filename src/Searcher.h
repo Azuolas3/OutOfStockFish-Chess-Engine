@@ -14,6 +14,8 @@
 
 namespace ChessEngine
 {
+#define MATED (INT_MIN / 2 + 1000)
+#define STARTING_VALUE (INT_MAX / 2)
 
     class Searcher
     {

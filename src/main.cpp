@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <chrono>
+#include <windows.h>
+#include <thread>
 #include "pieces.h"
 #include "Move.h"
 #include "FenParser.h"
@@ -26,7 +28,7 @@ int main() {
     InitializeZobrist();
     bool isPlaying = true;
 
-    Position* position = fenParser.loadFen(fenParser.startingFenString); // "r1bq1rk1/ppbn2pp/2p1pn2/3pNp2/3P1B2/4P2P/PPPNBPP1/R2Q1RK1 w - - 9 10"
+    Position* position = fenParser.loadFen("6k1/5ppp/8/8/8/8/1R6/2K5 w - - 0 1"); // "8/5k2/8/8/8/8/3Q4/3K4 w - - 0 1"
     ChessBoard* board = position->board;
     MoveGenerator* moveGenerator = new MoveGenerator(position);
     Evaluator* evaluator = new Evaluator(position);
@@ -38,23 +40,26 @@ int main() {
 //    }
 
     auto start  = std::chrono::steady_clock::now();
-    cout << searcher->Search(1, INT_MIN + 9999, INT_MAX - 9999) << " " << searcher->posEvaluated << " " << searcher->transposFound << " " << searcher->tt->times << " " << searcher->tt->otherTimes << '\n';
-    cout << MoveToString(searcher->currentBestMove) << '\n';
+    //cout << searcher->Search(3, INT_MIN + 9999, INT_MAX - 9999) << " " << searcher->posEvaluated << " " << searcher->transposFound << " " << searcher->tt->times << " " << searcher->tt->otherTimes << '\n';
+    //cout << searcher->SearchIteratively(3)  << '\n';
+    //cout << MoveToString(searcher->currentBestMove) << '\n';
      auto end = std::chrono::steady_clock::now();
     std::chrono::duration<double> elapsed_seconds = end-start;
     cout << "TIME: " << elapsed_seconds.count() << '\n';
 
     while(isPlaying)
     {
-        if(position->activePlayerColor == BLACK)
+        if(position->activePlayerColor == WHITE)
         {
-            cout << "eval:   " << searcher->SearchIteratively(2) << '\n';
-            //searcher->Search(6, INT_MIN + 9999, INT_MAX - 9999);
+            cout << "eval:   " << searcher->SearchIteratively(5) << '\n';
+            //searcher->Search(1, INT_MIN + 9999, INT_MAX - 9999);
             position->MakeMove(searcher->currentBestMove);
             cout << MoveToString(searcher->currentBestMove) << '\n';
         }
 
         board->PrintBoard();
+//        std::this_thread::sleep_for(std::chrono::seconds(3));
+//        continue;
         string moveInput;
         cin >> moveInput;
         if(moveInput == "STOP")
