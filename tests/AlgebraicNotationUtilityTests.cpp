@@ -18,4 +18,11 @@ TEST_CASE("Move to string tests")
 
         CHECK((MoveToString(move) == "a1h8"));
     }
+
+    SUBCASE("Promotion move")
+    {
+        Move move = Move(7, 6, 7, 7, Q_PROMOTION);
+
+        CHECK((MoveToString(move) == "h7h8q"));
+    }
 }

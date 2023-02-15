@@ -90,6 +90,8 @@ struct MovePositionInfo // Larger struct which hols more information about a mov
 
 Move InverseMove(const Move& move);
 ChessEngine::PieceType GetPieceTypeFromPromotionType(MoveType moveType);
+MoveType GetMoveTypeFromChar(char c);
+char GetCharFromPromotionType(MoveType promotionType);
 
 
 #endif //CHESS_ENGINE_MOVE_H

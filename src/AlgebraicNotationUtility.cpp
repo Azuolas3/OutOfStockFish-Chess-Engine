@@ -11,6 +11,7 @@ int intToRank(int num) { return num-'0'-1;}
 std::string MoveToString(const Move& move)
 {
     std::string resultString;
+    MoveType moveType = move.moveType;
 
     char startFile = IntToFile(move.startingX);
     char startRank = move.startingY + '0' + 1;
@@ -22,6 +23,12 @@ std::string MoveToString(const Move& move)
     resultString.push_back(startRank);
     resultString.push_back(endFile);
     resultString.push_back(endRank);
+
+    if(IsPromotionType(moveType))
+    {
+        char promotionChar = GetCharFromPromotionType(moveType);
+        resultString.push_back(promotionChar);
+    }
 
     return resultString;
 }

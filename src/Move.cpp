@@ -25,3 +25,33 @@ ChessEngine::PieceType GetPieceTypeFromPromotionType(MoveType moveType)
             return static_cast<ChessEngine::PieceType>(-1);
     }
 }
+
+MoveType GetMoveTypeFromChar(char c)
+{
+    switch(c)
+    {
+        case 'B':
+            return B_PROMOTION;
+        case 'N':
+            return N_PROMOTION;
+        case 'R':
+            return R_PROMOTION;
+        case 'Q':
+            return Q_PROMOTION;
+    }
+}
+
+char GetCharFromPromotionType(MoveType promotionType)
+{
+    switch(promotionType)
+    {
+        case B_PROMOTION:
+            return 'b';
+        case N_PROMOTION:
+            return 'q';
+        case R_PROMOTION:
+            return 'r';
+        case Q_PROMOTION:
+            return 'q';
+    }
+}

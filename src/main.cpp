@@ -9,7 +9,6 @@
 #include "MoveGenerator.h"
 #include "BoardUtility.h"
 #include "AlgebraicNotationUtility.h"
-#include "PerftUtility.h"
 #include "Evaluator.h"
 #include "Searcher.h"
 #include "ZobristUtility.h"
@@ -28,7 +27,7 @@ int main() {
     InitializeZobrist();
     bool isPlaying = true;
 
-    Position* position = fenParser.loadFen("6k1/5ppp/8/8/8/8/1R6/2K5 w - - 0 1"); // "8/5k2/8/8/8/8/3Q4/3K4 w - - 0 1"
+    Position* position = fenParser.loadFen("8/6k1/8/8/8/8/2Q5/2K5 w - - 0 1"); // "8/5k2/8/8/8/8/3Q4/3K4 w - - 0 1"
     ChessBoard* board = position->board;
     MoveGenerator* moveGenerator = new MoveGenerator(position);
     Evaluator* evaluator = new Evaluator(position);
@@ -49,17 +48,23 @@ int main() {
 
     while(isPlaying)
     {
-        if(position->activePlayerColor == WHITE)
+        if(position->activePlayerColor == WHITE || position->activePlayerColor == BLACK)
         {
-            cout << "eval:   " << searcher->SearchIteratively(5) << '\n';
+            int eval = searcher->SearchIteratively(1);
+            cout << "eval:   " << eval << '\n';
             //searcher->Search(1, INT_MIN + 9999, INT_MAX - 9999);
             position->MakeMove(searcher->currentBestMove);
             cout << MoveToString(searcher->currentBestMove) << '\n';
+            if(eval == -MATED)
+            {
+                cout << "\nCheckmate!\n";
+                return 0;
+            }
         }
 
         board->PrintBoard();
-//        std::this_thread::sleep_for(std::chrono::seconds(3));
-//        continue;
+        std::this_thread::sleep_for(std::chrono::seconds(3));
+        continue;
         string moveInput;
         cin >> moveInput;
         if(moveInput == "STOP")
@@ -126,21 +131,6 @@ void Print2darray(bool array[8][8])
                 cout<<"0 ";
         }
         std::cout << std::endl;
-    }
-}
-
-MoveType GetMoveTypeFromChar(char c)
-{
-    switch(c)
-    {
-        case 'B':
-            return B_PROMOTION;
-        case 'N':
-            return N_PROMOTION;
-        case 'R':
-            return R_PROMOTION;
-        case 'Q':
-            return Q_PROMOTION;
     }
 }
 
