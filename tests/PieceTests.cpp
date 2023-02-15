@@ -9,5 +9,5 @@ TEST_CASE("Piece Construction")
     ChessEngine::PieceType pieceType = ChessEngine::ROOK;
 
     ChessEngine::Piece piece = static_cast<ChessEngine::Piece>(pieceColor | pieceType);
-    CHECK(piece == ChessEngine::W_ROOK);
+    CHECK((piece == ChessEngine::W_ROOK));
 }

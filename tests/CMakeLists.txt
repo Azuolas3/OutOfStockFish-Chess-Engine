@@ -1,2 +1,2 @@
-add_executable(Tests_run PieceTests.cpp)
+add_executable(Tests_run PieceTests.cpp PerftTests.cpp)
 target_link_libraries(Tests_run chess_engine_lib)
