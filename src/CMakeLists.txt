@@ -23,6 +23,7 @@ set(HEADER_FILES
         u64.h
         VectorUtility.h
         ZobristUtility.h
+        uci.h
         )
 
 set(SOURCE_FILES
@@ -42,6 +43,6 @@ set(SOURCE_FILES
         TranspositionTable.cpp
         VectorUtility.cpp
         ZobristUtility.cpp
-        )
+        uci.cpp)
 
 add_library(chess_engine_lib STATIC ${SOURCE_FILES} ${HEADER_FILES})

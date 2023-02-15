@@ -1,7 +1,6 @@
 #include <iostream>
 #include <vector>
 #include <chrono>
-#include <windows.h>
 #include <thread>
 #include "pieces.h"
 #include "Move.h"
@@ -33,10 +32,14 @@ int main() {
     Evaluator* evaluator = new Evaluator(position);
     Searcher* searcher = new Searcher(evaluator, moveGenerator);
 
-//    for(int i = 0; i< 10; i++)
-//    {
-//        cout << GetRandomU64Number() << '\n';
-//    }
+    string startingInput;
+    cin >> startingInput;
+    if(startingInput == "uci")
+    {
+        cout << "id name OutOfStockFish\n";
+        cout << "id author Azuolas\n";
+        cout << "uciok\n";
+    }
 
     auto start  = std::chrono::steady_clock::now();
     //cout << searcher->Search(3, INT_MIN + 9999, INT_MAX - 9999) << " " << searcher->posEvaluated << " " << searcher->transposFound << " " << searcher->tt->times << " " << searcher->tt->otherTimes << '\n';
