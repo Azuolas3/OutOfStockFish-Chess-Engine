@@ -1,11 +1,7 @@
 #include "doctest.h"
 
-#include "pieces.h"
-#include "Move.h"
 #include "FenParser.h"
 #include "MoveGenerator.h"
-#include "BoardUtility.h"
-#include "AlgebraicNotationUtility.h"
 #include "PerftUtility.h"
 #include "u64.h"
 
