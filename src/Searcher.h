@@ -16,6 +16,7 @@ namespace ChessEngine
 {
 #define MATED (INT_MIN / 2 + 1000)
 #define STARTING_VALUE (INT_MAX / 2)
+#define MAX_DEPTH INT_MAX
 
     class Searcher
     {
@@ -48,6 +49,8 @@ namespace ChessEngine
         void EndSearch();
 
         const int DELTA = pieceValueMap[ROOK]; // for delta pruning Quiescence search
+
+        int maxDepth = MAX_DEPTH;
 
         Move currentBestMove;
         u64 posEvaluated = 0;

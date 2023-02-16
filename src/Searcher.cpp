@@ -10,19 +10,20 @@ namespace ChessEngine
     int Searcher::SearchIteratively(int allocatedSearchTime)
     {
         isSearchRunning = true;
+        //bool isTimeSet = allocatedSearchTime > 0; // if allocated search time a negative number, assume that time isn't set
 
         int currentDepth = 1; // start from 1 ply depth
         int latestEval = 0;
 
         auto future = std::async(StartTimer, allocatedSearchTime, [this] {EndSearch();});
-        std::cout << "HELLO" << '\n';
-        while(isSearchRunning)
+        while(isSearchRunning && currentDepth <= maxDepth)
         {
             Move previousIterationBestMove = currentBestMove;
             int previousIterationEval = latestEval;
 
             latestEval = Search(currentDepth, -STARTING_VALUE, STARTING_VALUE);
             std::cout << "current depth:   " << currentDepth << '\n';
+
             currentDepth++;
 
             if(!isSearchRunning) // in case allocated time ends before search is over, revert back to previous iteration's best move
@@ -32,7 +33,7 @@ namespace ChessEngine
             }
         }
 
-        std::cout << "Last depth:   " << currentDepth - 1 << '\n';
+        //std::cout << "Last depth:   " << currentDepth - 1 << '\n';
         return latestEval;
     }
 
