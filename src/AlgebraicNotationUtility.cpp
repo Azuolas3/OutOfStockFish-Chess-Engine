@@ -44,10 +44,11 @@ Move StringToMove(const std::string &moveString)
     MoveType moveType = QUIET;
     if(moveString.length() == 5)
     {
-        moveType = GetMoveTypeFromChar(moveString[4]);
+        char promotionChar = toupper(moveString[4]); // GetMoveTypeFromChar expects uppercase letters
+        moveType = GetMoveTypeFromChar(promotionChar);
     }
 
-    return Move(startingX, startingY, destinationX, destinationY);
+    return Move(startingX, startingY, destinationX, destinationY, moveType);
 }
 
 char IntToFile(int integer)
