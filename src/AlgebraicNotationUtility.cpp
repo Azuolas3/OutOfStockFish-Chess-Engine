@@ -33,6 +33,23 @@ std::string MoveToString(const Move& move)
     return resultString;
 }
 
+Move StringToMove(const std::string &moveString)
+{
+    int startingX = letterToFile(moveString[0]);
+    int startingY = intToRank(moveString[1]);
+
+    int destinationX = letterToFile(moveString[2]);
+    int destinationY = intToRank(moveString[3]);
+
+    MoveType moveType = QUIET;
+    if(moveString.length() == 5)
+    {
+        moveType = GetMoveTypeFromChar(moveString[4]);
+    }
+
+    return Move(startingX, startingY, destinationX, destinationY);
+}
+
 char IntToFile(int integer)
 {
     return integer + 'a';

@@ -25,6 +25,7 @@ int letterToFile(char letter);
 char IntToFile(int integer);
 int intToRank(int num);
 std::string MoveToString(const Move& move);
+Move StringToMove(const std::string& moveString);
 
 
 
