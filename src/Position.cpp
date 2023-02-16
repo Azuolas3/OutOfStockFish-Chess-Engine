@@ -32,6 +32,7 @@ void Position::MakeMove(const Move& move)
 {
     Piece movedPiece = board->pieces[move.startingX][move.startingY];
     Piece capturedPiece = board->pieces[move.destinationX][move.destinationY];
+    PieceType movedPieceType = GetType(movedPiece);
 
     int initialCastlingRightsIndex = GetCastlingRightsIndex(whiteCastlingRights, blackCastlingRights); // keeping track of index for zobrist hashing purposes
 
@@ -50,13 +51,43 @@ void Position::MakeMove(const Move& move)
     if(enPassantSquareX != -1)
     {
         zobristKey ^= enPassantKeys[enPassantSquareX];
+    }
 
+    if(whiteCastlingRights != NONE || blackCastlingRights != NONE) // removing castling rights if necessary
+    {
+        if(movedPieceType == KING)
+        {
+            RemoveCastlingRights(activePlayerColor, BOTH);
+        }
+        else if(movedPieceType == ROOK)
+        {
+            int startingRank = (activePlayerColor == WHITE) ? 0 : 7;
+
+            if(move.startingX == 0 && move.startingY == startingRank)
+                RemoveCastlingRights(activePlayerColor, QUEENSIDE);
+            if(move.startingX == 7 && move.startingY == startingRank)
+                RemoveCastlingRights(activePlayerColor, KINGSIDE);
+        }
+    }
+
+    if(movedPieceType == PAWN && move.destinationX == enPassantSquareX && move.destinationY == enPassantSquareY) // remove/capture piece if move was en passant
+    {
+        int capturedPawnY = (activePlayerColor == WHITE) ? 4 : 3;
+        board->RemovePiece(move.destinationX, capturedPawnY);
+    }
+
+    if(movedPieceType == PAWN && abs(move.startingY - move.destinationY) == 2) // setting en Passant square if last move was a double pawn move
+    {
+        if(move.startingY - move.destinationY < 0) // if the pawn is white
+            SetEnPassantSquare(move.destinationX, move.destinationY - 1);
+        else if(move.startingY - move.destinationY > 0) // if the pawn is black
+            SetEnPassantSquare(move.destinationX, move.destinationY + 1);
+    }
+    else
+    {
         enPassantSquareX = -1;
         enPassantSquareY = -1;
     }
-
-    if(move.additionalAction != nullptr)
-        move.additionalAction();
 
     if(enPassantSquareX != -1)
         zobristKey ^= enPassantKeys[enPassantSquareX];
@@ -74,6 +105,7 @@ void Position::MakeMove(const Move& move)
         int rookFromX = (move.startingX - move.destinationX > 0) ? 0 : 7;
 
         int kingRank = move.startingY;
+        board->MovePiece(Move(rookFromX, kingRank, rookToX, kingRank));
 
         zobristKey ^= pieceKeys[rookFromX][kingRank][GetPieceIndex(rook)];
         zobristKey ^= pieceKeys[rookToX][kingRank][GetPieceIndex(rook)];
@@ -91,6 +123,7 @@ void Position::MakeMove(const Move& move)
     {
         Piece pawn = (activePlayerColor == WHITE) ? W_PAWN : B_PAWN;
         Piece promotedPiece = static_cast<Piece>(activePlayerColor | GetPieceTypeFromPromotionType(move.moveType));
+        board->ReplacePiece(promotedPiece, Square(move.destinationX, move.destinationY));
 
         zobristKey ^= pieceKeys[move.destinationX][move.destinationY][GetPieceIndex(pawn)];
         zobristKey ^= pieceKeys[move.destinationX][move.destinationY][GetPieceIndex(promotedPiece)];
@@ -190,8 +223,8 @@ void Position::UndoMove(const MovePositionInfo& move)
     zobristKey ^= pieceKeys[inverseMove.destinationX][inverseMove.destinationY][GetPieceIndex(movedPiece)]; // moving piece in hash key
     zobristKey ^= sideToMoveKey;
 
-    if(zobristKey != GeneratePositionHashKey(this))
-        std::cout << "WHAT THE HEEEEEEEEEELL UNMAKE" << '\n';
+//    if(zobristKey != GeneratePositionHashKey(this))
+//        std::cout << "WHAT THE HEEEEEEEEEELL UNMAKE" << '\n';
 //    std::cout << "updated key: " << zobristKey << '\n';
 //    std::cout << "should be:   " << GeneratePositionHashKey(this);
 }

@@ -5,7 +5,6 @@
 #ifndef CHESS_ENGINE_MOVE_H
 #define CHESS_ENGINE_MOVE_H
 
-#include <functional>
 #include "pieces.h"
 #include "BoardUtility.h"
 
@@ -54,7 +53,6 @@ struct Move
     int destinationX, destinationY;
 
     MoveType moveType;
-    std::function<void()> additionalAction = nullptr;
 };
 
 inline bool operator==(Move a, Move b)

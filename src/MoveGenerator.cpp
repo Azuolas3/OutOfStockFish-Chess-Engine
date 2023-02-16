@@ -445,9 +445,9 @@ namespace ChessEngine
         {
 
             Move move(startingX, startingY, startingX + 2, startingY, CASTLING);
-            Move rookMove(7, kingRank, 5, kingRank);
-
-            move.additionalAction = [this, rookMove, color] { position->PerformCastling(rookMove, color); };
+//            Move rookMove(7, kingRank, 5, kingRank);
+//
+//            move.additionalAction = [this, rookMove, color] { position->PerformCastling(rookMove, color); };
             generatedMoves.push_back(move);
         }
 
@@ -456,9 +456,9 @@ namespace ChessEngine
         && !activeThreatMap[3][kingRank] && !activeThreatMap[2][kingRank])
         {
             Move move(startingX, startingY, startingX - 2, startingY, CASTLING);
-            Move rookMove(0, kingRank, 3, kingRank);
-
-            move.additionalAction = [this, rookMove, color] { position->PerformCastling(rookMove, color); };
+//            Move rookMove(0, kingRank, 3, kingRank);
+//
+//            move.additionalAction = [this, rookMove, color] { position->PerformCastling(rookMove, color); };
             generatedMoves.push_back(move);
         }
     }

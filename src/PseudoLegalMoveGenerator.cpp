@@ -123,28 +123,6 @@ void PseudoLegalMoveGenerator::GenerateStraightMoves(std::vector<Move>& pseudoLe
 
         pseudoLegalMoves.push_back(move);
     }
-
-    if(position->whiteCastlingRights != NONE && position->blackCastlingRights != NONE &&
-            GetType(activePiece) == ROOK) // Adding RemoveCastleRights to each rook move
-    {
-        if(startingX == 0) // QUEENSIDE
-        {
-            std::function<void()> func = [activeColor, this] { position->RemoveCastlingRights(activeColor, QUEENSIDE); };
-            for(int i = initialSize; i < pseudoLegalMoves.size(); i++)
-            {
-                pseudoLegalMoves[i].additionalAction = func;
-            }
-        }
-
-        if(startingX == 7) // KINGSIDE
-        {
-            std::function<void()> func = [activeColor, this] { position->RemoveCastlingRights(activeColor, KINGSIDE); };
-            for(int i = initialSize; i < pseudoLegalMoves.size(); i++)
-            {
-                pseudoLegalMoves[i].additionalAction = func;
-            }
-        }
-    }
 }
 
 void PseudoLegalMoveGenerator::GenerateDiagonalMoves(std::vector<Move>& pseudoLegalMoves, int startingX, int startingY, MoveGenerationType generationType)
@@ -313,13 +291,11 @@ void PseudoLegalMoveGenerator::GenerateKingMoves(std::vector<Move>& pseudoLegalM
             if(generationType == CAPTURE_ONLY && color != currentColor && position->board->pieces[x][y] != EMPTY)
             {
                 Move move(startingX, startingY, x, y);
-                move.additionalAction = [this, color] { position->RemoveCastlingRights(color, BOTH); };
                 pseudoLegalMoves.push_back(move);
             }
             else if(generationType != CAPTURE_ONLY && color != currentColor)
             {
                 Move move(startingX, startingY, x, y);
-                move.additionalAction = [this, color] { position->RemoveCastlingRights(color, BOTH); };
                 pseudoLegalMoves.push_back(move);
             }
         }
@@ -337,9 +313,6 @@ void PseudoLegalMoveGenerator::GenerateCastlingMoves(std::vector<Move>& pseudoLe
     if(IsKingsideEmpty(color, board->pieces) && position->HasCastlingRights(color, KINGSIDE) && GetType(board->pieces[7][kingRank]) == ROOK) // checking only for type because color doesnt matter - all castling conditions cant be met if the rook is of opposite color.
     {
         Move move(startingX, startingY, startingX + 2, startingY, CASTLING);
-        Move rookMove(7, kingRank, 5, kingRank);
-
-        move.additionalAction = [&capture0 = board, rookMove] { capture0->MovePiece(rookMove); };
         pseudoLegalMoves.push_back(move);
     }
 
@@ -347,9 +320,6 @@ void PseudoLegalMoveGenerator::GenerateCastlingMoves(std::vector<Move>& pseudoLe
     if(IsQueensideEmpty(color, board->pieces) && position->HasCastlingRights(color, QUEENSIDE) && GetType(board->pieces[0][kingRank]) == ROOK)
     {
         Move move(startingX, startingY, startingX - 2, startingY, CASTLING);
-        Move rookMove(0, kingRank, 3, kingRank);
-
-        move.additionalAction = [&capture0 = board, rookMove] { capture0->MovePiece(rookMove); };
         pseudoLegalMoves.push_back(move);
     }
 }
@@ -374,7 +344,7 @@ void PseudoLegalMoveGenerator::GeneratePawnMoves(std::vector<Move>& pseudoLegalM
             {
                 offset *= 2;
                 Move move(startingX, startingY, startingX, startingY + offset);
-                move.additionalAction = [this, startingX, capture0 = startingY + (offset/2)] { position->SetEnPassantSquare(startingX, capture0); };
+
                 pseudoLegalMoves.push_back(move);
                 offset /= 2;
             }
@@ -384,10 +354,6 @@ void PseudoLegalMoveGenerator::GeneratePawnMoves(std::vector<Move>& pseudoLegalM
                 for(int promotionType = B_PROMOTION, pieceType = BISHOP; promotionType <= Q_PROMOTION; promotionType *= 2, pieceType += 4)
                 {
                     move.moveType = static_cast<MoveType>(promotionType);
-                    Piece promotedPiece = static_cast<Piece>(pieceColor | pieceType);
-
-                    move.additionalAction = [&capture0 = position->board, promotedPiece, capture1 = Square(startingX, startingY + offset)] { capture0->ReplacePiece(promotedPiece, capture1); };
-
                     pseudoLegalMoves.push_back(move);
                 }
             }
@@ -414,10 +380,6 @@ void PseudoLegalMoveGenerator::GeneratePawnMoves(std::vector<Move>& pseudoLegalM
                 for(int promotionType = B_PROMOTION, pieceType = BISHOP; promotionType <= Q_PROMOTION; promotionType *= 2, pieceType += 4)
                 {
                     move.moveType = static_cast<MoveType>(promotionType);
-                    Piece promotedPiece = static_cast<Piece>(pieceColor | pieceType);
-
-                    move.additionalAction = [&capture0 = position->board, promotedPiece, capture1 = Square(startingX - 1, startingY + offset)] { capture0->ReplacePiece(promotedPiece, capture1); };
-
                     pseudoLegalMoves.push_back(move);
                 }
             }
@@ -441,10 +403,6 @@ void PseudoLegalMoveGenerator::GeneratePawnMoves(std::vector<Move>& pseudoLegalM
                 for(int promotionType = B_PROMOTION, pieceType = BISHOP; promotionType <= Q_PROMOTION; promotionType *= 2, pieceType += 4)
                 {
                     move.moveType = static_cast<MoveType>(promotionType);
-                    Piece promotedPiece = static_cast<Piece>(pieceColor | pieceType);
-
-                    move.additionalAction = [&capture0 = position->board, promotedPiece, capture1 = Square(startingX + 1, startingY + offset)] { capture0->ReplacePiece(promotedPiece, capture1); };
-
                     pseudoLegalMoves.push_back(move);
                 }
             }
@@ -461,14 +419,12 @@ void PseudoLegalMoveGenerator::GeneratePawnMoves(std::vector<Move>& pseudoLegalM
         if(IsInBounds(startingX + 1, startingY + offset) && (startingX + 1) == position->enPassantSquareX && (startingY + offset) == (position->enPassantSquareY)) //adding offset to squareY to make sure its equal with the target square
         {
             Move move(startingX, startingY, startingX + 1, startingY + offset, EN_PASSANT);
-            move.additionalAction = [&capture0 = position->board, capture1 = position->enPassantSquareX, startingY] { capture0->RemovePiece(capture1, startingY); };
             pseudoLegalMoves.push_back(move);
         }
 
         if(IsInBounds(startingX - 1, startingY + offset) && (startingX - 1) == position->enPassantSquareX && (startingY + offset) == (position->enPassantSquareY))
         {
             Move move(startingX, startingY, startingX - 1, startingY + offset, EN_PASSANT);
-            move.additionalAction = [&capture0 = position->board, capture1 = startingX - 1, startingY] { capture0->RemovePiece(capture1, startingY); };
             pseudoLegalMoves.push_back(move);
         }
     }
