@@ -28,7 +28,7 @@ namespace ChessEngine
 
         u64 zobristKey;
 
-        void MakeMove(const Move& move);
+        void MakeMove(Move &move);
         void UndoMove(const MovePositionInfo& move);
 
         void PerformCastling(const Move& rookMove, Color color);

@@ -2,7 +2,6 @@
 // Created by Azuolas on 2/15/2023.
 //
 
-
 #include "uci.h"
 
 using std::string;
@@ -33,7 +32,7 @@ namespace ChessEngine
             }
             else if(firstWord == "position")
             {
-                ParsePosition(line, position);
+                ParsePosition(input, position);
             }
             else if(firstWord == "ucinewgame")
             {
@@ -71,7 +70,8 @@ namespace ChessEngine
         {
             position = parser.loadFen(parser.startingFenString);
         }
-        else {
+        else
+        {
             currentPos = arguments.find("fen");
             if(currentPos != std::string::npos)
             {
@@ -83,5 +83,21 @@ namespace ChessEngine
                 position = parser.loadFen(parser.startingFenString);
             }
         }
+
+        currentPos = arguments.find("moves");
+        if(currentPos != std::string::npos)
+        {
+            std::string movesInput = arguments.substr(currentPos + 6);
+            std::stringstream ss(movesInput);
+            while(!ss.eof())
+            {
+                std::string moveString;
+                ss >> moveString;
+                Move parsedMove = StringToMove(moveString);
+                position->MakeMove(parsedMove);
+            }
+        }
+
+        position->board->PrintBoard();
     }
 }

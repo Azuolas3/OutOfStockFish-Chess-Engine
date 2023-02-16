@@ -28,7 +28,7 @@ bool Position::HasCastlingRights(Color color, CastlingRights side)
     }
 }
 
-void Position::MakeMove(const Move& move)
+void Position::MakeMove(Move &move)
 {
     Piece movedPiece = board->pieces[move.startingX][move.startingY];
     Piece capturedPiece = board->pieces[move.destinationX][move.destinationY];
@@ -72,6 +72,7 @@ void Position::MakeMove(const Move& move)
 
     if(movedPieceType == PAWN && move.destinationX == enPassantSquareX && move.destinationY == enPassantSquareY) // remove/capture piece if move was en passant
     {
+        move.moveType = EN_PASSANT;
         int capturedPawnY = (activePlayerColor == WHITE) ? 4 : 3;
         board->RemovePiece(move.destinationX, capturedPawnY);
     }
@@ -87,6 +88,11 @@ void Position::MakeMove(const Move& move)
     {
         enPassantSquareX = -1;
         enPassantSquareY = -1;
+    }
+
+    if(movedPieceType == KING && abs(move.startingX - move.destinationX) == 2) // mark move as castling (if it was castle)
+    {
+        move.moveType = CASTLING;
     }
 
     if(enPassantSquareX != -1)

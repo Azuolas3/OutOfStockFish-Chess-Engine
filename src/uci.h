@@ -10,6 +10,7 @@
 #include <cstring>
 #include <string>
 #include <iostream>
+#include <sstream>
 #include "position.h"
 #include "FenParser.h"
 
