@@ -11,14 +11,15 @@
 #include <string>
 #include <iostream>
 #include <sstream>
-#include "position.h"
+#include "Position.h"
 #include "FenParser.h"
+#include "Searcher.h"
 
 namespace ChessEngine
 {
     void UciLoop();
     void ParseGo(std::string input, Position* position);
-    void ParsePosition(std::string input, Position* position);
+    void ParsePosition(std::string input, Position *&position);
 }
 
 #endif //CHESS_ENGINE_UCI_H
