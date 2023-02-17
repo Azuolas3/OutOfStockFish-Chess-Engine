@@ -24,7 +24,7 @@ set(HEADER_FILES
         VectorUtility.h
         ZobristUtility.h
         uci.h
-        )
+        InputReadUtility.h)
 
 set(SOURCE_FILES
         AlgebraicNotationUtility.cpp
@@ -43,6 +43,7 @@ set(SOURCE_FILES
         TranspositionTable.cpp
         VectorUtility.cpp
         ZobristUtility.cpp
-        uci.cpp)
+        uci.cpp
+        InputReadUtility.cpp)
 
 add_library(chess_engine_lib STATIC ${SOURCE_FILES} ${HEADER_FILES})

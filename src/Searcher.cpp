@@ -3,7 +3,6 @@
 //
 
 #include "Searcher.h"
-#include "AlgebraicNotationUtility.h"
 
 namespace ChessEngine
 {
@@ -15,7 +14,8 @@ namespace ChessEngine
         int currentDepth = 1; // start from 1 ply depth
         int latestEval = 0;
 
-        auto future = std::async(StartTimer, allocatedSearchTime, [this] {EndSearch();});
+        auto future1 = std::async(StartTimer, allocatedSearchTime, [this] {EndSearch();});
+        auto future2 = std::async(&Searcher::PeriodicInputCheck, this, 100);
         while(isSearchRunning && currentDepth <= maxDepth)
         {
             Move previousIterationBestMove = currentBestMove;
@@ -180,5 +180,49 @@ namespace ChessEngine
     void Searcher::EndSearch()
     {
         isSearchRunning = false;
+    }
+
+    bool Searcher::HasStopped()
+    {
+        return !isSearchRunning;
+    }
+
+    void Searcher::ReadInput()
+    {
+        int bytes;
+        std::string input;
+        int pos;
+
+        if(ChessEngine::InputWaiting())
+        {
+            this->EndSearch();
+            do
+            {
+                bytes = read(fileno(stdin), input.data(), 256);
+            }
+            while (bytes < 0);
+            pos = input.find('\n');
+
+            if(pos != std::string::npos)
+                pos = 0;
+
+            if(input.length() > 0)
+            {
+                pos = input.find("quit");
+                if(pos != std::string::npos)
+                    this->EndSearch();
+            }
+        }
+    }
+
+    void Searcher::PeriodicInputCheck(int ms)
+    {
+        while(true)
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+            ReadInput();
+            if(this->HasStopped())
+                break;
+        }
     }
 } // ChessEngine

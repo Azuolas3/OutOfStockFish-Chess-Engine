@@ -11,6 +11,8 @@
 #include "MoveGenerator.h"
 #include "TranspositionTable.h"
 #include "Timer.h"
+#include "AlgebraicNotationUtility.h"
+#include "InputReadUtility.h"
 
 namespace ChessEngine
 {
@@ -25,6 +27,9 @@ namespace ChessEngine
         ChessBoard *board;
 
         bool isSearchRunning = true;
+
+        void ReadInput();
+        void PeriodicInputCheck(int ms);
 
     public:
         explicit Searcher(Evaluator* evaluator, MoveGenerator* moveGenerator)
@@ -47,6 +52,7 @@ namespace ChessEngine
         int EvaluateCapture(const Move& capture);
         void OrderMoves(std::vector<Move> &moveList);
         void EndSearch();
+        bool HasStopped();
 
         const int DELTA = pieceValueMap[ROOK]; // for delta pruning Quiescence search
 
