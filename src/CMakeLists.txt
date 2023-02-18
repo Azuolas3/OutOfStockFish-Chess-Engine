@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(chess_engine)
+project(OutOfStockFish)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -44,4 +44,4 @@ set(SOURCE_FILES
         uci.cpp
         Utilities/InputReadUtility.cpp)
 
-add_library(chess_engine_lib STATIC ${SOURCE_FILES} ${HEADER_FILES})
+add_library(OutOfStockFish_lib STATIC ${SOURCE_FILES} ${HEADER_FILES})
