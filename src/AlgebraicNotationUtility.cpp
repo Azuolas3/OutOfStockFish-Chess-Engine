@@ -5,8 +5,8 @@
 #include "AlgebraicNotationUtility.h"
 
 
-int letterToFile(char letter) { return letterToFileMap[letter];}
-int intToRank(int num) { return num-'0'-1;}
+int LetterToFile(char letter) { return letterToFileMap[letter];}
+int IntToRank(int num) { return num - '0' - 1;}
 
 std::string MoveToString(const Move& move)
 {
@@ -35,11 +35,11 @@ std::string MoveToString(const Move& move)
 
 Move StringToMove(const std::string &moveString)
 {
-    int startingX = letterToFile(moveString[0]);
-    int startingY = intToRank(moveString[1]);
+    int startingX = LetterToFile(moveString[0]);
+    int startingY = IntToRank(moveString[1]);
 
-    int destinationX = letterToFile(moveString[2]);
-    int destinationY = intToRank(moveString[3]);
+    int destinationX = LetterToFile(moveString[2]);
+    int destinationY = IntToRank(moveString[3]);
 
     MoveType moveType = QUIET;
     if(moveString.length() == 5)

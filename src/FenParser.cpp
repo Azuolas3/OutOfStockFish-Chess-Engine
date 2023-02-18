@@ -115,8 +115,8 @@ Position* FenParser::ParseFen(std::string fenString)
     // Parse en passant square
     if(fenString[charIterator] != '-')
     {
-        position->enPassantSquareX = letterToFile(fenString[charIterator]);
-        position->enPassantSquareY = intToRank(fenString[charIterator+1]);
+        position->enPassantSquareX = LetterToFile(fenString[charIterator]);
+        position->enPassantSquareY = IntToRank(fenString[charIterator + 1]);
     }
 
     charIterator += 2;

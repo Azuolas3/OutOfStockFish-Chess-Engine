@@ -21,11 +21,11 @@ inline std::map<char, int> letterToFileMap =
         {'h', 7},
 };
 
-int letterToFile(char letter);
+int LetterToFile(char letter);
 char IntToFile(int integer);
-int intToRank(int num);
-std::string MoveToString(const Move& move);
-Move StringToMove(const std::string& moveString);
+int IntToRank(int num);
+std::string MoveToString(const Move& move); // turns move into long algebraic notation string
+Move StringToMove(const std::string& moveString); // turns ong algebraic notation string into move
 
 
 

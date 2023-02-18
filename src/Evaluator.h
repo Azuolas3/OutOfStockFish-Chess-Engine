@@ -18,7 +18,7 @@ namespace ChessEngine
             {ROOK, 500},
             {QUEEN, 900},
             {KING, 0}, // dont need king value to influence material count
-            {static_cast<PieceType>(EMPTY), 0} // dont need king value to influence material count
+            {static_cast<PieceType>(EMPTY), 0} // In case of bug where an empty square would be evaluated
     };
 
     class Evaluator

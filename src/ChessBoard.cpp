@@ -8,23 +8,6 @@ using namespace ChessEngine;
 
 void ChessBoard::PrintBoard()
 {
-//    std::map<Piece, wchar_t> symbolDictionary =
-//    {
-//            {EMPTY, L'\u26DA'}, //Unicode symbol codes for each piece and its color
-//            {B_PAWN, L'\u2659'},
-//            {W_PAWN, L'\u265F'},
-//            {B_BISHOP, L'\u2657'},
-//            {W_BISHOP, L'\u265D'},
-//            {B_KNIGHT, L'\u2658'},
-//            {W_KNIGHT, L'\u265E'},
-//            {B_ROOK, L'\u2656'},
-//            {W_ROOK, L'\u265C'},
-//            {B_QUEEN, L'\u2655'},
-//            {W_QUEEN, L'\u265B'},
-//            {B_KING, L'\u2654'},
-//            {W_KING, L'\u265A'}
-//    };
-
     std::map<Piece, char> symbolDictionary =
     {
             {EMPTY, ' '},

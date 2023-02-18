@@ -72,7 +72,6 @@ struct MovePositionInfo // Larger struct which hols more information about a mov
     {
         this->move = move;
         this->capturedPiece = capturedPiece;
-        this->capturedPieceSquare = capturedPieceSquare;
         this->enPassantSquare = enPassantSquare;
         this->whiteCastlingRights = white;
         this->blackCastlingRights = black;
@@ -80,7 +79,6 @@ struct MovePositionInfo // Larger struct which hols more information about a mov
 
     Move move;
     ChessEngine::Piece capturedPiece;
-    ChessEngine::Square capturedPieceSquare{};
     ChessEngine::Square enPassantSquare{};
     ChessEngine::CastlingRights whiteCastlingRights;
     ChessEngine::CastlingRights blackCastlingRights;

@@ -10,7 +10,7 @@
 
 namespace ChessEngine
 {
-    int InputWaiting();
+    int InputWaiting(); // detect waiting input in stdin
 }
 
 #endif //CHESS_ENGINE_INPUTREADUTILITY_H
