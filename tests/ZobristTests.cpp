@@ -11,7 +11,7 @@ TEST_CASE("Zobrist key tests")
 
     SUBCASE("Key remaining the same after making/unmaking moves a lot")
     {
-        ChessEngine::Position* position = fenParser.loadFen(fenParser.startingFenString);
+        ChessEngine::Position* position = fenParser.ParseFen(fenParser.startingFenString);
         ChessEngine::MoveGenerator* moveGenerator = new ChessEngine::MoveGenerator(position);
         u64 startingKey = position->zobristKey;
         ChessEngine::Perft(6, position, moveGenerator);

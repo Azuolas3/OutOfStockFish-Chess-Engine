@@ -24,9 +24,6 @@ namespace ChessEngine
     class PseudoLegalMoveGenerator
     {
         ChessEngine::Position* position;
-        //ChessEngine::ChessBoard* board;
-
-        //bool IsSameColor(int startingX, int startingY, int destinationX, int destinationY);
 
     public:
         PseudoLegalMoveGenerator() = default;
@@ -46,8 +43,6 @@ namespace ChessEngine
 
         void GeneratePieceMoves(std::vector<Move>& pseudoLegalMoves, ChessEngine::Piece piece, int startingX, int startingY, MoveGenerationType generationType = NORMAL);
         std::vector<Move> GenerateAllMoves(ChessEngine::Color color, MoveGenerationType generationType = NORMAL);
-
-        bool DoesContainMove(std::vector<Move> generatedMoves, Move move, Move *correctMove);
     };
 }
 

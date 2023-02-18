@@ -21,7 +21,6 @@ set(HEADER_FILES
         Timer.h
         TranspositionTable.h
         u64.h
-        VectorUtility.h
         ZobristUtility.h
         uci.h
         InputReadUtility.h)
@@ -41,7 +40,6 @@ set(SOURCE_FILES
         Searcher.cpp
         Timer.cpp
         TranspositionTable.cpp
-        VectorUtility.cpp
         ZobristUtility.cpp
         uci.cpp
         InputReadUtility.cpp)

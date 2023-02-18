@@ -99,7 +99,7 @@ namespace ChessEngine
 
     inline int GetPieceSquareValue(int x, int y, PieceType pieceType, Color color)
     {
-        if(color == WHITE)
+        if(color == WHITE) //inverse pieceSquareTable if white
             y = 7 - y;
 
         array array1 = pieceSquareValueMap[pieceType];

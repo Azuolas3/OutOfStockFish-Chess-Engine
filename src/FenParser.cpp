@@ -6,13 +6,15 @@
 
 using namespace ChessEngine;
 
-Position* FenParser::loadFen(std::string fenString)
+Position* FenParser::ParseFen(std::string fenString)
 {
     Position* position = new Position();
     position->board = new ChessBoard();
 
     int x = 0, y = 7;
     int charIterator = 0;
+
+    // Parse pieces
     for (char& currChar : fenString)
     {
         charIterator++;
@@ -64,6 +66,7 @@ Position* FenParser::loadFen(std::string fenString)
 
     charIterator; //Skip empty character and move to color specifier
 
+    // parse active player (player's turn)
     if(fenString[charIterator] == 'w')
     {
         position->activePlayerColor = WHITE;
@@ -75,6 +78,7 @@ Position* FenParser::loadFen(std::string fenString)
 
     charIterator += 2; // Skip empty char and move to castling rights specifier
 
+    // Parse castling rights
     if(fenString[46] != '-')
     {
         std::string fenSubString = fenString.substr(charIterator-1);
@@ -108,6 +112,7 @@ Position* FenParser::loadFen(std::string fenString)
 
     charIterator++;
 
+    // Parse en passant square
     if(fenString[charIterator] != '-')
     {
         position->enPassantSquareX = letterToFile(fenString[charIterator]);
@@ -116,6 +121,7 @@ Position* FenParser::loadFen(std::string fenString)
 
     charIterator += 2;
 
+    //parse fifty move counter
     position->fiftyMoveRuleCounter = std::stoi(&fenString[charIterator]);
     position->zobristKey = GeneratePositionHashKey(position);
 

@@ -17,8 +17,8 @@ namespace ChessEngine
     inline u64 enPassantKeys[8];
     inline u64 sideToMoveKey;
 
-    void InitializeZobrist();
-    u64 GeneratePositionHashKey(Position* position);
+    void InitializeZobrist(); //generates hash keys for each piece, castling rights, en passant and side to move.
+    u64 GeneratePositionHashKey(Position* position); // generates a hash for a position from scratch
     u64 GetRandomU64Number();
 
     int GetPieceIndex(Piece piece);

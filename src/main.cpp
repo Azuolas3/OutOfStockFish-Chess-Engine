@@ -19,8 +19,6 @@ using namespace ChessEngine;
 using std::cout; using std::cin; using std::endl;
 using std::string; using std::vector;
 
-MoveType GetMoveTypeFromChar(char c);
-
 int main() {
     InitializeZobrist();
     cout << "id name OutOfStockFish\n";

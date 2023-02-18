@@ -42,19 +42,6 @@ namespace ChessEngine
         B_KING = KING + BLACK, W_KING
     };
 
-    struct PieceInfo
-    {
-        Piece piece;
-        int x, y;
-
-        PieceInfo(Piece piece, int x, int y)
-        {
-            this->piece = piece;
-            this->x = x;
-            this->y = y;
-        }
-    };
-
     inline Color GetColor(Piece piece)
     {
         Color color = static_cast<Color>(piece & pieceColorBitMask);
@@ -66,14 +53,6 @@ namespace ChessEngine
         Color oppositeColor = color == WHITE ? BLACK : WHITE;
         return oppositeColor;
     }
-
-//    inline bool IsSameColor(Color a, Color b)
-//    {
-//        if(GetType(piece) == ROOK || GetType(piece) == BISHOP ||  GetType(piece) == QUEEN)
-//            return true;
-//        else
-//            return false;
-//    }
 
     inline PieceType GetType(Piece piece)
     {

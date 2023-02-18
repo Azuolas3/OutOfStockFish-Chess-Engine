@@ -10,6 +10,8 @@
 #include "BoardUtility.h"
 #include "u64.h"
 
+#define NO_SQUARE -1
+
 namespace ChessEngine
 {
     class Position
@@ -23,15 +25,14 @@ namespace ChessEngine
 
         int fiftyMoveRuleCounter;
 
-        int enPassantSquareX = -1; // -1 to represent no square
-        int enPassantSquareY = -1;
+        int enPassantSquareX = NO_SQUARE; // -1 to represent no square
+        int enPassantSquareY = NO_SQUARE;
 
         u64 zobristKey;
 
         void MakeMove(Move &move);
         void UndoMove(const MovePositionInfo& move);
 
-        void PerformCastling(const Move& rookMove, Color color);
         void RemoveCastlingRights(Color color, CastlingRights side);
         bool HasCastlingRights(Color color, CastlingRights side);
         MovePositionInfo GenerateMoveInfo(const Move& move);

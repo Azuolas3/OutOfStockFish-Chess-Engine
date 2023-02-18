@@ -9,8 +9,6 @@ using std::vector;
 
 void PseudoLegalMoveGenerator::GenerateStraightMoves(std::vector<Move>& pseudoLegalMoves, int startingX, int startingY, MoveGenerationType generationType)
 {
-    int initialSize = pseudoLegalMoves.size();
-
     ChessBoard* board = position->board;
     Piece activePiece = board->pieces[startingX][startingY];
     Color activeColor = GetColor(activePiece);
@@ -464,32 +462,6 @@ void PseudoLegalMoveGenerator::GeneratePieceMoves(std::vector<Move>& pseudoLegal
     }
 }
 
-//bool PseudoLegalMoveGenerator::IsSameColor(int startingX, int startingY, int destinationX, int destinationY)
-//{
-//    ChessBoard* board = position->board;
-//
-//    if(GetColor(board->pieces[startingX][startingY]) == GetColor(board->pieces[destinationX][destinationY]))
-//        return true;
-//    else
-//        return false;
-//}
-
-bool PseudoLegalMoveGenerator::DoesContainMove(std::vector<Move> generatedMoves, Move move, Move *correctMove)
-{
-    for(int i = 0; i < generatedMoves.size(); i++)
-    {
-        if(generatedMoves[i].destinationX == move.destinationX && generatedMoves[i].destinationY == move.destinationY && generatedMoves[i].startingX == move.startingX && generatedMoves[i].startingY == move.startingY)
-        {
-            if(IsPromotionType(move.moveType) && move.moveType != generatedMoves[i].moveType)
-                continue;
-
-            *correctMove = generatedMoves[i];
-            return true;
-        }
-    }
-    return false;
-}
-
 std::vector<Move> PseudoLegalMoveGenerator::GenerateAllMoves(ChessEngine::Color color, MoveGenerationType generatesThreatMap)
 {
     int maxSize = 256; // maximum theoretical number of moves is 218, 256 just in case and since it's a beautiful number :)
@@ -507,7 +479,6 @@ std::vector<Move> PseudoLegalMoveGenerator::GenerateAllMoves(ChessEngine::Color 
     {
         int x = squareList[i].x;
         int y = squareList[i].y;
-        //std::cout << i << " " << pieceList[i].x << " " << pieceList[i].y << " " << pieceList[i].piece << std::endl;
 
         GeneratePieceMoves(generatedMoves, board->pieces[x][y], x, y, generatesThreatMap);
     }

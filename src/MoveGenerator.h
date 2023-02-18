@@ -6,7 +6,6 @@
 #define CHESS_ENGINE_MOVEGENERATOR_H
 
 #include "PseudoLegalMoveGenerator.h"
-#include "LegalityTester.h"
 #include "BoardUtility.h"
 #include <algorithm>
 #include <iostream>
@@ -17,38 +16,45 @@ namespace ChessEngine
     {
         Position* position;
         ChessBoard* board;
-        LegalityTester legalityTester;
+        PseudoLegalMoveGenerator* plMoveGenerator;
 
-        //bool whiteThreatMap[8][8]; // squares attacked by white pieces
-        //bool blackThreatMap[8][8];// squares attacked by black pieces
+        int whiteKingX;
+        int whiteKingY;
 
-        bool isInCheck;
+        int blackKingX;
+        int blackKingY;
 
         int activeKingX;
         int activeKingY;
 
         bool activeThreatMap[8][8];
+        bool checkRayMap[8][8]; // map for squares which are in between the checked king and the sliding piece checking it (or the multiple ones)
+        bool captureCheckMap[8][8]; // map for pieces checking the king
 
         void FindKingPosition(Color color);
 
         std::pair<Square, Square> GetSquareAttackers(int x, int y, int &attackerCount);
         std::vector<Square> GetAbsolutelyPinnedPieces(Color color);
 
+        void GenerateCastlingMoves(std::vector<Move>& generatedMoves, int x, int y);
+
+        void EraseIllegalKingMoves(std::vector<Move>& generatedMoves);
         void EraseIllegalMoves(std::vector<Move>& moveList); // Erases illegal moves for every piece except king
         void EraseIllegalEnPassantMoves(std::vector<Move>& moveList);
         void EraseIllegalPinnedMoves(std::vector<Move>& moveList, Square pinnedPiece); // Erases illegal moves for absolutely pinned pieces
 
-        bool isMoveEnPassant(const Move& move);
+        bool IsMoveEnPassant(const Move& move);
+        bool IsCorrectSlidingPiece(Piece piece, int xOffset, int yOffset); // function checks if the piece can move in a certain direction (given in offsets)
+
+        void InitThreatMaps();
+        void GetCheckRayMap();
+        void UpdateCaptureCheckMap(std::pair<Square, Square> attackerPair);
+
+        void UpdateKingPositions();
 
     public:
         std::vector<Move> GenerateAllMoves(Color color, MoveGenerationType generationType = NORMAL); // Generates all legal moves for chosen color
         std::vector<Move> GenerateAllMoves(MoveGenerationType generationType = NORMAL); // Efficiently generates all legal moves for current active Color
-
-        std::vector<Move> GenerateAllCaptureMoves(); // Efficiently generates all legal moves for current active Color
-
-
-        void EraseIllegalKingMoves(std::vector<Move>& generatedMoves);
-        void GenerateCastlingMoves(std::vector<Move>& generatedMoves, int x, int y);
 
         void GeneratePieceMoves(std::vector<Move>& generatedMoves, ChessEngine::Piece piece, int startingX, int startingY, MoveGenerationType generationType = NORMAL, bool isPinned = false);
 
@@ -59,31 +65,9 @@ namespace ChessEngine
             plMoveGenerator = new PseudoLegalMoveGenerator(position);
             FindKingPosition(WHITE);
             FindKingPosition(BLACK);
-            //InitThreatMaps();
         }
 
-
-        PseudoLegalMoveGenerator* plMoveGenerator;
-
-        void InitThreatMaps();
-
-        int whiteKingX;
-        int whiteKingY;
-
-        int blackKingX;
-        int blackKingY;
-
-        void UpdateKingPositions();
-
-        void GetCheckRayMap();
-        void UpdateCaptureCheckMap(std::pair<Square, Square> attackerPair);
-
-        bool checkRayMap[8][8]; // map for squares which are in between the checked king and the sliding piece checking it (or the multiple ones)
-        bool captureCheckMap[8][8]; // map for pieces checking the king
-
         bool IsInCheck();
-
-        bool IsCorrectSlidingPiece(Piece piece, int xOffset, int yOffset); // function checks if the piece can move in a certain direction (given in offsets)
     };
 } // ChessEngine
 

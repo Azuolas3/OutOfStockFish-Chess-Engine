@@ -48,7 +48,7 @@ void Position::MakeMove(Move &move)
 
     board->MovePiece(move);
 
-    if(enPassantSquareX != -1)
+    if(enPassantSquareX != NO_SQUARE)
     {
         zobristKey ^= enPassantKeys[enPassantSquareX];
     }
@@ -86,8 +86,8 @@ void Position::MakeMove(Move &move)
     }
     else
     {
-        enPassantSquareX = -1;
-        enPassantSquareY = -1;
+        enPassantSquareX = NO_SQUARE;
+        enPassantSquareY = NO_SQUARE;
     }
 
     if(movedPieceType == KING && abs(move.startingX - move.destinationX) == 2) // mark move as castling (if it was castle)
@@ -95,7 +95,7 @@ void Position::MakeMove(Move &move)
         move.moveType = CASTLING;
     }
 
-    if(enPassantSquareX != -1)
+    if(enPassantSquareX != NO_SQUARE)
         zobristKey ^= enPassantKeys[enPassantSquareX];
 
     int newCastlingRightsIndex = GetCastlingRightsIndex(whiteCastlingRights, blackCastlingRights);
@@ -140,12 +140,6 @@ void Position::MakeMove(Move &move)
     zobristKey ^= pieceKeys[move.startingX][move.startingY][GetPieceIndex(movedPiece)]; // moving piece in hash key
     zobristKey ^= pieceKeys[move.destinationX][move.destinationY][GetPieceIndex(movedPiece)]; // moving piece in hash key
     zobristKey ^= sideToMoveKey; // changing side to move in hash key
-
-
-//    if(zobristKey != GeneratePositionHashKey(this))
-//        std::cout << "WHAT THE HEEEEEEEEEELL MAKE" << '\n';
-//    std::cout << "updated key: " << zobristKey << '\n';
-//    std::cout << "should be:   " << GeneratePositionHashKey(this);
 }
 
 void Position::UndoMove(const MovePositionInfo& move)
@@ -178,9 +172,9 @@ void Position::UndoMove(const MovePositionInfo& move)
 
     if(enPassantSquareX != move.enPassantSquare.x)
     {
-        if(enPassantSquareX != -1)
+        if(enPassantSquareX != NO_SQUARE)
             zobristKey ^= enPassantKeys[enPassantSquareX];
-        if(move.enPassantSquare.x != -1)
+        if(move.enPassantSquare.x != NO_SQUARE)
             zobristKey ^= enPassantKeys[move.enPassantSquare.x];
     }
 
@@ -228,11 +222,6 @@ void Position::UndoMove(const MovePositionInfo& move)
     zobristKey ^= pieceKeys[inverseMove.startingX][inverseMove.startingY][GetPieceIndex(movedPiece)]; // moving piece in hash key
     zobristKey ^= pieceKeys[inverseMove.destinationX][inverseMove.destinationY][GetPieceIndex(movedPiece)]; // moving piece in hash key
     zobristKey ^= sideToMoveKey;
-
-//    if(zobristKey != GeneratePositionHashKey(this))
-//        std::cout << "WHAT THE HEEEEEEEEEELL UNMAKE" << '\n';
-//    std::cout << "updated key: " << zobristKey << '\n';
-//    std::cout << "should be:   " << GeneratePositionHashKey(this);
 }
 
 MovePositionInfo Position::GenerateMoveInfo(const Move& move)
@@ -260,8 +249,3 @@ void Position::SetEnPassantSquare(int x, int y)
     enPassantSquareY = y;
 }
 
-void Position::PerformCastling(const Move& rookMove, Color color)
-{
-    board->MovePiece(rookMove);
-    RemoveCastlingRights(color, BOTH);
-}

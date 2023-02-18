@@ -14,14 +14,13 @@ namespace ChessEngine
         generatedMoves.reserve(maxSize);
 
         std::vector<Square> absolutelyPinnedPieces;
-        //absolutelyPinnedPieces[1];
 
-        PieceList* pieceList = (color == WHITE) ? board->whitePieces : board->blackPieces;
-        Square* squareList = pieceList->squares;
+        PieceList *pieceList = (color == WHITE) ? board->whitePieces : board->blackPieces;
+        Square *squareList = pieceList->squares;
 
         absolutelyPinnedPieces = GetAbsolutelyPinnedPieces(color);
 
-        for(int i = 1; i < pieceList->count; i++)
+        for (int i = 1; i < pieceList->count; i++)
         {
             int x = squareList[i].x;
             int y = squareList[i].y;
@@ -44,15 +43,15 @@ namespace ChessEngine
 
         InitThreatMaps();
 
-        //if active player is in check,
-        if(IsInCheck())
+        //if active player is in check, get necessary info before generating moves
+        if (IsInCheck())
         {
             std::pair<Square, Square> attackerPair;
             int attackerCount;
 
             int kingX, kingY;
 
-            if(activePlayerColor == WHITE)
+            if (activePlayerColor == WHITE)
             {
                 kingX = whiteKingX;
                 kingY = whiteKingY;
@@ -69,7 +68,7 @@ namespace ChessEngine
             UpdateCaptureCheckMap(attackerPair);
 
             // Only calculate king moves if it's a double check since its impossible for any other piece to have a legal move
-            if(attackerCount == 1)
+            if (attackerCount == 1)
             {
                 return GenerateAllMoves(activePlayerColor, generationType);
             }
@@ -87,11 +86,12 @@ namespace ChessEngine
         }
     }
 
-    void MoveGenerator::GeneratePieceMoves(std::vector<Move>& generatedMoves, ChessEngine::Piece piece, int startingX, int startingY, MoveGenerationType generationType,  bool isPinned)
+    void MoveGenerator::GeneratePieceMoves(std::vector<Move> &generatedMoves, ChessEngine::Piece piece, int startingX,
+                                           int startingY, MoveGenerationType generationType, bool isPinned)
     {
         PieceType pieceType = GetType(piece);
 
-        switch(pieceType)
+        switch (pieceType)
         {
             case PAWN:
                 plMoveGenerator->GeneratePawnMoves(generatedMoves, startingX, startingY, generationType);
@@ -123,12 +123,12 @@ namespace ChessEngine
             case KING:
                 plMoveGenerator->GenerateKingMoves(generatedMoves, startingX, startingY, generationType);
                 EraseIllegalKingMoves(generatedMoves);
-                if(generationType == NORMAL)
+                if (generationType == NORMAL)
                     GenerateCastlingMoves(generatedMoves, startingX, startingY);
                 break;
         }
 
-        if(isPinned)
+        if (isPinned)
         {
             EraseIllegalPinnedMoves(generatedMoves, Square(startingX, startingY));
         }
@@ -141,32 +141,21 @@ namespace ChessEngine
 
         std::vector<Move> opponentMoves = plMoveGenerator->GenerateAllMoves(GetOppositeColor(position->activePlayerColor), THREAT_MAP);
 
-        for(auto & move : opponentMoves)
+        for (auto &move: opponentMoves)
         {
             activeThreatMap[move.destinationX][move.destinationY] = true;
         }
     }
-//
-//    void MoveGenerator::UpdateThreatMap(const Move& move)
-//    {
-//        Piece movingPiece = board->pieces[move.][]
-//        std::vector<Move> originalPieceMoves = plMoveGenerator->GeneratePieceMoves();
-//
-//        for(auto & move : originalPieceMoves)
-//        {
-//            activeThreatMap[move.destinationX][move.destinationY] = true;
-//        }
-//    }
 
     void MoveGenerator::FindKingPosition(Color color)
     {
-        PieceList* pieceList = (color == WHITE) ? board->whitePieces : board->blackPieces;
+        PieceList *pieceList = (color == WHITE) ? board->whitePieces : board->blackPieces;
 
-        for(int i = 0; i < pieceList->count; i++)
+        for (int i = 0; i < pieceList->count; i++)
         {
-            if(GetType(board->pieces[pieceList->squares[i].x][pieceList->squares[i].y]) == KING)
+            if (GetType(board->pieces[pieceList->squares[i].x][pieceList->squares[i].y]) == KING)
             {
-                if(color == WHITE)
+                if (color == WHITE)
                 {
                     whiteKingX = pieceList->squares[i].x;
                     whiteKingY = pieceList->squares[i].y;
@@ -187,7 +176,7 @@ namespace ChessEngine
 
         memset(checkRayMap, false, sizeof(bool) * 8 * 8);
 
-        if(position->activePlayerColor == WHITE)
+        if (position->activePlayerColor == WHITE)
         {
             kingX = whiteKingX;
             kingY = whiteKingY;
@@ -200,10 +189,15 @@ namespace ChessEngine
 
         int attackerCount;
         std::pair<Square, Square> attackerPair = GetSquareAttackers(kingX, kingY, attackerCount);
-        //std::cout << attackerPair.first.x << " " << attackerPair.first.y << " " << attackerPair.second.x << " " << attackerPair.second.y << " " << attackerCount << std::endl;
 
-        if(attackerCount > 0 && IsSlidingPiece(board->pieces[attackerPair.first.x][attackerPair.first.y])) // probably a bug here - should cast for both pieces(attackers)
+        if (attackerCount > 0 && IsSlidingPiece(board->pieces[attackerPair.first.x][attackerPair.first.y]))
+        {
             CastRayToSquare(std::ref(checkRayMap), Square(kingX, kingY), attackerPair.first);
+        }
+        if (attackerCount > 1 && IsSlidingPiece(board->pieces[attackerPair.second.x][attackerPair.second.y]))
+        {
+            CastRayToSquare(std::ref(checkRayMap), Square(kingX, kingY), attackerPair.second);
+        }
     }
 
     std::pair<Square, Square> MoveGenerator::GetSquareAttackers(int x, int y, int &attackerCount)
@@ -215,10 +209,10 @@ namespace ChessEngine
         attackerCount = 0;
 
 
-        for(Move& move : generatedMoves)
+        for (Move &move: generatedMoves)
         {
             Piece piece = board->pieces[move.destinationX][move.destinationY];
-            if(GetType(piece) == KNIGHT && GetColor(piece) != position->activePlayerColor)
+            if (GetType(piece) == KNIGHT && GetColor(piece) != position->activePlayerColor)
             {
                 attackers[attackerCount] = Square(move.destinationX, move.destinationY);
                 attackerCount++;
@@ -229,10 +223,10 @@ namespace ChessEngine
         generatedMoves.clear();
         plMoveGenerator->GenerateStraightMoves(generatedMoves, x, y);
 
-        for(Move& move : generatedMoves)
+        for (Move &move: generatedMoves)
         {
             Piece piece = board->pieces[move.destinationX][move.destinationY];
-            if(IsRookOrQueen(piece) && GetColor(piece) != position->activePlayerColor)
+            if (IsRookOrQueen(piece) && GetColor(piece) != position->activePlayerColor)
             {
                 attackers[attackerCount] = Square(move.destinationX, move.destinationY);
                 attackerCount++;
@@ -241,33 +235,32 @@ namespace ChessEngine
         }
 
 
-        if(attackerCount == 2)
+        if (attackerCount == 2)
             return std::pair<Square, Square>(attackers[0], attackers[1]);
 
         generatedMoves.clear();
         plMoveGenerator->GenerateDiagonalMoves(generatedMoves, x, y);
 
-        for(Move& move : generatedMoves)
+        for (Move &move: generatedMoves)
         {
             Piece piece = board->pieces[move.destinationX][move.destinationY];
-            if(IsBishopOrQueen(piece) && GetColor(piece) != position->activePlayerColor)
-            {
+            if (IsBishopOrQueen(piece) && GetColor(piece) != position->activePlayerColor) {
                 attackers[attackerCount] = Square(move.destinationX, move.destinationY);
                 attackerCount++;
                 break;
             }
         }
 
-        if(attackerCount == 2)
+        if (attackerCount == 2)
             return std::pair<Square, Square>(attackers[0], attackers[1]);
 
         generatedMoves.clear();
         plMoveGenerator->GeneratePawnMoves(generatedMoves, x, y, THREAT_MAP);
 
-        for(Move& move : generatedMoves)
+        for (Move &move: generatedMoves)
         {
             Piece piece = board->pieces[move.destinationX][move.destinationY];
-            if(GetType(piece) == PAWN && GetColor(piece) != position->activePlayerColor)
+            if (GetType(piece) == PAWN && GetColor(piece) != position->activePlayerColor)
             {
                 attackers[attackerCount] = Square(move.destinationX, move.destinationY);
                 attackerCount++;
@@ -280,34 +273,33 @@ namespace ChessEngine
 
     bool MoveGenerator::IsInCheck()
     {
-        if(activeThreatMap[activeKingX][activeKingY])
+        if (activeThreatMap[activeKingX][activeKingY])
             return true;
 
         return false;
     }
 
-    void MoveGenerator::EraseIllegalMoves(std::vector<Move>& moveList)
+    void MoveGenerator::EraseIllegalMoves(std::vector<Move> &moveList)
     {
-        if(!IsInCheck())
+        if (!IsInCheck())
             return;
 
         int moveCount = moveList.size();
-        for(int i = moveCount - 1; i >= 0; i--)
+        for (int i = moveCount - 1; i >= 0; i--)
         {
             Move move = moveList[i];
             Piece currentPiece = board->pieces[move.startingX][move.startingY];
 
-            if(IsKing(currentPiece))
+            if (IsKing(currentPiece))
             {
                 break;
             }
-            if(!captureCheckMap[move.destinationX][move.destinationY] && !checkRayMap[move.destinationX][move.destinationY])
-            {
-                if(isMoveEnPassant(move)) // cover for edge case where move square doesn't coincide with capture square - en passant
+            if (!captureCheckMap[move.destinationX][move.destinationY] &&
+                !checkRayMap[move.destinationX][move.destinationY]) {
+                if (IsMoveEnPassant(move)) // cover for edge case where move square doesn't coincide with capture square - en passant
                 {
                     int offset = (position->activePlayerColor == WHITE) ? -1 : 1;
-                    if(captureCheckMap[move.destinationX][move.destinationY + offset])
-                    {
+                    if (captureCheckMap[move.destinationX][move.destinationY + offset]) {
                         continue;
                     }
                 }
@@ -317,19 +309,18 @@ namespace ChessEngine
         }
     }
 
-    void MoveGenerator::EraseIllegalKingMoves(std::vector<Move>& generatedMoves)
+    void MoveGenerator::EraseIllegalKingMoves(std::vector<Move> &generatedMoves)
     {
         int moveCount = generatedMoves.size();
-        for(int i = moveCount - 1; i >= 0; i--)
-        {
+        for (int i = moveCount - 1; i >= 0; i--) {
             Move move = generatedMoves[i];
             Piece currentPiece = board->pieces[move.startingX][move.startingY];
 
-            if(!IsKing(currentPiece))
+            if (!IsKing(currentPiece))
             {
                 break;
             }
-            if(activeThreatMap[move.destinationX][move.destinationY])
+            if (activeThreatMap[move.destinationX][move.destinationY])
             {
                 generatedMoves.erase(generatedMoves.begin() + i);
                 moveCount--;
@@ -347,14 +338,12 @@ namespace ChessEngine
         CastRayInDirection(pinnedRay, Square(activeKingX, activeKingY), direction);
 
         int moveCount = moveList.size();
-        for(int i = moveCount - 1; i >= 0; i--)
-        {
+        for (int i = moveCount - 1; i >= 0; i--) {
             Move move = moveList[i];
-            if(move.startingX != pinnedPiece.x || move.startingY != pinnedPiece.y)
-            {
+            if (move.startingX != pinnedPiece.x || move.startingY != pinnedPiece.y) {
                 break;
             }
-            if(!pinnedRay[move.destinationX][move.destinationY])
+            if (!pinnedRay[move.destinationX][move.destinationY])
             {
                 moveList.erase(moveList.begin() + i);
             }
@@ -364,15 +353,14 @@ namespace ChessEngine
     void MoveGenerator::EraseIllegalEnPassantMoves(std::vector<Move> &moveList)
     {
         int moveNumber = moveList.size() - 1;
-        //Color activeColor = GetColor(board->pieces[][])
-        if(moveList.empty())
+        if (moveList.empty())
             return;
 
         Move move = moveList[moveNumber];
         Piece activePiece = board->pieces[move.startingX][move.startingY];
         Color activeColor = GetColor(activePiece);
 
-        if (!isMoveEnPassant(move))
+        if (!IsMoveEnPassant(move))
         {
             return;
         }
@@ -382,9 +370,9 @@ namespace ChessEngine
             {
                 int offset = (activeKingX - move.startingX > 0) ? -1 : 1; // find direction from king towards en passant square
 
-                for (int x = activeKingX + offset;; x+= offset) // go through each square in that direction
+                for (int x = activeKingX + offset;; x += offset) // go through each square in that direction
                 {
-                    if(!IsInBounds(x,activeKingY))
+                    if (!IsInBounds(x, activeKingY))
                     {
                         break;
                     }
@@ -395,7 +383,7 @@ namespace ChessEngine
                         {
                             continue;
                         }
-                        else if (IsCorrectSlidingPiece(board->pieces[x][activeKingY], -offset,0) && GetColor(board->pieces[x][activeKingY]) != activeColor) //if you have found a piece which can move in that direction, erase
+                        else if (IsCorrectSlidingPiece(board->pieces[x][activeKingY], -offset, 0) && GetColor(board->pieces[x][activeKingY]) != activeColor) //if you have found a piece which can move in that direction, erase
                         {
                             moveList.erase(moveList.begin() + moveNumber);
                             break;
@@ -414,51 +402,48 @@ namespace ChessEngine
     {
         memset(captureCheckMap, false, sizeof(bool) * 8 * 8);
 
-        if(attackerPair.first.x != -1)
+        if (attackerPair.first.x != -1)
         {
             captureCheckMap[attackerPair.first.x][attackerPair.first.y] = true;
-            if(attackerPair.second.x != -1)
+            if (attackerPair.second.x != -1)
                 captureCheckMap[attackerPair.second.x][attackerPair.second.y] = true;
         }
     }
 
-    bool MoveGenerator::isMoveEnPassant(const Move& move)
+    bool MoveGenerator::IsMoveEnPassant(const Move &move)
     {
-        if(move.moveType == EN_PASSANT)
+        if (move.moveType == EN_PASSANT)
             return true;
         else
             return false;
     }
 
-    void MoveGenerator::GenerateCastlingMoves(std::vector<Move>& generatedMoves, int startingX, int startingY)
+    void MoveGenerator::GenerateCastlingMoves(std::vector<Move> &generatedMoves, int startingX, int startingY)
     {
         int kingRank = startingY;
         Color color = GetColor(board->pieces[startingX][startingY]);
 
 
-        if(IsInCheck())
+        if (IsInCheck())
             return;
 
         //Kingside generation
-        if(IsKingsideEmpty(color, board->pieces) && position->HasCastlingRights(color, KINGSIDE) && GetType(board->pieces[7][kingRank]) == ROOK
-        && !activeThreatMap[5][kingRank] && !activeThreatMap[6][kingRank]) // checking only for type because color doesn't matter - all castling conditions cant be met if the rook is of opposite color.
+        if (IsKingsideEmpty(color, board->pieces) && position->HasCastlingRights(color, KINGSIDE) &&
+            GetType(board->pieces[7][kingRank]) == ROOK // checking only for type because color doesn't matter - all castling conditions cant be met if the rook is of opposite color.
+            && !activeThreatMap[5][kingRank] &&
+            !activeThreatMap[6][kingRank])
         {
 
             Move move(startingX, startingY, startingX + 2, startingY, CASTLING);
-//            Move rookMove(7, kingRank, 5, kingRank);
-//
-//            move.additionalAction = [this, rookMove, color] { position->PerformCastling(rookMove, color); };
             generatedMoves.push_back(move);
         }
 
         //Queenside generation
-        if(IsQueensideEmpty(color, board->pieces) && position->HasCastlingRights(color, QUEENSIDE) && GetType(board->pieces[0][kingRank]) == ROOK
-        && !activeThreatMap[3][kingRank] && !activeThreatMap[2][kingRank])
+        if (IsQueensideEmpty(color, board->pieces) && position->HasCastlingRights(color, QUEENSIDE) &&
+            GetType(board->pieces[0][kingRank]) == ROOK
+            && !activeThreatMap[3][kingRank] && !activeThreatMap[2][kingRank])
         {
             Move move(startingX, startingY, startingX - 2, startingY, CASTLING);
-//            Move rookMove(0, kingRank, 3, kingRank);
-//
-//            move.additionalAction = [this, rookMove, color] { position->PerformCastling(rookMove, color); };
             generatedMoves.push_back(move);
         }
     }
@@ -470,18 +455,17 @@ namespace ChessEngine
 
         std::vector<Square> pinnedPieces;
 
-        for(int currentDir = 0; currentDir < 8; currentDir++)
-        {
+        for (int currentDir = 0; currentDir < 8; currentDir++) {
             Square pinnedPiece{};
 
-            for(int x = kingX + xDirOffset[currentDir], y = kingY + yDirOffset[currentDir]; ;x += xDirOffset[currentDir], y += yDirOffset[currentDir])
+            for (int x = kingX + xDirOffset[currentDir], y = kingY + yDirOffset[currentDir];; x += xDirOffset[currentDir], y += yDirOffset[currentDir])
             {
-                if(!IsInBounds(x, y))
+                if (!IsInBounds(x, y))
                     break;
 
-                if(board->pieces[x][y] != EMPTY)
+                if (board->pieces[x][y] != EMPTY)
                 {
-                    if(GetColor(board->pieces[x][y]) == position->activePlayerColor)
+                    if (GetColor(board->pieces[x][y]) == position->activePlayerColor)
                     {
                         pinnedPiece = Square(x, y);
 
@@ -489,13 +473,12 @@ namespace ChessEngine
                         y += yDirOffset[currentDir];
 
                         bool haveFoundPinner = false;
-                        while(!haveFoundPinner && IsInBounds(x, y))
+                        while (!haveFoundPinner && IsInBounds(x, y))
                         {
-                            if(board->pieces[x][y] != EMPTY)
+                            if (board->pieces[x][y] != EMPTY)
                             {
-                                if(GetColor(board->pieces[x][y]) != position->activePlayerColor && IsCorrectSlidingPiece(board->pieces[x][y], xDirOffset[currentDir], yDirOffset[currentDir]))
-                                {
-                                    //pinnerPiece = Square(x, y);
+                                if (GetColor(board->pieces[x][y]) != position->activePlayerColor &&
+                                    IsCorrectSlidingPiece(board->pieces[x][y], xDirOffset[currentDir],yDirOffset[currentDir])) {
                                     haveFoundPinner = true;
                                     pinnedPieces.push_back(pinnedPiece);
                                 }
@@ -521,9 +504,9 @@ namespace ChessEngine
 
     bool MoveGenerator::IsCorrectSlidingPiece(Piece piece, int xOffset, int yOffset) // function for checking if the sliding piece can move in given direction (given in offset)
     {
-        if((xOffset == 0 || yOffset == 0) && IsRookOrQueen(piece))
+        if ((xOffset == 0 || yOffset == 0) && IsRookOrQueen(piece))
             return true;
-        if((xOffset != 0 && yOffset != 0) && IsBishopOrQueen(piece))
+        if ((xOffset != 0 && yOffset != 0) && IsBishopOrQueen(piece))
             return true;
 
         return false;
@@ -537,57 +520,4 @@ namespace ChessEngine
         blackKingX = board->blackKingX;
         blackKingY = board->blackKingY;
     }
-
-//    std::vector<Move> MoveGenerator::GenerateAllCaptureMoves()
-//    {
-//        Color activePlayerColor = position->activePlayerColor;
-//        UpdateKingPositions();
-//
-//        activeKingX = (activePlayerColor == WHITE) ? whiteKingX : blackKingX;
-//        activeKingY = (activePlayerColor == WHITE) ? whiteKingY : blackKingY;
-//
-//        InitThreatMaps();
-//
-//        if(IsInCheck())
-//        {
-//            std::pair<Square, Square> attackerPair;
-//            int attackerCount;
-//
-//            int kingX, kingY;
-//
-//            if(activePlayerColor == WHITE)
-//            {
-//                kingX = whiteKingX;
-//                kingY = whiteKingY;
-//            }
-//            else
-//            {
-//                kingX = blackKingX;
-//                kingY = blackKingY;
-//            }
-//
-//            attackerPair = GetSquareAttackers(kingX, kingY, attackerCount);
-//
-//            GetCheckRayMap();
-//            UpdateCaptureCheckMap(attackerPair);
-//
-//            // Only calculate king moves if it's a double check since its impossible for any other piece to have a legal move
-//            if(attackerCount == 1)
-//            {
-//                return GenerateAllMoves(activePlayerColor, CAPTURE_ONLY);
-//            }
-//            else
-//            {
-//                std::vector<Move> kingMoves;
-//                plMoveGenerator->GenerateKingMoves(kingMoves, kingX, kingY, CAPTURE_ONLY);
-//                EraseIllegalKingMoves(kingMoves);
-//                return kingMoves;
-//            }
-//        }
-//        else
-//        {
-//            return GenerateAllMoves(activePlayerColor, CAPTURE_ONLY);
-//        }
-//    }
-
-} // ChessEngine
+}

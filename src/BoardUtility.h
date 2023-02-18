@@ -10,15 +10,7 @@
 
 namespace ChessEngine
 {
-
-    enum Direction
-    {
-        NORTHWEST, NORTH, NORTHEAST,
-        WEST,                   EAST,
-        SOUTHWEST, SOUTH, SOUTHEAST
-    };
-
-    struct Square
+    struct Square // simple struct holding two numbers
     {
         int x;
         int y;
@@ -51,8 +43,8 @@ namespace ChessEngine
     inline int xDirOffset[] = {-1, 0, 1, -1, 1, -1, 0, 1};
     inline int yDirOffset[] = {1, 1, 1, 0, 0, -1, -1, -1};
 
-    void CastRayToSquare(bool table[8][8], Square startingPos, Square endingPos);
-    void CastRayInDirection(bool table[8][8], Square startingPos, Square direction);
+    void CastRayToSquare(bool table[8][8], Square startingPos, Square endingPos); // sets each value from startingPos to endingPos as true
+    void CastRayInDirection(bool table[8][8], Square startingPos, Square direction); // sets each value from startingPos to end of board in the given direction as true
 
     Square NormalizeVector(Square vector); // it doesn't quite normalize the vector, however changes it into a direction the code understands
 
@@ -60,9 +52,6 @@ namespace ChessEngine
 
     bool IsKingsideEmpty(Color color, Piece board[8][8]);
     bool IsQueensideEmpty(Color color, Piece board[8][8]);
-
-    bool isAbsolutelyPinned(int x, int y, Piece board[8][8]);
-    Piece FindFirstPieceInDirection(int startingX, int startingY, Direction dir, Piece board[8][8]);
 }
 
 

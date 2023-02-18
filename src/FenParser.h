@@ -17,7 +17,7 @@ namespace ChessEngine
 {
     class FenParser
     {
-        std::map<char, ChessEngine::PieceType> pieceTypeMap =
+        std::map<char, ChessEngine::PieceType> pieceTypeMap = // for parsing fen
         {
                 {'p', ChessEngine::PAWN},
                 {'b', ChessEngine::BISHOP},
@@ -29,7 +29,7 @@ namespace ChessEngine
 
     public:
         std::string const startingFenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-        Position* loadFen(std::string fenString);
+        Position* ParseFen(std::string fenString);
     };
 }
 

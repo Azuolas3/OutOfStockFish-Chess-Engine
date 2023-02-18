@@ -25,13 +25,12 @@ namespace ChessEngine
     class TranspositionTable
     {
         Position* position;
-        u64 size;
+        u64 size = 63997;
 
     public:
-        TranspositionTable(Position* position, u64 size = 63997) //odd 63997 size cause its better for size to be a prime
+        TranspositionTable(Position *position)
         {
             this->position = position;
-            this->size = size;
         }
 
         u64 GetIndex();
@@ -45,7 +44,7 @@ namespace ChessEngine
         const int alphaFlag = 2;
         u64 times = 0;
         u64 otherTimes = 0;
-        std::array<Entry, 63997> entries;
+        std::array<Entry, 63997> entries; //odd 63997 size cause it's better for size to be a prime to prevent collisions
     };
 } // ChessEngine
 

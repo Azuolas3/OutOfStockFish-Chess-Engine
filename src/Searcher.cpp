@@ -9,7 +9,6 @@ namespace ChessEngine
     int Searcher::SearchIteratively(int allocatedSearchTime)
     {
         isSearchRunning = true;
-        //bool isTimeSet = allocatedSearchTime > 0; // if allocated search time a negative number, assume that time isn't set
 
         int currentDepth = 1; // start from 1 ply depth
         int latestEval = 0;
@@ -22,7 +21,6 @@ namespace ChessEngine
             int previousIterationEval = latestEval;
 
             latestEval = Search(currentDepth, -STARTING_VALUE, STARTING_VALUE);
-            std::cout << "current depth:   " << currentDepth << '\n';
 
             currentDepth++;
 
@@ -33,7 +31,6 @@ namespace ChessEngine
             }
         }
 
-        //std::cout << "Last depth:   " << currentDepth - 1 << '\n';
         return latestEval;
     }
 
@@ -47,7 +44,6 @@ namespace ChessEngine
 
         if(ttLookup != NOT_FOUND)
         {
-            //std::cout << bestEvaluation << '\n';
             transposFound++;
             currentBestMove = tt->ReadHashEntryMove();
             return ttLookup;

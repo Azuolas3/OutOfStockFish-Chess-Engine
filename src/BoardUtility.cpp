@@ -36,27 +36,6 @@ namespace ChessEngine
             return false;
     }
 
-    bool isAbsolutelyPinned(int x, int y, Piece board[8][8])
-    {
-        return false;
-    }
-
-    Piece FindFirstPieceInDirection(int startingX, int startingY, Direction dir, Piece board[8][8])
-    {
-        for(int x = startingX + xDirOffset[dir], y = startingY + yDirOffset[dir];; x += xDirOffset[dir], y += yDirOffset[dir])
-        {
-            if(IsInBounds(x, y))
-            {
-                if(board[x][y] != EMPTY)
-                    return board[x][y];
-            }
-            else
-            {
-                return EMPTY;
-            }
-        }
-    }
-
     void CastRayToSquare(bool table[8][8], Square startingPos, Square endingPos)
     {
         int xDistance = startingPos.x - endingPos.x;

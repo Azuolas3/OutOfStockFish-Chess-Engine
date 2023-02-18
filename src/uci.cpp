@@ -13,11 +13,8 @@ namespace ChessEngine
     {
         Position* position;
 
-        char line[INPUT_BUFFER];
-
         while(true)
         {
-            memset(line, 0, sizeof(line[0]) * INPUT_BUFFER);
             string input;
             std::getline(cin, input);
 
@@ -128,7 +125,7 @@ namespace ChessEngine
         std::string arguments = input.substr(9); // starting at 9 since we can safely skip "position " part of the string
         if(arguments == "startpos")
         {
-            position = parser.loadFen(parser.startingFenString);
+            position = parser.ParseFen(parser.startingFenString);
         }
         else
         {
@@ -136,11 +133,11 @@ namespace ChessEngine
             if(currentPos != std::string::npos)
             {
                 std::string fenString = arguments.substr(currentPos + 4);
-                position = parser.loadFen(fenString);
+                position = parser.ParseFen(fenString);
             }
             else
             {
-                position = parser.loadFen(parser.startingFenString);
+                position = parser.ParseFen(parser.startingFenString);
             }
         }
 
@@ -158,6 +155,6 @@ namespace ChessEngine
             }
         }
 
-        position->board->PrintBoard();
+        //position->board->PrintBoard();
     }
 }

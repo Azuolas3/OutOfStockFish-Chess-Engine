@@ -14,6 +14,7 @@
 
 namespace ChessEngine
 {
+    // bulk counting is a little "cheat" used to increase performance for perft
     u64 Perft(int depth, Position *position, MoveGenerator *moveGenerator, bool isBulkCountingEnabled = false); // generates and adds up all possible generated moves to a certain depth
 }
 

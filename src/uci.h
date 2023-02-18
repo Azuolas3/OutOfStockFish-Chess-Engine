@@ -5,8 +5,6 @@
 #ifndef CHESS_ENGINE_UCI_H
 #define CHESS_ENGINE_UCI_H
 
-#define INPUT_BUFFER 800
-
 #include <cstring>
 #include <string>
 #include <iostream>
