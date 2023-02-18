@@ -1,5 +1,5 @@
 #include <iostream>
-#include "ZobristUtility.h"
+#include "Utilities/ZobristUtility.h"
 #include "uci.h"
 
 using std::cout;

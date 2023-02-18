@@ -7,7 +7,7 @@
 
 #include <map>
 #include <array>
-#include "pieces.h"
+#include "BoardRepresentation/pieces.h"
 
 using std::array;
 

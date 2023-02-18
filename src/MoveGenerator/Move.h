@@ -5,8 +5,8 @@
 #ifndef CHESS_ENGINE_MOVE_H
 #define CHESS_ENGINE_MOVE_H
 
-#include "pieces.h"
-#include "BoardUtility.h"
+#include "BoardRepresentation/pieces.h"
+#include "Utilities/BoardUtility.h"
 
 enum MoveType // flags
 {

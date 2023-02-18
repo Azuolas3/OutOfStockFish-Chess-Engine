@@ -8,11 +8,11 @@
 #include <limits>
 
 #include "Evaluator.h"
-#include "MoveGenerator.h"
+#include "MoveGenerator/MoveGenerator.h"
 #include "TranspositionTable.h"
-#include "Timer.h"
-#include "AlgebraicNotationUtility.h"
-#include "InputReadUtility.h"
+#include "Utilities/TimerUtility.h"
+#include "Utilities/AlgebraicNotationUtility.h"
+#include "Utilities/InputReadUtility.h"
 
 namespace ChessEngine
 {

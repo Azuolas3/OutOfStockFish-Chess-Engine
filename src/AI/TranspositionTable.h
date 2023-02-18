@@ -5,9 +5,9 @@
 #ifndef CHESS_ENGINE_TRANSPOSITIONTABLE_H
 #define CHESS_ENGINE_TRANSPOSITIONTABLE_H
 
-#include "u64.h"
-#include "Move.h"
-#include "Position.h"
+#include "Miscellaneous/u64.h"
+#include "MoveGenerator/Move.h"
+#include "BoardRepresentation/Position.h"
 
 #define NOT_FOUND (INT_MIN+1000)
 

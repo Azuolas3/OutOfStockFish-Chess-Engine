@@ -7,7 +7,7 @@
 
 #include <map>
 #include <string>
-#include "Move.h"
+#include "MoveGenerator/Move.h"
 
 inline std::map<char, int> letterToFileMap =
 {

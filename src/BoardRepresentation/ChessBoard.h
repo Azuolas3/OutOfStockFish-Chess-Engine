@@ -11,7 +11,7 @@
 #include <map>
 #include <vector>
 #include "PieceList.h"
-#include "Move.h"
+#include "MoveGenerator/Move.h"
 
 namespace ChessEngine
 {

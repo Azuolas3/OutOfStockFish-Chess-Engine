@@ -1,7 +1,7 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
 
-#include "pieces.h"
+#include "BoardRepresentation/pieces.h"
 
 TEST_CASE("Piece Construction")
 {

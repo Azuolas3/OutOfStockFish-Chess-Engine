@@ -1,7 +1,7 @@
 #include "doctest.h"
 
-#include "Move.h"
-#include "AlgebraicNotationUtility.h"
+#include "MoveGenerator/Move.h"
+#include "Utilities/AlgebraicNotationUtility.h"
 
 TEST_CASE("Move to string tests")
 {

@@ -5,7 +5,7 @@
 #ifndef CHESS_ENGINE_EVALUATOR_H
 #define CHESS_ENGINE_EVALUATOR_H
 
-#include "Position.h"
+#include "BoardRepresentation/Position.h"
 #include "PieceSquareTables.h"
 
 namespace ChessEngine

@@ -4,44 +4,44 @@ project(chess_engine)
 set(CMAKE_CXX_STANDARD 17)
 
 set(HEADER_FILES
-        AlgebraicNotationUtility.h
-        BoardUtility.h
-        ChessBoard.h
-        Evaluator.h
-        FenParser.h
-        Move.h
-        MoveGenerator.h
-        PerftUtility.h
-        PieceList.h
-        pieces.h
-        PieceSquareTables.h
-        Position.h
-        PseudoLegalMoveGenerator.h
-        Searcher.h
-        Timer.h
-        TranspositionTable.h
-        u64.h
-        ZobristUtility.h
+        Utilities/AlgebraicNotationUtility.h
+        Utilities/BoardUtility.h
+        BoardRepresentation/ChessBoard.h
+        AI/Evaluator.h
+        Miscellaneous/FenParser.h
+        MoveGenerator/Move.h
+        MoveGenerator/MoveGenerator.h
+        Utilities/PerftUtility.h
+        BoardRepresentation/PieceList.h
+        BoardRepresentation/pieces.h
+        AI/PieceSquareTables.h
+        BoardRepresentation/Position.h
+        MoveGenerator/PseudoLegalMoveGenerator.h
+        AI/Searcher.h
+        Utilities/TimerUtility.h
+        AI/TranspositionTable.h
+        Miscellaneous/u64.h
+        Utilities/ZobristUtility.h
         uci.h
-        InputReadUtility.h)
+        Utilities/InputReadUtility.h)
 
 set(SOURCE_FILES
-        AlgebraicNotationUtility.cpp
-        BoardUtility.cpp
-        ChessBoard.cpp
-        Evaluator.cpp
-        FenParser.cpp
-        Move.cpp
-        MoveGenerator.cpp
-        PerftUtility.cpp
-        PieceList.cpp
-        Position.cpp
-        PseudoLegalMoveGenerator.cpp
-        Searcher.cpp
-        Timer.cpp
-        TranspositionTable.cpp
-        ZobristUtility.cpp
+        Utilities/AlgebraicNotationUtility.cpp
+        Utilities/BoardUtility.cpp
+        BoardRepresentation/ChessBoard.cpp
+        AI/Evaluator.cpp
+        Miscellaneous/FenParser.cpp
+        MoveGenerator/Move.cpp
+        MoveGenerator/MoveGenerator.cpp
+        Utilities/PerftUtility.cpp
+        BoardRepresentation/PieceList.cpp
+        BoardRepresentation/Position.cpp
+        MoveGenerator/PseudoLegalMoveGenerator.cpp
+        AI/Searcher.cpp
+        Utilities/TimerUtility.cpp
+        AI/TranspositionTable.cpp
+        Utilities/ZobristUtility.cpp
         uci.cpp
-        InputReadUtility.cpp)
+        Utilities/InputReadUtility.cpp)
 
 add_library(chess_engine_lib STATIC ${SOURCE_FILES} ${HEADER_FILES})

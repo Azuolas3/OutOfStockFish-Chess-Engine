@@ -7,8 +7,8 @@
 
 #include "ChessBoard.h"
 #include <iostream>
-#include "BoardUtility.h"
-#include "u64.h"
+#include "Utilities/BoardUtility.h"
+#include "Miscellaneous/u64.h"
 
 #define NO_SQUARE -1
 

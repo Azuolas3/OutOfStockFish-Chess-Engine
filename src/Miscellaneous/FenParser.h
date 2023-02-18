@@ -7,11 +7,11 @@
 
 #include <string>
 #include <map>
-#include "ChessBoard.h"
-#include "pieces.h"
-#include "Position.h"
-#include "AlgebraicNotationUtility.h"
-#include "ZobristUtility.h"
+#include "BoardRepresentation/ChessBoard.h"
+#include "BoardRepresentation/pieces.h"
+#include "BoardRepresentation/Position.h"
+#include "Utilities/AlgebraicNotationUtility.h"
+#include "Utilities/ZobristUtility.h"
 
 namespace ChessEngine
 {

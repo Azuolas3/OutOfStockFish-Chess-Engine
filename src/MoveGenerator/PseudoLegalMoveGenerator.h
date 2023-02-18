@@ -7,9 +7,9 @@
 
 #include <iostream>
 #include <vector>
-#include "ChessBoard.h"
-#include "Position.h"
-#include "BoardUtility.h"
+#include "BoardRepresentation/ChessBoard.h"
+#include "BoardRepresentation/Position.h"
+#include "Utilities/BoardUtility.h"
 #include "Move.h"
 
 namespace ChessEngine

@@ -3,7 +3,7 @@
 //
 
 #include "InputReadUtility.h"
-#include "Searcher.h"
+#include "AI/Searcher.h"
 
 int ChessEngine::InputWaiting()
 {

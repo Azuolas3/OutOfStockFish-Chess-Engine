@@ -5,7 +5,7 @@
 #ifndef CHESS_ENGINE_BOARDUTILITY_H
 #define CHESS_ENGINE_BOARDUTILITY_H
 
-#include "pieces.h"
+#include "BoardRepresentation/pieces.h"
 #include <cstdlib>
 
 namespace ChessEngine

@@ -7,8 +7,8 @@
 
 
 #include <random>
-#include "u64.h"
-#include "Position.h"
+#include "Miscellaneous/u64.h"
+#include "BoardRepresentation/Position.h"
 
 namespace ChessEngine
 {

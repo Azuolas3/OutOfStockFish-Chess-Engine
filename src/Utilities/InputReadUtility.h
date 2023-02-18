@@ -6,7 +6,7 @@
 #define CHESS_ENGINE_INPUTREADUTILITY_H
 
 #include <unistd.h>
-#include "Searcher.h"
+#include "AI/Searcher.h"
 
 namespace ChessEngine
 {

@@ -7,10 +7,10 @@
 
 #include <iostream>
 #include <fstream>
-#include "AlgebraicNotationUtility.h"
-#include "MoveGenerator.h"
-#include "Position.h"
-#include "u64.h"
+#include "Utilities/AlgebraicNotationUtility.h"
+#include "MoveGenerator/MoveGenerator.h"
+#include "BoardRepresentation/Position.h"
+#include "Miscellaneous/u64.h"
 
 namespace ChessEngine
 {

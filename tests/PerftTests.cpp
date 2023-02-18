@@ -1,9 +1,9 @@
 #include "doctest.h"
 
-#include "FenParser.h"
-#include "MoveGenerator.h"
-#include "PerftUtility.h"
-#include "u64.h"
+#include "Miscellaneous/FenParser.h"
+#include "MoveGenerator/MoveGenerator.h"
+#include "Utilities/PerftUtility.h"
+#include "Miscellaneous/u64.h"
 
 TEST_CASE("Perft Results")
 {

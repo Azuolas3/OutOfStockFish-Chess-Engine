@@ -9,9 +9,9 @@
 #include <string>
 #include <iostream>
 #include <sstream>
-#include "Position.h"
-#include "FenParser.h"
-#include "Searcher.h"
+#include "BoardRepresentation/Position.h"
+#include "Miscellaneous/FenParser.h"
+#include "AI/Searcher.h"
 
 namespace ChessEngine
 {

@@ -3,7 +3,7 @@
 //
 
 #include "Position.h"
-#include "ZobristUtility.h"
+#include "Utilities/ZobristUtility.h"
 
 using namespace ChessEngine;
 

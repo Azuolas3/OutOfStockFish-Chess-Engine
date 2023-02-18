@@ -6,7 +6,7 @@
 #define CHESS_ENGINE_PIECELIST_H
 
 #include <vector>
-#include "BoardUtility.h"
+#include "Utilities/BoardUtility.h"
 //#include "Position.h"
 
 namespace ChessEngine

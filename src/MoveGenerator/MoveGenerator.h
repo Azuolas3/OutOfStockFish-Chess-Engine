@@ -6,7 +6,7 @@
 #define CHESS_ENGINE_MOVEGENERATOR_H
 
 #include "PseudoLegalMoveGenerator.h"
-#include "BoardUtility.h"
+#include "Utilities/BoardUtility.h"
 #include <algorithm>
 #include <iostream>
 
