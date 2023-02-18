@@ -114,6 +114,11 @@ namespace ChessEngine
             searcher->maxDepth = depth;
 
         searcher->SearchIteratively((time + inc) / 1000); // divided by 1000 since search expects seconds and UCI expects ms
+
+        delete evaluator; // clean up memory after search
+        delete searcher;
+        delete moveGenerator;
+
         cout << "bestmove " << MoveToString(searcher->currentBestMove) << '\n'; //send the best move found to GUI
     }
 
