@@ -49,6 +49,10 @@ namespace ChessEngine
                 cout << "id author Azuolas\n";
                 cout << "uciok\n";
             }
+            else if(firstWord == "d")
+            {
+                position->board->PrintBoard();
+            }
         }
     }
 
@@ -114,12 +118,11 @@ namespace ChessEngine
             searcher->maxDepth = depth;
 
         searcher->SearchIteratively((time + inc) / 1000); // divided by 1000 since search expects seconds and UCI expects ms
+        cout << "bestmove " << MoveToString(searcher->currentBestMove) << '\n'; //send the best move found to GUI
 
         delete evaluator; // clean up memory after search
         delete searcher;
         delete moveGenerator;
-
-        cout << "bestmove " << MoveToString(searcher->currentBestMove) << '\n'; //send the best move found to GUI
     }
 
     void ParsePosition(std::string input, Position *&position)
