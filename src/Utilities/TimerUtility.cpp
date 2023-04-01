@@ -6,12 +6,12 @@
 
 namespace ChessEngine
 {
-    void StartTimer(int seconds, const std::function<void()> &func)
+    void StartTimer(int milliseconds, const std::function<void()> &func)
     {
-        if(seconds <= 0) // don't do anything if the specified time is incorrect
+        if(milliseconds <= 0) // don't do anything if the specified time is incorrect
             return;
 
-        std::this_thread::sleep_for(std::chrono::seconds(seconds));
+        std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
         func();
     }
 } // ChessEngine

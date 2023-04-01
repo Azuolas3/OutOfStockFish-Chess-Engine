@@ -12,7 +12,7 @@
 
 namespace ChessEngine
 {
-    void StartTimer(int seconds, const std::function<void()> &func);
+    void StartTimer(int milliseconds, const std::function<void()> &func);
 } // ChessEngine
 
 #endif //CHESS_ENGINE_TIMERUTILITY_H
