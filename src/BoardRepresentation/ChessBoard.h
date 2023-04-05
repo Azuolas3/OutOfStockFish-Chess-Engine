@@ -7,9 +7,9 @@
 
 #include "pieces.h"
 #include <iostream>
-#include "windows.h"
 #include <map>
 #include <vector>
+#include <cstring>
 #include "PieceList.h"
 #include "MoveGenerator/Move.h"
 
