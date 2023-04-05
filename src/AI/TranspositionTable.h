@@ -5,6 +5,8 @@
 #ifndef CHESS_ENGINE_TRANSPOSITIONTABLE_H
 #define CHESS_ENGINE_TRANSPOSITIONTABLE_H
 
+#include <climits>
+
 #include "Miscellaneous/u64.h"
 #include "MoveGenerator/Move.h"
 #include "BoardRepresentation/Position.h"

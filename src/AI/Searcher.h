@@ -5,7 +5,7 @@
 #ifndef CHESS_ENGINE_SEARCHER_H
 #define CHESS_ENGINE_SEARCHER_H
 
-#include <limits>
+#include <climits>
 
 #include "Evaluator.h"
 #include "MoveGenerator/MoveGenerator.h"
