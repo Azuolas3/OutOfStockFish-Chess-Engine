@@ -8,6 +8,10 @@ program (e.g. Arena, XBoard) to play or use comfortably.
 The engine uses a simple 8x8 array and piece lists for board representation, piece square tables and material count for evaluation, as well as a minimax algorithm
 with alpha-beta pruning, move ordering and a transposition table for search. There's also quiescence search and iterative deepening implemented as well.
 
+# How to play against it
+- Download any UCI-compatible chess GUI and load it there.
+- Play it online! http://sodrapensijos.eu.pythonanywhere.com/
+
 # Usage
 The engine is designed to be loaded inside a UCI-compatible GUI, however you're still able to use it from console.
 The following are commands the engine can parse:
@@ -29,6 +33,11 @@ Noteworthy files:
 - Miscellaneous, subdirectory containing everything that didn't find it's place elsewhere - Fen parser, small files for type defs, etc.
 - CMakeLists.txt, file used to build the project with CMake.
 
+# Build
+To build you will need to do the following:
+1. Make sure you have CMake and a C++ compiler installed.
+2. in root directory ```cmake . ```
+3. ```make OutOfStockFish ```
 
 # Contributions
 Feel free to contribute if you feel like it!
